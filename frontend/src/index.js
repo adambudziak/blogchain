@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Web3 from 'web3';
 import sha3js from 'js-sha3';
+import axios from 'axios';
 
 
 class CreatePostForm extends React.Component {
@@ -74,56 +75,22 @@ class App extends React.Component {
       this.setState({
         accounts,
         currentAccount: accounts[0],
-        postsContract: this.loadPostsStorageABI(),
       });
+      this.loadPostsStorageABI();
     });
   }
 
   loadPostsStorageABI() {
-    const abi = [
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "name": "posts",
-        "outputs": [
-          {
-            "name": "date",
-            "type": "string"
-          },
-          {
-            "name": "contentHash",
-            "type": "string"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_date",
-            "type": "string"
-          },
-          {
-            "name": "_contentHash",
-            "type": "string"
-          }
-        ],
-        "name": "addPost",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
+    axios.get('http://localhost:8000/api/static/abi/PostsContainer.json')
+    .then(response => {
+      if (response.status !== 200) {
+        console.error(response);
       }
-    ];
-    return new this.web3.eth.Contract(abi, '0x359968c2eE25A44380fDCae3451D9b3490A4D60b');
+      console.log(response.data.abi);
+      const contract = response.data.abi;
+      console.log(contract);
+      this.setState({ postsContract: this.web3.eth.Contract(contract, '0xAdf81897D6a14807356a50Dc2cF9679293275e69') })
+    });
   }
 
   addPost(title, content) {

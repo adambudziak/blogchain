@@ -1,0 +1,25 @@
+version: '3'
+services:
+  backend:
+    build: backend
+    expose:
+      - "8000"
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: frontend
+    volumes:
+      - ./frontend:/app
+    expose: 
+      - "8000"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - 8000:8000
+    links:
+      - frontend
+      - backend
+    volumes:
+      - ./nginx:/etc/nginx
