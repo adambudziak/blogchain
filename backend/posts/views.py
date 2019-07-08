@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 
 from .models import Post
 from .serializers import PostSerializer, UserSerializer
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadCreateOnly
 
 from django.contrib.auth.models import User, AnonymousUser
 
@@ -30,6 +30,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,
     #                       IsOwnerOrReadOnly,)
+    permission_classes = (IsOwnerOrReadCreateOnly,)
 
     def perform_create(self, serializer):
         author = self.request.user

@@ -29,7 +29,7 @@ class Post(models.Model):
     title = models.CharField('Post title', max_length=200)
     creation_datetime = models.DateTimeField('Post creation datetime')
     # bc_proof = models.OneToOneField(BlockchainProof, null=True, blank=True, on_delete=models.SET_NULL)
-    data_hash = models.BinaryField(max_length=32)
+    data_hash = models.BinaryField(max_length=32, editable=False)
     tags = models.ManyToManyField(Tag, blank=True)
 
     def save(self, *args, **kwargs):

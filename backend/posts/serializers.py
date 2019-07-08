@@ -8,7 +8,11 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Post
         fields = ('url', 'id', 'creation_datetime', 'author',
-                  'tags', 'title', 'content')
+                  'tags', 'title', 'content', 'data_hash')
+
+    def get_author(self, obj):
+        if obj.author is None:
+            return 'Anonymous'
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
