@@ -1,2 +1,5 @@
 django==2.2.3
 djangorestframework==3.9.4
+coreapi==2.3.3
+gunicorn==19.9.0
+eth_hash==0.2.0

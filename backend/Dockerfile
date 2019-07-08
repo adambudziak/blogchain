@@ -4,4 +4,5 @@ COPY . /app
 WORKDIR /app
 
 RUN pip install -r requirements.txt
-ENTRYPOINT ["python", "manage.py", "runserver", "backend:8000"]
+ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# ENTRYPOINT ["gunicorn", "blogchain.wsgi:application", "-w 2", "-b :8000"]
