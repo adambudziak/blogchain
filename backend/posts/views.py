@@ -28,13 +28,11 @@ def api_root(request, format=None):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-    #                       IsOwnerOrReadOnly,)
     permission_classes = (IsOwnerOrReadCreateOnly,)
 
     def perform_create(self, serializer):
         author = self.request.user
-        if type(author) == AnonymousUser:
+        if isinstance(author, AnonymousUser):
             logging.warn('Got anonymous user! Changing to None')
             author = None
         else:

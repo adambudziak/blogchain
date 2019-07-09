@@ -1,12 +1,11 @@
 from django.db import models
-from eth_hash.auto import keccak
 
+from .bc import compute_post_hash
 import logging
 
 # class BlockchainProof(models.Model):
 #     tx_address = models.BinaryField(max_length=32)
 #     commitment - models.BinaryField(max_length=32)
-
 
 class Tag(models.Model):
     name = models.CharField(max_length=40)
@@ -29,7 +28,7 @@ class Post(models.Model):
     title = models.CharField('Post title', max_length=200)
     creation_datetime = models.DateTimeField('Post creation datetime')
     # bc_proof = models.OneToOneField(BlockchainProof, null=True, blank=True, on_delete=models.SET_NULL)
-    data_hash = models.BinaryField(max_length=32, editable=False)
+    data_hash = models.BinaryField(max_length=32)
     tags = models.ManyToManyField(Tag, blank=True)
 
     def save(self, *args, **kwargs):
@@ -38,8 +37,7 @@ class Post(models.Model):
         date = str(self.creation_datetime)
         username = self.author.username if self.author is not None else 'anonymous'
 
-        self.data_hash = keccak((date + username + self.title + self.content).encode('utf-8'))
-        return super(Post, self).save(*args, **kwargs)
+        self.data_hash = compute_post_hash(date, username, self.title, self.content)
 
 
 class Comment(models.Model):

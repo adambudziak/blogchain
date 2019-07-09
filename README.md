@@ -26,6 +26,7 @@ Visit http://localhost:8000
 * prepare UT environment (Django UTs, Frontend UTs), CI;
 * add TypeScript to the frontend;
 * prepare production-like environment;
+* add django-rest-knox for better security;
 * improve the development environment by automating the process of finding the addresses of contracts
     (maybe use truffle for this and store them in Redis which will be accessible by the API)
     For the frontend we could use Drizzle, but it won't work in the backend, so we need another

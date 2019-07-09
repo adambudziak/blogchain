@@ -45,18 +45,21 @@ export default class HomePage extends React.Component {
   addPost(title, content) {
     const now = moment().format(moment.HTML5_FMT.DATETIME_LOCAL_MS)
     const contract = this.state.postsContract;
-    const author = 'anonymous';
+    const storedAuthor = localStorage.getItem('user');
+    const author = storedAuthor === undefined ? 'anonymous' : storedAuthor;
+    const hash = this.hashPost(now, author, title, content);
     createPost({
       title: title,
       content: content,
-      datetime: now
+      datetime: now,
+      hash: hash,
     })
     .then(response => {
       if (response.status !== 200) {
         console.error(response);
       }
       console.log('Sent to server!');
-      contract.methods.addPost(String(now), this.hashPost(now, author, title, content))
+      contract.methods.addPost(String(now), hash)
         .send({from: this.state.currentAccount, gas: 1000000})
         .on('confirmation', () => {console.log('Submitted!')})
         .on('error', console.error);

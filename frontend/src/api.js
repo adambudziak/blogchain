@@ -5,11 +5,17 @@ const API_URLS = {
 }
 
 function createPost(post) {
+    const config = {
+      headers: {
+        'Authorization': 'Token ' + localStorage.getItem('token')
+      }
+    };
     return axios.post(API_URLS.POST, {
         title: post.title,
         content: post.content,
-        creation_datetime: post.datetime
-    });
+        creation_datetime: post.datetime,
+        data_hash: post.hash,
+    }, config);
 }
 
 export { createPost };

@@ -24,6 +24,7 @@ export const authFail = error => {
 
 export const logout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     localStorage.removeItem('expirationDate');
     return {
         type: actionTypes.AUTH_LOGOUT
@@ -48,6 +49,7 @@ export const authLogin = (username, password) => {
         .then(response => {
             const token = response.data.key;
             const expirationDate = moment().add(14, 'days');
+            localStorage.setItem('user', username);
             localStorage.setItem('token', token);
             localStorage.setItem('expirationDate', expirationDate);
             dispatch(authSuccess(token));
@@ -88,12 +90,13 @@ export const authCheckState = () => {
         if (token === undefined) {
             dispatch(logout());
         } else {
-            const expirationDate = localStorage.getItem('expirationDate');
-            if (expirationDate <= moment()) {
+            const expirationDate = moment(localStorage.getItem('expirationDate'));
+            const now = moment();
+            if (expirationDate.isBefore(now)) {
                 dispatch(logout());
             } else {
                 dispatch(authSuccess(token));
-                dispatch(checkAuthTimeout(expirationDate.sub(moment()).asMilliseconds()));
+                dispatch(checkAuthTimeout(expirationDate.diff(now)));
             }
         }
     }
