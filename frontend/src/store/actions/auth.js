@@ -1,4 +1,4 @@
-import * as actionTypes from './actionTypes';
+import * as actionTypes from './types';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -51,7 +51,7 @@ export const authLogin = (username, password) => {
             const expirationDate = moment().add(14, 'days');
             localStorage.setItem('user', username);
             localStorage.setItem('token', token);
-            localStorage.setItem('expirationDate', expirationDate);
+            localStorage.setItem('expirationDate', expirationDate.toISOString());
             dispatch(authSuccess(token));
             dispatch(checkAuthTimeout(moment.duration(14, 'days').asMilliseconds()));
         })
