@@ -9,21 +9,16 @@ class Posts extends React.Component {
 
   componentWillMount() {
     this.props.initWeb3();
+    this.props.fetchPosts();
+    setInterval(this.props.fetchPosts, 5000);
   }
 
-  storePost(title, content) {
+  storePost = (post) => {
     this.props.storePost({
       web3: this.props.web3,
       currentAccount: this.props.currentAccount,
       postsContract: this.props.postsContract
-    }, {
-      title: title,
-      content: content,
-    });
-  }
-
-  handleNewPost = (newPost) => {
-    this.storePost(newPost.title, newPost.content);
+    }, post);
   }
 
   render() {
@@ -34,8 +29,11 @@ class Posts extends React.Component {
       <div>
         <h2>Hello, {this.props.currentAccount}</h2>
         Accounts registered: {this.props.accounts.length}
-        <CreatePostForm onSubmit={this.handleNewPost} />
-        <button className="btn btn-primary" onClick={this.props.fetchPosts}>Show all posts</button>
+        <CreatePostForm onSubmit={this.storePost} />
+        {this.props.submitPost.error ?
+          <div>Error: {String(this.props.submitPost.error)}</div>
+          : <div></div> 
+        }
         {this.props.posts.map((p, i) => {
           return (
             <div key={i}>
@@ -61,6 +59,10 @@ const mapStateToProps = state => ({
   web3: state.bc.web3,
   currentAccount: state.bc.account,
   postsContract: state.bc.postsContract,
+  submitPost: {
+    error: state.posts.storeError,
+    loading: state.posts.storeLoading,
+  },
 })
 
 export default connect(mapStateToProps, {

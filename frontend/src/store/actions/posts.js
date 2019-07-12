@@ -45,7 +45,7 @@ const storePostBcFail = (error) => {
 
 export const storePost = (web3Context, post) => dispatch => {
     dispatch(storePostStart());
-    const now = moment();
+    const now = moment().format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
     const author = getUser();
     const hash = hashPost(web3Context.web3, post, author, now);
     createPost({

@@ -25,6 +25,7 @@ export const initWeb3 = () => dispatch => {
         );
         dispatch({
             type: INIT_WEB3,
+            web3: web3,
             account: accounts[0],
             accounts: accounts,
             addresses: addresses,

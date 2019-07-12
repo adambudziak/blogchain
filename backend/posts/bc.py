@@ -42,7 +42,6 @@ class PostsContract:
 
     def __init__(self, web3: Web3, abi, address):
         self.contract = web3.eth.contract(abi=abi, address=address)
-        logging.warn('Hello?')
 
     def posts_count(self):
         return self.contract.functions.getPostsCount().call()
@@ -57,7 +56,6 @@ class PostsContract:
         posts_count = self.posts_count()
         for post_index in reversed(range(posts_count)):
             stored_post = PostsContract.Post(*self.get_post(post_index))
-            logging.warn(f'Post stored at {post_index}: {stored_post}')
             if stored_post.data_hash == post.data_hash:
                 post.verified = True
                 post.save()
@@ -68,7 +66,7 @@ class CommentStoreContract:
 
     Comment = namedtuple('Comment', 'data_hash, post_hash')
 
-    def __init__(self, web: Web3, abi, address):
+    def __init__(self, web3: Web3, abi, address):
         self.contract = web3.eth.contract(abi=abi, address=address)
 
     def comments_count(self):
@@ -79,9 +77,10 @@ class CommentStoreContract:
 
     def verify_comment(self, comment: Comment, post: Post):
         comments_count = self.comments_count()
+        comment = CommentStoreContract.Comment(comment.data_hash, comment.post_hash)
         for comment_index in reversed(range(comments_count)):
             stored_comment = CommentStoreContract.Comment(*self.get_comment(comment_index))
-            if stored_comment.data_hash == comment.data_hash and stored_comment.post_hash == post.data_hash:
+            if stored_comment == comment:
                 comment.verified = True
                 comment.save()
                 break
