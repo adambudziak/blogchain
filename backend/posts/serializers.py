@@ -17,35 +17,50 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
     class Meta:
         model = Post
-        fields = ('url', 'id', 'creation_datetime', 'author',
+        fields = ('url', 'id', 'creation_datetime', 'author', 'verified',
                   'tags', 'title', 'content', 'data_hash')
+        read_only_fields = ('verified',)
 
     def validate(self, data):
-        data_hash = self.context['request'].data['data_hash']
-        data_hash = base64.b64encode(bytes.fromhex(data_hash)).decode('utf-8')
-        author = self.context['request'].user
-        if isinstance(author, User):
-            author = author.username
+        """
+        Validates whether the request contains a valid hash of the post contents.
 
-        logging.warn('Got user: ' + author)
+        This is used to ensure that the hash was computed properly and can
+        be recomputed when necessary.
+
+        When this check passes, the client can safely put his post
+        on the BlockChain without a risk of wasting a transaction.
+
+        (Note: we cannot just take the hash the client passes because
+               it may be malicious.)
+        """
+        data_hash = self.context['request'].data['data_hash']  # TODO not sure why it's excluded in data
+        data_hash = bytes.fromhex(data_hash[2:]) # remove 0x
+        author = self.context['request'].user
+        author = author.username if isinstance(author, User) else 'anonymous'
 
         _datetime = _format_datetime_with_millis(data['creation_datetime'])
-        digest = _datetime + author + data['title'] + data['content']
-        logging.warn('Digest: X' + digest + 'X')
 
-        computed_hash = base64.b64encode(compute_post_hash(
+        computed_hash = compute_post_hash(
             author,
             _datetime,
             data['title'],
             data['content']
-            )).decode('utf-8')
-        
-        logging.warn('hash in request: ' + data_hash)
-        logging.warn('computed hash: ' + computed_hash)
+            )
 
         if computed_hash != data_hash:
             raise serializers.ValidationError('The data-hash is invalid.')
+
+        data['data_hash'] = computed_hash
         return data
+
+
+class CommentSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ('url', 'id', 'author', 'content', 'data_hash', 'post')
+        read_only_fields = ('verified',)
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

@@ -30,7 +30,7 @@ class LayoutWrapper extends React.Component {
             </Menu.Item>
           </Menu>
         </Header>
-        <Content style={{ padding: '0 50px'}}>
+        <Content style={{ padding: '50px', width: '80%', margin: 'auto'}}>
           <div>{this.props.children}</div>
         </Content>
         <Footer>

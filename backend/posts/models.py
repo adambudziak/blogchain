@@ -1,11 +1,7 @@
 from django.db import models
 
-from .bc import compute_post_hash
 import logging
 
-# class BlockchainProof(models.Model):
-#     tx_address = models.BinaryField(max_length=32)
-#     commitment - models.BinaryField(max_length=32)
 
 class Tag(models.Model):
     name = models.CharField(max_length=40)
@@ -27,17 +23,9 @@ class Post(models.Model):
     content = models.TextField('Post content')
     title = models.CharField('Post title', max_length=200)
     creation_datetime = models.DateTimeField('Post creation datetime')
-    # bc_proof = models.OneToOneField(BlockchainProof, null=True, blank=True, on_delete=models.SET_NULL)
     data_hash = models.BinaryField(max_length=32)
     tags = models.ManyToManyField(Tag, blank=True)
-
-    def save(self, *args, **kwargs):
-        logging.warn(self.author)
-
-        date = str(self.creation_datetime)
-        username = self.author.username if self.author is not None else 'anonymous'
-
-        self.data_hash = compute_post_hash(date, username, self.title, self.content)
+    verified = models.BooleanField(default=False)
 
 
 class Comment(models.Model):
@@ -45,3 +33,5 @@ class Comment(models.Model):
     content = models.TextField('Comment content')
     creation_datetime = models.DateTimeField('Comment creation datetime')
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    data_hash = models.BinaryField(max_length=32)
+    verified = models.BooleanField(default=False)

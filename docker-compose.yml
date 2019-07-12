@@ -4,6 +4,8 @@ services:
     build: backend
     expose:
       - "8000"
+    links:
+      - ganache
     volumes:
       - ./backend:/app
 
@@ -13,6 +15,11 @@ services:
       - ./frontend:/app
     expose: 
       - "8000"
+
+  ganache:
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - "8545:8545"
 
   nginx:
     # build:

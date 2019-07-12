@@ -3,16 +3,18 @@ pragma solidity >=0.4.21 < 0.6.0;
 import "./Ownable.sol";
 
 contract Posts is Ownable {
+    uint addPostFee = 0.005 ether;
+
     struct Post {
-        uint id;
         string date;
-        string contentHash;
+        bytes32 contentHash;
     }
 
     Post[] public posts;
 
-    function addPost(string calldata _date, string calldata _contentHash) external payable {
-        posts.push(Post(posts.length + 1, _date, _contentHash));
+    function addPost(string calldata _date, bytes32 _contentHash) external payable {
+        require(msg.value == addPostFee, "Not enough funds to add a post!");
+        posts.push(Post(_date, _contentHash));
     }
 
     function getPostsCount() public view returns (uint) {
