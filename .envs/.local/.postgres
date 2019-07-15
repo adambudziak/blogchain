@@ -1,0 +1,3 @@
+POSTGRES_DB=blogchain_db
+POSTGRES_USER=blogchain
+POSTGRES_PASSWORD=blogchain

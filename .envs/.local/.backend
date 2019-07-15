@@ -1,0 +1,4 @@
+CELERY_BROKER_URL=redis://redis:6379
+
+# Django cache
+REDIS_URL=redis://redis:6379

@@ -9,8 +9,8 @@ import {
 
 const initialState = {
     items: [],
-    storeLoading: false,  // 'store' meaning the action of storing a new post
-    storeError: null,
+    submitLoading: false,
+    submitError: null,
 }
 
 const reducer = (state=initialState, action) => {
@@ -18,14 +18,14 @@ const reducer = (state=initialState, action) => {
         case STORE_POST_START:
             return {
                 ...state,
-                storeLoading: true,
-                storeError: null,
+                submitLoading: true,
+                submitError: null,
             }
         case STORE_POST_SERVER_FAIL:
             return {
                 ...state,
-                storeLoading: false,
-                storeError: action.error,
+                submitLoading: false,
+                submitError: action.error,
             }
         case STORE_POST_SERVER_SUCCESS:
             return {
@@ -34,13 +34,13 @@ const reducer = (state=initialState, action) => {
         case STORE_POST_BC_FAIL:
             return {
                 ...state,
-                storeLoading: false,
-                storeError: action.error,
+                submitLoading: false,
+                submitError: action.error,
             }
         case STORE_POST_BC_SUCCESS:
             return {
                 ...state,
-                storeLoading: false,
+                submitLoading: false,
             }
         case FETCH_POSTS:
             return {

@@ -3,7 +3,6 @@ import json
 import logging
 from collections import namedtuple
 
-from eth_hash.auto import keccak
 from web3 import Web3
 from rest_framework import status
 
@@ -14,7 +13,7 @@ CONTRACT_ADDRESS_STORE_URL = 'http://nginx:8000/assets/contracts.json'
 
 
 def compute_post_hash(username, date, title, content):
-    return keccak((username + date + title + content).encode('utf-8'))
+    return Web3.sha3(text=(username + date + title + content)).hex()
 
 
 def default_web3():
@@ -54,9 +53,10 @@ class PostsContract:
         Verifies that a post was registered on the blockchain.
         """
         posts_count = self.posts_count()
+        logging.warn(f'The blockchain contains {posts_count} posts.')
         for post_index in reversed(range(posts_count)):
             stored_post = PostsContract.Post(*self.get_post(post_index))
-            if stored_post.data_hash == post.data_hash:
+            if stored_post.data_hash == post.data_hash.tobytes():
                 post.verified = True
                 post.save()
                 break

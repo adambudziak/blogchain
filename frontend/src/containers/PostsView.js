@@ -1,5 +1,6 @@
 import React from 'react';
-import { CreatePostForm } from '../posts';
+import CreatePostForm from '../components/PostForm';
+import CreateCommentForm from '../components/CommentForm';
 
 import { connect } from 'react-redux';
 import { fetchPosts, storePost } from '../store/actions/posts';
@@ -45,6 +46,7 @@ class Posts extends React.Component {
                 }</span>
               </h3>
               <p>{p.content}</p>
+              <CreateCommentForm />
             </div>
           );
         })}
@@ -60,8 +62,8 @@ const mapStateToProps = state => ({
   currentAccount: state.bc.account,
   postsContract: state.bc.postsContract,
   submitPost: {
-    error: state.posts.storeError,
-    loading: state.posts.storeLoading,
+    error: state.posts.submitError,
+    loading: state.posts.submitLoading,
   },
 })
 
