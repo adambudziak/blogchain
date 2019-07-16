@@ -25,7 +25,6 @@ Visit http://localhost:8000
 
 
 ### Misc
-* Add celery so all the logic that is not a part of request handling can be moved there
 * prepare UT environment (Django UTs, Frontend UTs), CI;
 * add TypeScript to the frontend;
 * prepare production-like environment;
