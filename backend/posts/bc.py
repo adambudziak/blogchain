@@ -53,7 +53,6 @@ class PostsContract:
         Verifies that a post was registered on the blockchain.
         """
         posts_count = self.posts_count()
-        logging.warn(f'The blockchain contains {posts_count} posts.')
         for post_index in reversed(range(posts_count)):
             stored_post = PostsContract.Post(*self.get_post(post_index))
             if stored_post.data_hash == post.data_hash.tobytes():

@@ -6,7 +6,7 @@ from django.apps import apps, AppConfig
 if not settings.configured:
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blogchain.settings')
 
-app = Celery('tasks')
+app = Celery('blogchain')
 
 class CeleryConfig(AppConfig):
     name = 'taskapp'
@@ -18,10 +18,9 @@ class CeleryConfig(AppConfig):
         app.autodiscover_tasks(lambda: installed_apps, force=True)
 
 
-
 app.conf.beat_schedule = {
-    'debug-django': {
-        'task': 'taskapp.tasks.debug_django',
+    'test': {
+        'task': 'taskapp.tasks.verify_posts',
         'schedule': 60.0,
     }
 }

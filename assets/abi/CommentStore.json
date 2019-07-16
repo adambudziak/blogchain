@@ -1901,10 +1901,28 @@
       "links": {},
       "address": "0xC3BC90c2B389cd6834dB74C9279E3Ed320Ed1E33",
       "transactionHash": "0x552b52c94ce664fed9c3c91b1cef0bd33304f0788872f1a5bc8b31e45766de33"
+    },
+    "1563272896619": {
+      "events": {},
+      "links": {},
+      "address": "0x44F0364718d0dF26a67376f8a7113351b262a7C6",
+      "transactionHash": "0x3cb6a2424422011a0e31ec6139189ee85f2ee9c46e46668db556087598946ee2"
+    },
+    "1563274170766": {
+      "events": {},
+      "links": {},
+      "address": "0x77390f2dff028B26799Ab73081625abCE95e4852",
+      "transactionHash": "0x45b48d17524eec1c9e177a5571ad6ce51b754479bc6c5efad00510a0e542c30a"
+    },
+    "1563275275691": {
+      "events": {},
+      "links": {},
+      "address": "0x557f1271443824ECE86aC1a5409cFF00A2d15D55",
+      "transactionHash": "0xef52bb1c4825f39d90fb0dc841667179d58695059be8fa373274cf52cc50f7de"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-07-16T06:47:51.509Z",
+  "updatedAt": "2019-07-16T11:09:57.074Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

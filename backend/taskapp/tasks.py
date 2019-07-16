@@ -10,8 +10,9 @@ from posts.bc import (
 
 import logging
 
+
 @app.task(bind=True)
-def debug_django(self):
+def verify_posts(self):
     posts_to_verify = Post.objects.filter(verified=False)
     web3 = default_web3()
     posts_address = get_contract_address('Posts')

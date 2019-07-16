@@ -48,10 +48,13 @@ services:
     ports: []
     entrypoint: ["./start_celerybeat.sh"]
 
+  flower:
+    <<: *backend
+    ports:
+      - "5555:5555"
+    entrypoint: ["./start_flower.sh"]
+
   nginx:
-    # build:
-    #   context: ./
-    #   dockerfile: nginx/Dockerfile
     image: nginx:latest
     ports:
       - 8000:8000

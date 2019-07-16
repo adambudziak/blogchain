@@ -1938,10 +1938,28 @@
       "links": {},
       "address": "0x68A3b122e9CA8a265369f1a4aa29E8760D4d18EE",
       "transactionHash": "0x63d3cc7019a74c46f99a84ec640dc439f92389031525097a13ead2a80e9ed38f"
+    },
+    "1563272896619": {
+      "events": {},
+      "links": {},
+      "address": "0xeeCf3Ab8d2033249089cAfA6a90f0f8D6821FBA4",
+      "transactionHash": "0xe3baba4844559f63e118e9a9e04744034b485f5d2368ce273b226456ffb4ffd9"
+    },
+    "1563274170766": {
+      "events": {},
+      "links": {},
+      "address": "0xc2c726a7E98AEec3632A5777B5E3CF57e27FAC25",
+      "transactionHash": "0x21d9ed6a3ce8620d76fdfbaae704dcf5431fa4334aa1813ef060feb6253e707d"
+    },
+    "1563275275691": {
+      "events": {},
+      "links": {},
+      "address": "0x302cFcFC1e667a78f6f2E06AA8a36255a9BEF914",
+      "transactionHash": "0xca2aee3749ac8f15990e97f7650d636bc2d0cc0a25cde49a55b9ff37e23254d6"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-07-16T06:47:51.507Z",
+  "updatedAt": "2019-07-16T11:09:57.072Z",
   "devdoc": {
     "methods": {
       "isOwner()": {
