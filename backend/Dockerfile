@@ -1,10 +1,16 @@
 FROM python:3.7.3-slim-stretch
 
-COPY . /app
+RUN apt-get update && apt-get -yy install gcc curl
+
+RUN useradd -m django
+USER django
+ENV PATH "${PATH}:/home/django/.local/bin"
+
+COPY --chown=django:django . /app
+
 WORKDIR /app
 
-RUN apt update && apt -yy install gcc
+RUN pip install --user -r requirements.txt
 
-RUN pip install -r requirements.txt
-ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["./start.sh"]
 # ENTRYPOINT ["gunicorn", "blogchain.wsgi:application", "-w 2", "-b :8000"]

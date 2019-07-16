@@ -1,11 +1,24 @@
 version: '3'
 services:
-  backend:
+  db:
+    image: postgres:12
+    env_file:
+      - .envs/.local/.postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    expose:
+      - "5432"
+
+  backend: &backend
     build: backend
     expose:
       - "8000"
+    env_file:
+      - .envs/.local/.backend
     links:
       - ganache
+      - db
+      - redis
     volumes:
       - ./backend:/app
 
@@ -21,10 +34,27 @@ services:
     ports:
       - "8545:8545"
 
+
+  redis:
+    image: redis:5.0
+
+  celeryworker:
+    <<: *backend
+    ports: []
+    entrypoint: ["./start_celeryworker.sh"]
+
+  celerybeat:
+    <<: *backend
+    ports: []
+    entrypoint: ["./start_celerybeat.sh"]
+
+  flower:
+    <<: *backend
+    ports:
+      - "5555:5555"
+    entrypoint: ["./start_flower.sh"]
+
   nginx:
-    # build:
-    #   context: ./
-    #   dockerfile: nginx/Dockerfile
     image: nginx:latest
     ports:
       - 8000:8000
@@ -34,3 +64,6 @@ services:
     volumes:
       - ./nginx:/etc/nginx
       - ./assets:/var/www/blogchain/assets
+
+volumes:
+  pgdata:

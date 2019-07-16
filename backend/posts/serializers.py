@@ -18,7 +18,7 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Post
         fields = ('url', 'id', 'creation_datetime', 'author', 'verified',
-                  'tags', 'title', 'content', 'data_hash')
+                  'tags', 'title', 'content', 'data_hash',)
         read_only_fields = ('verified',)
 
     def validate(self, data):
@@ -34,8 +34,8 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         (Note: we cannot just take the hash the client passes because
                it may be malicious.)
         """
+
         data_hash = self.context['request'].data['data_hash']  # TODO not sure why it's excluded in data
-        data_hash = bytes.fromhex(data_hash[2:]) # remove 0x
         author = self.context['request'].user
         author = author.username if isinstance(author, User) else 'anonymous'
 
@@ -51,6 +51,8 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         if computed_hash != data_hash:
             raise serializers.ValidationError('The data-hash is invalid.')
 
+        computed_hash = bytes.fromhex(computed_hash[2:])  # remove 0x
+
         data['data_hash'] = computed_hash
         return data
 
@@ -59,7 +61,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('url', 'id', 'author', 'content', 'data_hash', 'post')
+        fields = ('url', 'id', 'author', 'creation_datetime', 'content', 'data_hash', 'post')
         read_only_fields = ('verified',)
 
 

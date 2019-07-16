@@ -42,16 +42,6 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer.save(author=author)
 
     def list(self, request):
-        # TODO this shouldn't be here but we don't have celery yet, soo...
-        posts_to_verify = Post.objects.filter(verified=False)
-        web3 = default_web3()
-        posts_address = get_contract_address('Posts')
-        posts_abi = get_contract_abi('Posts')
-        posts_contract = PostsContract(web3, posts_abi, posts_address)
-        logging.warn('Got the contract?' + str(posts_contract))
-        for post in posts_to_verify:
-            posts_contract.verify_post(post)
-
         serializer = self.serializer_class(self.queryset, many=True, context={
             'request': request
         })
