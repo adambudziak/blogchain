@@ -59,7 +59,8 @@ class PostsContract:
             if stored_post.data_hash == post.data_hash.tobytes():
                 post.verified = True
                 post.save()
-                break
+                return True
+        return False
 
 
 class CommentStoreContract:

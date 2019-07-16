@@ -1,3 +1,3 @@
 #!/bin/bash
 
-celery --app=taskapp worker -loglevel=INFO
+celery --app=taskapp worker --loglevel=INFO

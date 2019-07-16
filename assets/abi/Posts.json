@@ -1932,10 +1932,16 @@
       "links": {},
       "address": "0xBf228a7713D6Cc0a255e13E7ADdB9Ddd4cfd28Ce",
       "transactionHash": "0x63f55d0809ef3fee1fa7966b09cf39270dbc5e5c39e06ac76044403222a61c35"
+    },
+    "1563259637527": {
+      "events": {},
+      "links": {},
+      "address": "0x68A3b122e9CA8a265369f1a4aa29E8760D4d18EE",
+      "transactionHash": "0x63d3cc7019a74c46f99a84ec640dc439f92389031525097a13ead2a80e9ed38f"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-07-15T14:02:29.698Z",
+  "updatedAt": "2019-07-16T06:47:51.507Z",
   "devdoc": {
     "methods": {
       "isOwner()": {

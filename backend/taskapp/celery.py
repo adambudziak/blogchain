@@ -1,8 +1,27 @@
+import os
 from celery import Celery
+from django.conf import settings
+from django.apps import apps, AppConfig
 
-app = Celery('blogchain_celery')
+if not settings.configured:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blogchain.settings')
+
+app = Celery('tasks')
+
+class CeleryConfig(AppConfig):
+    name = 'taskapp'
+    verbose_name = 'Celery config'
+
+    def ready(self):
+        app.config_from_object('django.conf:settings', namespace='CELERY')
+        installed_apps = [app_config.name for app_config in apps.get_app_configs()]
+        app.autodiscover_tasks(lambda: installed_apps, force=True)
 
 
-@app.task(bind=True)
-def dummy_task(self):
-    print('Request {0!r}'.format(self.request))
+
+app.conf.beat_schedule = {
+    'debug-django': {
+        'task': 'taskapp.tasks.debug_django',
+        'schedule': 60.0,
+    }
+}
