@@ -32,6 +32,6 @@ class Comment(models.Model):
     author = models.ForeignKey('auth.User', related_name='comments', on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField('Comment content')
     creation_datetime = models.DateTimeField('Comment creation datetime')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
     data_hash = models.BinaryField(max_length=32)
     verified = models.BooleanField(default=False)

@@ -2,6 +2,7 @@ import requests
 import json
 import logging
 from collections import namedtuple
+from typing import Iterable
 
 from web3 import Web3
 from rest_framework import status
@@ -14,6 +15,10 @@ CONTRACT_ADDRESS_STORE_URL = 'http://nginx:8000/assets/contracts.json'
 
 def compute_post_hash(username, date, title, content):
     return Web3.sha3(text=(username + date + title + content)).hex()
+
+
+def compute_comment_hash(username, date, content):
+    return Web3.sha3(text=(username + date + content)).hex()
 
 
 def default_web3():
@@ -32,12 +37,13 @@ def get_contract_address(contract_name: str):
                       % (contract_name, response.status_code))
         return
     contracts = json.loads(response.content)
-    return contracts.get(contract_name.lower())
+    return contracts.get(contract_name)
 
 
 class PostsContract:
+    name = 'Posts'
 
-    Post = namedtuple('Post', 'datetime, data_hash')
+    _Post = namedtuple('Post', 'datetime, data_hash')
 
     def __init__(self, web3: Web3, abi, address):
         self.contract = web3.eth.contract(abi=abi, address=address)
@@ -48,23 +54,30 @@ class PostsContract:
     def get_post(self, index):
         return self.contract.functions.posts(index).call()
 
-    def verify_post(self, post: Post):
+    def iter_posts(self):
+        for i in reversed(range(self.posts_count())):
+            yield PostsContract._Post(*self.get_post(i))
+
+    def verify_posts(self, posts: Iterable[Post]):
         """
-        Verifies that a post was registered on the blockchain.
+        Takes an iterable of unverified posts and checks whether any
+        of them has a proof on the blockchain.
         """
-        posts_count = self.posts_count()
-        for post_index in reversed(range(posts_count)):
-            stored_post = PostsContract.Post(*self.get_post(post_index))
-            if stored_post.data_hash == post.data_hash.tobytes():
-                post.verified = True
-                post.save()
-                return True
-        return False
+        verified = 0
+        for stored_post in self.iter_posts():
+            for post in posts:
+                if stored_post.data_hash == post.data_hash.tobytes():
+                    post.verified = True
+                    post.save()
+                    posts.remove(post)
+                    verified += 1
+        return verified
 
 
-class CommentStoreContract:
+class CommentsContract:
+    name = 'Comments'
 
-    Comment = namedtuple('Comment', 'data_hash, post_hash')
+    _Comment = namedtuple('Comment', 'data_hash, post_hash')
 
     def __init__(self, web3: Web3, abi, address):
         self.contract = web3.eth.contract(abi=abi, address=address)
@@ -75,12 +88,31 @@ class CommentStoreContract:
     def get_comment(self, index):
         return self.contract.functions.comments(index).call()
 
-    def verify_comment(self, comment: Comment, post: Post):
-        comments_count = self.comments_count()
-        comment = CommentStoreContract.Comment(comment.data_hash, comment.post_hash)
-        for comment_index in reversed(range(comments_count)):
-            stored_comment = CommentStoreContract.Comment(*self.get_comment(comment_index))
-            if stored_comment == comment:
-                comment.verified = True
-                comment.save()
+    def iter_comments(self):
+        """
+        Returns an iterator over all comments on the blockchain
+        ordered from the newest to the oldest.
+        """
+        for i in reversed(range(self.comments_count())):
+            yield CommentsContract._Comment(*self.get_comment(i))
+
+    def verify_comments(self, comments: Iterable[Comment]):
+        """
+        Takes an iterable of unverified comments and checks whether any
+        of them has a proof on the blockchain.
+        """
+        verified = 0
+        for stored_comment in self.iter_comments():
+            if not comments:
                 break
+
+            for comment in comments:
+                parsed_comment = CommentsContract._Comment(comment.data_hash.tobytes(),
+                                                           comment.post.data_hash.tobytes())
+                if stored_comment == parsed_comment:
+                    comment.verified = True
+                    comment.save()
+                    comments.remove(comment)
+                    verified += 1
+                    break
+        return verified

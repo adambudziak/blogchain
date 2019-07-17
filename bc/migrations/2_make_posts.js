@@ -1,15 +1,15 @@
 const Posts = artifacts.require("Posts");
-const CommentStore = artifacts.require("CommentStore");
+const Comments = artifacts.require("Comments");
 const fs = require('fs');
 
 const globalConfig = require('./config/global');
 
 module.exports = async (deployer) => {
     await deployer.deploy(Posts);
-    await deployer.deploy(CommentStore);
+    await deployer.deploy(Comments);
 
     fs.writeFileSync(globalConfig.deploymentFile, JSON.stringify({
-        posts: Posts.address,
-        comment_store: CommentStore.address,
+        Posts: Posts.address,
+        Comments: Comments.address,
     }));
 }

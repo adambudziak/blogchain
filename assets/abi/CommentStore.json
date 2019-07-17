@@ -1919,10 +1919,16 @@
       "links": {},
       "address": "0x557f1271443824ECE86aC1a5409cFF00A2d15D55",
       "transactionHash": "0xef52bb1c4825f39d90fb0dc841667179d58695059be8fa373274cf52cc50f7de"
+    },
+    "1563350300560": {
+      "events": {},
+      "links": {},
+      "address": "0x96C96432c199247AE6465836daD7EB88F1B15059",
+      "transactionHash": "0xcd7a5292723b1c878001c2a3b57c409ad885feee4a0b479b3db2adcadece7d0d"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-07-16T11:09:57.074Z",
+  "updatedAt": "2019-07-17T07:58:28.205Z",
   "devdoc": {
     "methods": {
       "isOwner()": {
