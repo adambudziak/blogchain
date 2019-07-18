@@ -4,7 +4,7 @@ from django.conf import settings
 from django.apps import apps, AppConfig
 
 if not settings.configured:
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blogchain.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blogchain.settings.local')
 
 app = Celery('blogchain')
 

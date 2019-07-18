@@ -37,7 +37,7 @@ class TestCommentViews(TestCase):
         self.comment_data = {
             'content': 'Comment content',
             'creation_datetime': self.now.isoformat(),
-            'post': 'http://testserver/api/posts/3/',
+            'post': 'http://testserver/api/posts/1/',
             'data_hash': comment_hash,
         }
 
@@ -56,7 +56,7 @@ class TestCommentViews(TestCase):
 
         self.assertEqual(stored_comment.content, self.comment_data['content'])
         self.assertEqual(stored_comment.author.username, 'admin')
-        self.assertEqual(stored_comment.post.pk, 3)
+        self.assertEqual(stored_comment.post.pk, 1)
         self.assertEqual(stored_comment.creation_datetime, self.now.replace(tzinfo=pytz.UTC))
 
     def test_create_comment_invalid_hash(self):
@@ -97,7 +97,7 @@ class TestVoteViews(TestCase):
         vote_hash = compute_vote_hash('admin', self.now.isoformat()[:-3], True)
         self.vote_data = {
             'is_upvote': True,
-            'post': '7',
+            'post': '1',
             'creation_datetime': self.now.isoformat(),
             'data_hash': vote_hash
         }
@@ -113,12 +113,11 @@ class TestVoteViews(TestCase):
         stored_vote = Vote.objects.get(data_hash=self.vote_data['data_hash'])
         self.assertEqual(stored_vote.is_upvote, True)
         self.assertEqual(stored_vote.author.username, 'admin')
-        self.assertEqual(stored_vote.post.pk, 7)
+        self.assertEqual(stored_vote.post.pk, 1)
         votes_count = Vote.objects.filter(post=self.vote_data['post'], author__username='admin').count()
         self.assertEqual(votes_count, 1)
 
     def test_second_vote_is_forbidden(self):
-        self.vote_data['post'] = 8
         request = self.factory.post('/api/votes/', self.vote_data)
         force_authenticate(request, user=self.user)
         self._assert_post_response_status(request, status.HTTP_201_CREATED)

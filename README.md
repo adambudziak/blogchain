@@ -2,23 +2,19 @@
 
 ## Dependencies
 * `docker` and `docker-compose`
-* something to deploy and test the contracts (e.g. `Truffle`)
 
 
-To run:
-* run `docker-compose up`;
-* run `truffle deploy` inside `./bc`;
-* if you have a fresh database, you need to manually run the migrations in backend. Also, no
-  superuser account is created automatically;
+To run: `docker-compose up`.
 
 Visit http://localhost:8000
 
+By default, the application creates a superuser account `admin` with password `admin`.
 
 ## TODOs
 
 ### Features
 * allow submitting posts while logged-out (it worked but it doesn't now);
-* implement comments, tags and stars;
+* implement tags;
 * allow getting only these posts/comments/stars which have been confirmed by the blockchain;
 * implement creating accounts and bind them with the private keys used for txs on blockchain;
 * make the frontend pretty;

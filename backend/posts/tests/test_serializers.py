@@ -5,6 +5,7 @@ import pytz
 from datetime import datetime, timedelta
 
 from django.test import TestCase
+from django.contrib.auth.models import User
 
 from ..bc import compute_comment_hash, compute_post_hash, compute_vote_hash
 from ..serializers import PostSerializer, CommentSerializer, VoteSerializer
@@ -52,7 +53,7 @@ class TestCommentSerializer(TestCase):
             'creation_datetime': expected_date,
             'content': comment.content,
             'data_hash': comment.data_hash,
-            'post': '/api/posts/2/',
+            'post': '/api/posts/1/',
             'verified': False,
         })
 
@@ -74,10 +75,12 @@ class TestVoteSerializer(TestCase):
             data_hash=post_hash,
         )
         
-        vote_hash = compute_vote_hash('admin', now.isoformat()[:-3])
+        vote_hash = compute_vote_hash('admin', now.isoformat()[:-3], True)
+        User.objects.create_user('admin', password=None)
+
 
         Vote.objects.create(
-            author='admin',
+            author=User.objects.get(username='admin'),
             is_upvote=True,
             post=Post.objects.first(),
             data_hash=vote_hash,
@@ -85,4 +88,16 @@ class TestVoteSerializer(TestCase):
         )
 
     def test_serializer(self):
-        pass # TODO this will be done after fixing the test db setup
+        vote = Vote.objects.first()
+        serialized = self.serializer(Vote.objects.first(), context={
+            'request': None
+        }).data
+        expected_date = vote.creation_datetime.isoformat().replace('+00:00', 'Z')
+        self.assertEqual(serialized, {
+            'id': 1,
+            'post': 1,
+            'author': 'admin',
+            'creation_datetime': expected_date,
+            'is_upvote': True,
+            'data_hash': vote.data_hash,
+        })

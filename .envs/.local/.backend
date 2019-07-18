@@ -2,3 +2,5 @@ CELERY_BROKER_URL=redis://redis:6379
 
 # Django cache
 REDIS_URL=redis://redis:6379
+DJANGO_SETTINGS_MODULE=blogchain.settings.local
+DJANGO_SETTINGS_MODULE_TEST=blogchain.settings.test
