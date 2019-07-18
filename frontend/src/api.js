@@ -3,7 +3,11 @@ import axios from 'axios';
 const API_URLS = {
     POSTS: 'http://localhost:8000/api/posts/',
     POST_COMMENTS: 'http://localhost:8000/api/posts/<pk>/comments/',
+    POST_VOTES: 'http://localhost:8000/api/posts/<pk>/votes/',
+    POST_UPVOTES: 'http://localhost:8000/api/posts/<pk>/upvotes/',
+    POST_DOWNVOTES: 'http://localhost:8000/api/posts/<pk>/downvotes/',
     COMMENTS: 'http://localhost:8000/api/comments/',
+    VOTES: 'http://localhost:8000/api/votes/',
 }
 
 function defaultConfig() {
@@ -32,4 +36,13 @@ function createComment(comment) {
   }, defaultConfig());
 }
 
-export { API_URLS, createPost, createComment };
+function createVote(vote) {
+  return axios.post(API_URLS.VOTES, {
+    post: vote.post,
+    is_upvote: vote.isUpvote,
+    data_hash: vote.hash,
+    creation_datetime: vote.datetime,
+  }, defaultConfig());
+}
+
+export { API_URLS, createPost, createComment, createVote };

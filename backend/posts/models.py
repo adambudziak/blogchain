@@ -6,8 +6,15 @@ import logging
 class Tag(models.Model):
     name = models.CharField(max_length=40)
 
+class BcModelMixin(models.Model):
+    class Meta:
+        abstract = True
 
-class Post(models.Model):
+    creation_datetime = models.DateTimeField('Post creation datetime')
+    data_hash = models.CharField(max_length=66) # Two characters for the 0x
+    verified = models.BooleanField(default=False)
+
+class Post(BcModelMixin):
     """
     A simple representation of a blog post.
 
@@ -22,16 +29,20 @@ class Post(models.Model):
     author = models.ForeignKey('auth.User', related_name='posts', on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField('Post content')
     title = models.CharField('Post title', max_length=200)
-    creation_datetime = models.DateTimeField('Post creation datetime')
-    data_hash = models.CharField(max_length=66) # Two characters for the 0x
     tags = models.ManyToManyField(Tag, blank=True)
-    verified = models.BooleanField(default=False)
 
 
-class Comment(models.Model):
+class Comment(BcModelMixin):
     author = models.ForeignKey('auth.User', related_name='comments', on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField('Comment content')
-    creation_datetime = models.DateTimeField('Comment creation datetime')
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
-    data_hash = models.CharField(max_length=66)
-    verified = models.BooleanField(default=False)
+
+
+class Vote(BcModelMixin):
+    author = models.ForeignKey('auth.User', related_name='votes', on_delete=models.SET_NULL, null=True, blank=True)
+    is_upvote = models.BooleanField('Is this upvote?', default=False, null=False)
+    post = models.ForeignKey(Post, related_name='votes', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('author', 'post',)
+

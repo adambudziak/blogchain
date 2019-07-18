@@ -3,9 +3,10 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 router = DefaultRouter()
-router.register(r'posts', views.PostViewSet)
-router.register(r'users', views.UserViewSet)
-router.register(r'comments', views.CommentViewSet)
+router.register('posts', views.PostViewSet)
+router.register('users', views.UserViewSet)
+router.register('comments', views.CommentViewSet)
+router.register('votes', views.VoteViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

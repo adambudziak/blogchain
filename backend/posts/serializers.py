@@ -1,27 +1,22 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Post, Tag, Comment
-from .bc import compute_post_hash, compute_comment_hash
+from .models import Post, Tag, Comment, Vote
+from .bc import compute_post_hash, compute_comment_hash, compute_vote_hash
 
 import base64
 from datetime import datetime
 
 # TODO a better solution would be nice
-# (the frontend measures the time only to microseconds it seems)
+# (the frontend measures the time only to milliseconds it seems)
 def _format_datetime_with_millis(_datetime: datetime):
     return _datetime.isoformat()[:-3]
 
-# TODO think about a common base class for serializers which need to get
-# the data_hash from the request and validate it.
 
+class HashValidatorMixin():
 
-class PostSerializer(serializers.HyperlinkedModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
-    class Meta:
-        model = Post
-        fields = ('url', 'id', 'creation_datetime', 'author', 'verified',
-                  'tags', 'title', 'content', 'data_hash',)
-        read_only_fields = ('verified',)
+    @staticmethod
+    def compute_hash(author, datetime, data):
+        raise NotImplementedError('You need to override this method.')
 
     def validate(self, data):
         """
@@ -42,11 +37,10 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
 
         _datetime = _format_datetime_with_millis(data['creation_datetime'].replace(tzinfo=None))
 
-        computed_hash = compute_post_hash(
+        computed_hash = self.compute_hash(
             author,
             _datetime,
-            data['title'],
-            data['content']
+            data,
             )
 
         if computed_hash != data_hash:
@@ -55,36 +49,61 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         return data
 
 
-class CommentSerializer(serializers.HyperlinkedModelSerializer):
+
+class PostSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+    class Meta:
+        model = Post
+        fields = ('url', 'id', 'creation_datetime', 'author', 'verified',
+                  'tags', 'title', 'content', 'data_hash',)
+        read_only_fields = ('verified',)
+
+    @staticmethod
+    def compute_hash(author, datetime, data):
+        return compute_post_hash(
+            author, datetime, data['title'], data['content']
+        )
+
+    def validate(self, data):
+        return super(PostSerializer, self).validate(data)
+
+
+class CommentSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
         model = Comment
-        fields = ('url', 'id', 'author', 'creation_datetime', 'content', 'data_hash', 'post')
         read_only_fields = ('verified',)
+        fields = ('url', 'id', 'author', 'creation_datetime', 'content', 'data_hash', 'post') + read_only_fields
+
+    @staticmethod
+    def compute_hash(author, datetime, data):
+        return compute_comment_hash(
+            author, datetime, data['content']
+        )
 
     def validate(self, data):
-        """
-        Validates whether the request contains a valid hash of the comment contents.
+        return super(CommentSerializer, self).validate(data)
 
-        See PostSerializer.validate for more details.
-        """
-        data_hash = data['data_hash']
-        author = self.context['request'].user
-        author = author.username if isinstance(author, User) else 'anonymous'
 
-        _datetime = _format_datetime_with_millis(data['creation_datetime'].replace(tzinfo=None))
+class VoteSerializer(HashValidatorMixin, serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
 
-        computed_hash = compute_comment_hash(
-            author,
-            _datetime,
-            data['content']
-            )
+    class Meta:
+        model = Vote
+        fields = ('id', 'author', 'creation_datetime', 'data_hash', 'post', 'is_upvote')
 
-        if computed_hash != data_hash:
-            raise serializers.ValidationError('The data-hash is invalid.')
+    @staticmethod
+    def compute_hash(author, datetime, data):
+        return compute_vote_hash(author, datetime, data['is_upvote'])
 
-        return data
+    def validate(self, data):
+        if Vote.objects.filter(author=self.context['request'].user, post=data['post']).exists():
+            raise serializers.ValidationError('You have already voted on this post.')
+        
+        return super(VoteSerializer, self).validate(data)
+
+
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     posts = serializers.HyperlinkedRelatedField(many=True, view_name='post-detail', read_only=True)
@@ -92,3 +111,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'id', 'username', 'posts')
+
+    def validate(self, data):
+        return super(UserSerializer, self).validate(data)

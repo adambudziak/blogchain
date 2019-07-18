@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+djangorestframework = "==3.9.4"
+coreapi = "==2.3.3"
+gunicorn = "==19.9.0"
+django-rest-auth = "==0.9.5"
+django-allauth = "==0.39"
+web3 = "==4.9.2"
+psycopg2-binary = "==2.8.3"
+celery = "==4.3.0"
+flower = "==0.9.3"
+redis = "==3.2.1"
+Django = "==2.2.3"
+
+[requires]
+python_version = "3.7"
