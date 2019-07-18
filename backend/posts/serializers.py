@@ -3,14 +3,16 @@ from rest_framework import serializers
 from .models import Post, Tag, Comment
 from .bc import compute_post_hash, compute_comment_hash
 
-import logging
 import base64
 from datetime import datetime
 
-DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
-
+# TODO a better solution would be nice
+# (the frontend measures the time only to microseconds it seems)
 def _format_datetime_with_millis(_datetime: datetime):
-    return _datetime.strftime(DATETIME_FORMAT)[:-3]
+    return _datetime.isoformat()[:-3]
+
+# TODO think about a common base class for serializers which need to get
+# the data_hash from the request and validate it.
 
 
 class PostSerializer(serializers.HyperlinkedModelSerializer):
@@ -34,12 +36,11 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         (Note: we cannot just take the hash the client passes because
                it may be malicious.)
         """
-
-        data_hash = self.context['request'].data['data_hash']  # TODO not sure why it's excluded in data
+        data_hash = data['data_hash']
         author = self.context['request'].user
         author = author.username if isinstance(author, User) else 'anonymous'
 
-        _datetime = _format_datetime_with_millis(data['creation_datetime'])
+        _datetime = _format_datetime_with_millis(data['creation_datetime'].replace(tzinfo=None))
 
         computed_hash = compute_post_hash(
             author,
@@ -51,9 +52,6 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
         if computed_hash != data_hash:
             raise serializers.ValidationError('The data-hash is invalid.')
 
-        computed_hash = bytes.fromhex(computed_hash[2:])  # remove 0x
-
-        data['data_hash'] = computed_hash
         return data
 
 
@@ -71,12 +69,11 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
         See PostSerializer.validate for more details.
         """
-
-        data_hash = self.context['request'].data['data_hash']  # TODO not sure why it's excluded in data
+        data_hash = data['data_hash']
         author = self.context['request'].user
         author = author.username if isinstance(author, User) else 'anonymous'
 
-        _datetime = _format_datetime_with_millis(data['creation_datetime'])
+        _datetime = _format_datetime_with_millis(data['creation_datetime'].replace(tzinfo=None))
 
         computed_hash = compute_comment_hash(
             author,
@@ -87,9 +84,6 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         if computed_hash != data_hash:
             raise serializers.ValidationError('The data-hash is invalid.')
 
-        computed_hash = bytes.fromhex(computed_hash[2:])  # remove 0x
-
-        data['data_hash'] = computed_hash
         return data
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

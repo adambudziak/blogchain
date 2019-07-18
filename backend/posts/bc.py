@@ -66,7 +66,7 @@ class PostsContract:
         verified = 0
         for stored_post in self.iter_posts():
             for post in posts:
-                if stored_post.data_hash == post.data_hash.tobytes():
+                if stored_post.data_hash == post.data_hash:
                     post.verified = True
                     post.save()
                     posts.remove(post)
@@ -107,8 +107,8 @@ class CommentsContract:
                 break
 
             for comment in comments:
-                parsed_comment = CommentsContract._Comment(comment.data_hash.tobytes(),
-                                                           comment.post.data_hash.tobytes())
+                parsed_comment = CommentsContract._Comment(comment.data_hash,
+                                                           comment.post.data_hash)
                 if stored_comment == parsed_comment:
                     comment.verified = True
                     comment.save()

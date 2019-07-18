@@ -15,7 +15,7 @@ import { API_URLS, createPost } from '../../api';
 export const fetchPosts = () => dispatch => {
     axios.get(API_URLS.POSTS).then(response => dispatch({
         type: FETCH_POSTS,
-        payload: response.data
+        payload: response.data.results,
     }));
 }
 
@@ -74,7 +74,7 @@ export const storePost = (web3Context, post) => dispatch => {
         title: post.title,
         content: post.content,
         datetime: now,
-        hash
+        hash,
     })
     .then(_response => {
         dispatch(storePostServerSuccess());

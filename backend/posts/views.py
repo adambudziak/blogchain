@@ -44,13 +44,6 @@ class PostViewSet(viewsets.ModelViewSet):
             logging.debug('Got authenticated user! (%s)' % author)
         serializer.save(author=author)
 
-    def list(self, request):
-        serializer = self.serializer_class(self.queryset, many=True, context={
-            'request': request
-        })
-
-        return Response(serializer.data)
-
     @action(detail=True, methods=['GET'])
     def comments(self, request, pk=None):
         post = get_object_or_404(Post, pk=pk)
@@ -62,6 +55,9 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['GET'])
     def verified_comments(self, request, pk=None):
+        """
+        Returns a list of verified comments of the post.
+        """
         post = get_object_or_404(Post, pk=pk)
         comments = post.comments.filter(verified=True)
         serializer = CommentSerializer(comments, many=True, context={
