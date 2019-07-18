@@ -65,5 +65,12 @@ services:
       - ./nginx:/etc/nginx
       - ./assets:/var/www/blogchain/assets
 
+  truffle:
+    build: bc
+    links:
+      - ganache
+    volumes:
+      - ./assets:/assets
+
 volumes:
   pgdata:
