@@ -5,7 +5,10 @@ import {
     STORE_POST_SERVER_FAIL,
     STORE_POST_BC_SUCCESS,
     STORE_POST_BC_FAIL,
-    FETCH_COMMENTS_FOR_POST
+    FETCH_COMMENTS_FOR_POST,
+    FETCH_VOTES_FOR_POST,
+    FETCH_UPVOTES_FOR_POST,
+    FETCH_DOWNVOTES_FOR_POST,
 } from '../actions/types';
 
 const initialState = {
@@ -13,6 +16,8 @@ const initialState = {
     submitLoading: false,
     submitError: null,
     postComments: {},
+    postUpvotes: {},
+    postDownvotes: {},
 }
 
 const reducer = (state=initialState, action) => {
@@ -49,7 +54,28 @@ const reducer = (state=initialState, action) => {
             postComments[action.postId] = action.payload;
             return {
                 ...state,
-                postComments: postComments,
+                postComments,
+            }
+        case FETCH_VOTES_FOR_POST:
+            const postVotes = {...state.postVotes};
+            postVotes[action.postId] = action.payload;
+            return {
+                ...state,
+                postVotes,
+            }
+        case FETCH_UPVOTES_FOR_POST:
+            const postUpvotes = {...state.postUpvotes};
+            postUpvotes[action.postId] = action.payload;
+            return {
+                ...state,
+                postUpvotes,
+            }
+        case FETCH_DOWNVOTES_FOR_POST:
+            const postDownvotes = {...state.postDownvotes};
+            postDownvotes[action.postId] = action.payload;
+            return {
+                ...state,
+                postDownvotes,
             }
         case FETCH_POSTS:
             return {

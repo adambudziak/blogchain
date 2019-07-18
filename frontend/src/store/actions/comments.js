@@ -56,12 +56,12 @@ export const submitComment = (web3Context, comment, postHash) => dispatch => {
     const now = moment().format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
     const author = getUser();
     const hash = hashComment(web3Context.web3, comment, author, now);
-    const post_url = API_URLS.POSTS + comment.postId + '/';
+    const postUrl = API_URLS.POSTS + comment.postId + '/';
     createComment({
         content: comment.content,
         datetime: now,
         hash,
-        post: post_url,
+        post: postUrl,
     })
     .then(_response => {
         dispatch(submitCommentServerSuccess());

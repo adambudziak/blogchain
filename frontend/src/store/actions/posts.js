@@ -6,7 +6,11 @@ import {
     STORE_POST_BC_FAIL,
     STORE_POST_BC_SUCCESS,
     FETCH_COMMENTS_FOR_POST,
+    FETCH_VOTES_FOR_POST,
+    FETCH_UPVOTES_FOR_POST,
+    FETCH_DOWNVOTES_FOR_POST,
 } from './types';
+
 import moment from 'moment';
 import axios from 'axios';
 import { getUser } from '../utility';
@@ -19,12 +23,12 @@ export const fetchPosts = () => dispatch => {
     }));
 }
 
-export const fetchCommentsForPost = (postId) => dispatch => {
-    axios.get(API_URLS.POST_COMMENTS.replace('<pk>', postId))
+const fetchPostDetails = (postId, apiUrl, type, dispatch) => {
+    axios.get(apiUrl.replace('<pk>', postId))
     .then(response => dispatch({
-        type: FETCH_COMMENTS_FOR_POST,
+        type,
         payload: response.data,
-        postId,
+        postId
     }))
     .catch(error => {
         if (error.message.indexOf('404') === -1) {
@@ -32,6 +36,43 @@ export const fetchCommentsForPost = (postId) => dispatch => {
         }
     })
 }
+
+export const fetchCommentsForPost = (postId) => dispatch => {
+    return fetchPostDetails(
+        postId,
+        API_URLS.POST_COMMENTS,
+        FETCH_COMMENTS_FOR_POST,
+        dispatch
+    );
+}
+
+export const fetchVotesForPost = (postId) => dispatch => {
+    return fetchPostDetails(
+        postId,
+        API_URLS.POST_VOTES,
+        FETCH_VOTES_FOR_POST,
+        dispatch,
+    );
+}
+
+export const fetchUpvotesForPost = (postId) => dispatch => {
+    return fetchPostDetails(
+        postId,
+        API_URLS.POST_UPVOTES,
+        FETCH_UPVOTES_FOR_POST,
+        dispatch,
+    );
+}
+
+export const fetchDownvotesForPost = (postId) => dispatch => {
+    return fetchPostDetails(
+        postId,
+        API_URLS.POST_DOWNVOTES,
+        FETCH_DOWNVOTES_FOR_POST,
+        dispatch,
+    );
+}
+
 
 const storePostStart = () => {
     return {

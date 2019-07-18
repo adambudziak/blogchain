@@ -7,6 +7,9 @@ class PostCommentsComponent extends React.Component {
 
     componentWillMount() {
         this.props.fetchCommentsForPost(this.props.postId);
+        setInterval(_ => {
+            this.props.fetchCommentsForPost(this.props.postId);
+        }, 5000);
     }
 
     getComments = () => {

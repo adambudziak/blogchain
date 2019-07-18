@@ -7,6 +7,7 @@ from web3 import Web3
 from rest_framework import status
 
 from .models import Post, Comment
+import logging
 
 CONTRACT_ABI_URL = 'http://nginx:8000/assets/abi/{contract_name}.json'
 CONTRACT_ADDRESS_STORE_URL = 'http://nginx:8000/assets/contracts.json'
@@ -18,6 +19,11 @@ def compute_post_hash(username, date, title, content):
 
 def compute_comment_hash(username, date, content):
     return Web3.sha3(text=(username + date + content)).hex()
+
+
+def compute_vote_hash(username, date, is_upvote):
+    is_upvote = '1' if is_upvote else '0'
+    return Web3.sha3(text=(username + date + is_upvote)).hex()
 
 
 def default_web3():
