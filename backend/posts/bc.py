@@ -69,7 +69,6 @@ class PostsContract:
                 if stored_post.data_hash == post.data_hash:
                     post.verified = True
                     post.save()
-                    posts.remove(post)
                     verified += 1
         return verified
 
@@ -103,16 +102,12 @@ class CommentsContract:
         """
         verified = 0
         for stored_comment in self.iter_comments():
-            if not comments:
-                break
-
             for comment in comments:
                 parsed_comment = CommentsContract._Comment(comment.data_hash,
                                                            comment.post.data_hash)
                 if stored_comment == parsed_comment:
                     comment.verified = True
                     comment.save()
-                    comments.remove(comment)
                     verified += 1
                     break
         return verified
