@@ -1,6 +1,5 @@
 import requests
 import json
-import logging
 from collections import namedtuple
 from typing import Iterable
 
@@ -66,7 +65,7 @@ class PostsContract:
         verified = 0
         for stored_post in self.iter_posts():
             for post in posts:
-                if stored_post.data_hash == post.data_hash:
+                if Web3.toHex(stored_post.data_hash) == post.data_hash:
                     post.verified = True
                     post.save()
                     verified += 1
@@ -93,7 +92,7 @@ class CommentsContract:
         ordered from the newest to the oldest.
         """
         for i in reversed(range(self.comments_count())):
-            yield CommentsContract._Comment(*self.get_comment(i))
+            yield CommentsContract._Comment(*map(Web3.toHex, self.get_comment(i)))
 
     def verify_comments(self, comments: Iterable[Comment]):
         """

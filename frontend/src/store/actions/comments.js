@@ -65,7 +65,6 @@ export const submitComment = (web3Context, comment, postHash) => dispatch => {
     })
     .then(_response => {
         dispatch(submitCommentServerSuccess());
-        postHash = '0x' + Buffer.from(postHash, 'base64').toString('hex');
         web3Context.commentsContract.methods.addComment(hash, postHash)
         .send({
             from: web3Context.currentAccount,
