@@ -10,6 +10,11 @@ Visit http://localhost:8000
 
 By default, the application creates a superuser account `admin` with password `admin`.
 
+## Testing
+
+Currently, only the backend and Solidity contracts have glimpses of tests. To run them, use
+`docker-compose -f docker-compose.tests.yml up`
+
 ## TODOs
 
 ### Features

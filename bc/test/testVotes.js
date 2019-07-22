@@ -23,16 +23,23 @@ contract('Upvotes', async accounts => {
     })
 
     it('Should not mix with downvotes', async () => {
-        let upvotes = await Upvotes.deployed();
-        let downvotes = await Downvotes.deployed();
-        let upvoteCountBefore = await upvotes.getUpvoteCount();
+        const upvotes = await Upvotes.deployed();
+        const downvotes = await Downvotes.deployed();
+        const upvoteCountBefore = await upvotes.getUpvoteCount();
         assert.equal(upvoteCountBefore, 1);
+        const postHash = web3.utils.keccak256('some post');
+        let upvoteCountForPost = await upvotes.getUpvoteCountForPost(postHash);
+        let downvoteCountForPost = await downvotes.getDownvoteCountForPost(postHash);
+        assert.equal(upvoteCountForPost, 1);
+        assert.equal(downvoteCountForPost, 0);
 
-        let postHash = web3.utils.keccak256('some post');
-        await upvotes.vote(postHash, {
+        const upvoteHash = web3.utils.keccak256('upvote');
+        const downvoteHash = web3.utils.keccak256('downvote');
+
+        await upvotes.vote(upvoteHash, postHash, {
             value: web3.utils.toWei('0.001', 'ether')
         });
-        await downvotes.vote(postHash, {
+        await downvotes.vote(downvoteHash, postHash, {
             value: web3.utils.toWei('0.001', 'ether')
         });
 
@@ -40,5 +47,10 @@ contract('Upvotes', async accounts => {
         assert.equal(upvoteCountAfter, 2);
         let downvoteCountAfter = await downvotes.getDownvoteCountForPost(postHash);
         assert.equal(downvoteCountAfter, 1);
+
+        upvoteCountForPost = await upvotes.getUpvoteCountForPost(postHash);
+        downvoteCountForPost = await downvotes.getDownvoteCountForPost(postHash);
+        assert.equal(upvoteCountForPost, 2);
+        assert.equal(downvoteCountForPost, 1);
     })
 })

@@ -1,0 +1,16 @@
+version: '3'
+services:
+  backend_test:
+    build: backend
+    env_file:
+      - .envs/.local/.backend
+    entrypoint: ["pytest", "--ds=blogchain.settings.test"]
+    volumes:
+     - ./backend:/app
+
+  truffle_test:
+    build: bc
+    entrypoint: ["truffle", "test"]
+    volumes:
+      - ./bc:/app
+      - ./assets:/assets
