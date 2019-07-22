@@ -1,4 +1,12 @@
-import { FETCH_POSTS, STORE_POST_START, STORE_POST_SERVER_SUCCESS, STORE_POST_SERVER_FAIL, STORE_POST_BC_FAIL, STORE_POST_BC_SUCCESS } from './types';
+import {
+    FETCH_POSTS,
+    STORE_POST_START,
+    STORE_POST_SERVER_SUCCESS,
+    STORE_POST_SERVER_FAIL,
+    STORE_POST_BC_FAIL,
+    STORE_POST_BC_SUCCESS,
+    FETCH_COMMENTS_FOR_POST,
+} from './types';
 import moment from 'moment';
 import axios from 'axios';
 import { getUser } from '../utility';
@@ -7,8 +15,22 @@ import { API_URLS, createPost } from '../../api';
 export const fetchPosts = () => dispatch => {
     axios.get(API_URLS.POSTS).then(response => dispatch({
         type: FETCH_POSTS,
-        payload: response.data
+        payload: response.data.results,
     }));
+}
+
+export const fetchCommentsForPost = (postId) => dispatch => {
+    axios.get(API_URLS.POST_COMMENTS.replace('<pk>', postId))
+    .then(response => dispatch({
+        type: FETCH_COMMENTS_FOR_POST,
+        payload: response.data,
+        postId,
+    }))
+    .catch(error => {
+        if (error.message.indexOf('404') === -1) {
+            console.error(error);
+        }
+    })
 }
 
 const storePostStart = () => {
@@ -52,7 +74,7 @@ export const storePost = (web3Context, post) => dispatch => {
         title: post.title,
         content: post.content,
         datetime: now,
-        hash
+        hash,
     })
     .then(_response => {
         dispatch(storePostServerSuccess());

@@ -6,7 +6,7 @@ contract Posts is Ownable {
     uint addPostFee = 0.005 ether;
 
     struct Post {
-        string date;
+        string date; // TODO the date is probably useless
         bytes32 contentHash;
     }
 

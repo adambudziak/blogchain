@@ -23,7 +23,7 @@ class Post(models.Model):
     content = models.TextField('Post content')
     title = models.CharField('Post title', max_length=200)
     creation_datetime = models.DateTimeField('Post creation datetime')
-    data_hash = models.BinaryField(max_length=32)
+    data_hash = models.CharField(max_length=66) # Two characters for the 0x
     tags = models.ManyToManyField(Tag, blank=True)
     verified = models.BooleanField(default=False)
 
@@ -32,6 +32,6 @@ class Comment(models.Model):
     author = models.ForeignKey('auth.User', related_name='comments', on_delete=models.SET_NULL, null=True, blank=True)
     content = models.TextField('Comment content')
     creation_datetime = models.DateTimeField('Comment creation datetime')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    data_hash = models.BinaryField(max_length=32)
+    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
+    data_hash = models.CharField(max_length=66)
     verified = models.BooleanField(default=False)

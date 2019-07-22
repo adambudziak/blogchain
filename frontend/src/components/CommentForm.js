@@ -9,7 +9,8 @@ class CreateCommentForm extends React.Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         this.props.onSubmit({
-          content: values.content
+          content: values.content,
+          postId: this.props.postId,
         })
       }
     })

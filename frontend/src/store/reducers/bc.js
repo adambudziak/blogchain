@@ -5,7 +5,8 @@ const initialState = {
     account: null,
     accounts: [],
     addresses: null,
-    postsContract: null
+    postsContract: null,
+    commentsContract: null,
 }
 
 const reducer = (state=initialState, action) => {
@@ -13,11 +14,7 @@ const reducer = (state=initialState, action) => {
         case INIT_WEB3:
             return {
                 ...state,
-                web3: action.web3,
-                account: action.account,
-                accounts: action.accounts,
-                addresses: action.addresses,
-                postsContract: action.postsContract,
+                ...action,
             }
         default:
             return state;

@@ -19,8 +19,12 @@ class CeleryConfig(AppConfig):
 
 
 app.conf.beat_schedule = {
-    'test': {
+    'verify-posts': {
         'task': 'taskapp.tasks.verify_posts',
         'schedule': 60.0,
+    },
+    'verify-comments': {
+        'task': 'taskapp.tasks.verify_comments',
+        'schedule': 10.0,
     }
 }

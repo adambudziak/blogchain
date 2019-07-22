@@ -1,9 +1,11 @@
 import React from 'react';
 import CreatePostForm from '../components/PostForm';
 import CreateCommentForm from '../components/CommentForm';
+import PostComments from '../containers/PostComments';
 
 import { connect } from 'react-redux';
 import { fetchPosts, storePost } from '../store/actions/posts';
+import { fetchComments, submitComment } from '../store/actions/comments';
 import { initWeb3 } from '../store/actions/bc';
 
 class Posts extends React.Component {
@@ -11,6 +13,7 @@ class Posts extends React.Component {
   componentWillMount() {
     this.props.initWeb3();
     this.props.fetchPosts();
+    this.props.fetchComments();
     setInterval(this.props.fetchPosts, 5000);
   }
 
@@ -18,8 +21,17 @@ class Posts extends React.Component {
     this.props.storePost({
       web3: this.props.web3,
       currentAccount: this.props.currentAccount,
-      postsContract: this.props.postsContract
+      postsContract: this.props.postsContract,
     }, post);
+  }
+
+  submitComment = (comment) => {
+    const postHash = this.props.posts.find(p => p.id === comment.postId).data_hash;
+    this.props.submitComment({
+      web3: this.props.web3,
+      currentAccount: this.props.currentAccount,
+      commentsContract: this.props.commentsContract,
+    }, comment, postHash);
   }
 
   render() {
@@ -46,7 +58,8 @@ class Posts extends React.Component {
                 }</span>
               </h3>
               <p>{p.content}</p>
-              <CreateCommentForm />
+              <PostComments postId={p.id} />
+              <CreateCommentForm postId={p.id} onSubmit={this.submitComment} />
             </div>
           );
         })}
@@ -65,10 +78,14 @@ const mapStateToProps = state => ({
     error: state.posts.submitError,
     loading: state.posts.submitLoading,
   },
+  comments: state.comments.items,
+  commentsContract: state.bc.commentsContract,
 })
 
 export default connect(mapStateToProps, {
   fetchPosts,
   initWeb3,
   storePost,
+  fetchComments,
+  submitComment,
 })(Posts);

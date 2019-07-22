@@ -2,7 +2,7 @@ pragma solidity >=0.4.21 < 0.6.0;
 
 import "./Ownable.sol";
 
-contract CommentStore is Ownable {
+contract Comments is Ownable {
 
     uint addCommentFee = 0.001 ether;
 

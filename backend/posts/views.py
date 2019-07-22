@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 
 from rest_framework.decorators import api_view
@@ -30,6 +31,8 @@ def api_root(request, format=None):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    # TODO maybe instead of permission classes just create a custom abstract
+    # ViewSet that will only be able to handle getting or creating new data?
     permission_classes = (IsOwnerOrReadCreateOnly,)
 
     def perform_create(self, serializer):
@@ -41,8 +44,32 @@ class PostViewSet(viewsets.ModelViewSet):
             logging.debug('Got authenticated user! (%s)' % author)
         serializer.save(author=author)
 
-    def list(self, request):
-        serializer = self.serializer_class(self.queryset, many=True, context={
+    @action(detail=True, methods=['GET'])
+    def comments(self, request, pk=None):
+        post = get_object_or_404(Post, pk=pk)
+        comments = post.comments.all()
+        serializer = CommentSerializer(comments, many=True, context={
+            'request': request
+        })
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['GET'])
+    def verified_comments(self, request, pk=None):
+        """
+        Returns a list of verified comments of the post.
+        """
+        post = get_object_or_404(Post, pk=pk)
+        comments = post.comments.filter(verified=True)
+        serializer = CommentSerializer(comments, many=True, context={
+            'request': request
+        })
+        return Response(serializer.data)
+
+
+    @action(detail=False, methods=['GET'])
+    def verified(self, request):
+        queryset = Post.objects.filter(verified=True)
+        serializer = self.serializer_class(queryset, many=True, context={
             'request': request
         })
 
@@ -53,6 +80,15 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsOwnerOrReadCreateOnly,)
+
+    def perform_create(self, serializer):
+        author = self.request.user
+        if isinstance(author, AnonymousUser):
+            logging.debug('Got anonymous user! Changing to None')
+            author = None
+        else:
+            logging.debug('Got authenticated user! (%s)' % author)
+        serializer.save(author=author)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
