@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from rest_framework import serializers
 from .models import Post, Tag, Comment, Vote
 from .bc import compute_post_hash, compute_comment_hash, compute_vote_hash
@@ -6,13 +6,15 @@ from .bc import compute_post_hash, compute_comment_hash, compute_vote_hash
 import base64
 from datetime import datetime
 
-# TODO a better solution would be nice
-# (the frontend measures the time only to milliseconds it seems)
-def _format_datetime_with_millis(_datetime: datetime):
-    return _datetime.isoformat()[:-3]
-
 
 class HashValidatorMixin():
+    """
+    Mixin implementing the `validate` method that verifies the
+    `data_hash` passed in the request.
+
+    Each subclass must override the `compute_hash` method to provide
+    a hash computed from fields passed in the request.
+    """
 
     @staticmethod
     def compute_hash(author, datetime, data):
@@ -35,11 +37,9 @@ class HashValidatorMixin():
         author = self.context['request'].user
         author = author.username if isinstance(author, User) else 'anonymous'
 
-        _datetime = _format_datetime_with_millis(data['creation_datetime'].replace(tzinfo=None))
-
         computed_hash = self.compute_hash(
             author,
-            _datetime,
+            data['creation_datetime'],
             data,
             )
 

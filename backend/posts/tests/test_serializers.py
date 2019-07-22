@@ -11,83 +11,61 @@ from ..bc import compute_comment_hash, compute_post_hash, compute_vote_hash
 from ..serializers import PostSerializer, CommentSerializer, VoteSerializer
 from ..models import Post, Comment, Vote
 
+from .utils import post_factory, model_to_dict
+
+post_factory = post_factory('Post title', 'Post content')
 
 class TestCommentSerializer(TestCase):
     
     def setUp(self):
         self.serializer = CommentSerializer
-
-        now = datetime.now(pytz.UTC) 
-        post_date = (now - timedelta(1)).isoformat()
-        post_title = 'Post title'
-        post_content = 'Post content'
-        post_hash = compute_post_hash('anonymous', post_date, post_title, post_content)
-
-        Post.objects.create(
-            author=None,
-            content=post_content,
-            title=post_title,
-            creation_datetime=post_date,
-            data_hash=post_hash,
-        )
-
+        post = post_factory()
+        now = datetime.now(pytz.UTC)
         comment_content = 'Some text'
-        comment_hash = compute_comment_hash('anonymous', now.isoformat(), comment_content)
-        Comment.objects.create(
+        comment_hash = compute_comment_hash('anonymous', now, comment_content)
+
+        self.comment = Comment.objects.create(
             author=None,
             content=comment_content,
-            creation_datetime=now.isoformat(),
-            post=Post.objects.first(),
+            creation_datetime=now,
+            post=post,
             data_hash=comment_hash,
         )
 
     def test_serialize(self):
-        comment = Comment.objects.first()
-        serialized = self.serializer(Comment.objects.first(), context={
+        serialized = self.serializer(self.comment, context={
             'request': None
         }).data
-        expected_date = comment.creation_datetime.isoformat().replace('+00:00', 'Z')
-        self.assertEqual(serialized, {
-            'url': '/api/comments/1/',
-            'id': 1,
-            'creation_datetime': expected_date,
-            'content': comment.content,
-            'data_hash': comment.data_hash,
+        expected_date = self.comment.creation_datetime.isoformat().replace('+00:00', 'Z')
+        expected_comment = {
+            **model_to_dict(self.comment,
+                            ('id', 'content', 'data_hash', 'verified')),
             'post': '/api/posts/1/',
-            'verified': False,
-        })
+            'url': '/api/comments/1/',
+            'creation_datetime': expected_date
+        }
+        self.assertEqual(serialized, expected_comment)
 
 
 class TestVoteSerializer(TestCase):
+
     def setUp(self):
         self.serializer = VoteSerializer
+        self.post = post_factory()
+
         now = datetime.now(pytz.UTC)
-        post_date = (now - timedelta(1)).isoformat()
-        post_title = 'Post title'
-        post_content = 'Post content'
-        post_hash = compute_post_hash('anonymous', now.isoformat(), post_title, post_content)
-
-        Post.objects.create(
-            author=None,
-            content=post_content,
-            title=post_title,
-            creation_datetime=post_date,
-            data_hash=post_hash,
-        )
-        
-        vote_hash = compute_vote_hash('admin', now.isoformat()[:-3], True)
-        User.objects.create_user('admin', password=None)
-
+        vote_hash = compute_vote_hash('admin', now, True)
+        self.user = User.objects.create_user('admin', password=None)
 
         Vote.objects.create(
             author=User.objects.get(username='admin'),
             is_upvote=True,
-            post=Post.objects.first(),
+            post=self.post,
             data_hash=vote_hash,
             creation_datetime=now.isoformat()
         )
 
-    def test_serializer(self):
+    def test_serialize(self):
         vote = Vote.objects.first()
         serialized = self.serializer(Vote.objects.first(), context={
             'request': None

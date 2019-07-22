@@ -2,26 +2,31 @@ import requests
 import json
 from collections import namedtuple
 from typing import Iterable
+from datetime import datetime
+import logging
 
 from web3 import Web3
 from rest_framework import status
 
 from .models import Post, Comment
-import logging
+
 
 CONTRACT_ABI_URL = 'http://nginx:8000/assets/abi/{contract_name}.json'
 CONTRACT_ADDRESS_STORE_URL = 'http://nginx:8000/assets/contracts.json'
 
 
-def compute_post_hash(username, date, title, content):
+def compute_post_hash(username, date: datetime, title, content):
+    date = date.replace(tzinfo=None).isoformat()[:-3]
     return Web3.sha3(text=(username + date + title + content)).hex()
 
 
-def compute_comment_hash(username, date, content):
+def compute_comment_hash(username, date: datetime, content):
+    date = date.replace(tzinfo=None).isoformat()[:-3]
     return Web3.sha3(text=(username + date + content)).hex()
 
 
-def compute_vote_hash(username, date, is_upvote):
+def compute_vote_hash(username, date: datetime, is_upvote):
+    date = date.replace(tzinfo=None).isoformat()[:-3]
     is_upvote = '1' if is_upvote else '0'
     return Web3.sha3(text=(username + date + is_upvote)).hex()
 
@@ -31,18 +36,28 @@ def default_web3():
 
 
 def get_contract_abi(contract_name):
+    """
+    Load the ABI of a contract form a shared static config file.
+    """
     response = requests.get(CONTRACT_ABI_URL.format(contract_name=contract_name))
+    if response.status_code != status.HTTP_200_OK:
+        logging.error("Couldn't load contract ABI for %s. Response code %s, %s"
+                      % (contract_name, response.status_code, response.data))
+        return
     return json.loads(response.content)['abi']
     
 
 def get_contract_address(contract_name: str):
+    """
+    Load the address of a contract from a shared static config file.
+    """
     response = requests.get(CONTRACT_ADDRESS_STORE_URL)
     if response.status_code != status.HTTP_200_OK:
-        logging.error("Couldn't load contract address for %s. Reason: %s"
-                      % (contract_name, response.status_code))
+        logging.error("Couldn't load contract address for %s. Response code %s, %s"
+                      % (contract_name, response.status_code, response.data))
         return
     contracts = json.loads(response.content)
-    return contracts.get(contract_name)
+    return contracts[contract_name]
 
 
 class PostsContract:
@@ -52,6 +67,14 @@ class PostsContract:
 
     def __init__(self, web3: Web3, abi, address):
         self.contract = web3.eth.contract(abi=abi, address=address)
+
+    @classmethod
+    def default(cls):
+        web3 = default_web3()
+        address = get_contract_address(cls.name)
+        abi = get_contract_abi(cls.name)
+        return cls(web3, abi, address)
+
 
     def posts_count(self):
         return self.contract.functions.getPostsCount().call()
@@ -85,6 +108,14 @@ class CommentsContract:
 
     def __init__(self, web3: Web3, abi, address):
         self.contract = web3.eth.contract(abi=abi, address=address)
+
+    @classmethod
+    def default(cls):
+        web3 = default_web3()
+        address = get_contract_address(cls.name)
+        abi = get_contract_abi(cls.name)
+        return cls(web3, abi, address)
+
 
     def comments_count(self):
         return self.contract.functions.getCommentCount().call()

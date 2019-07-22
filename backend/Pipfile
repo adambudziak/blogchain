@@ -4,6 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "==5.0.1"
+pytest-django = "==3.5.1"
+pylint ="==2.3.1"
+ipdb = "*"
 
 [packages]
 djangorestframework = "==3.9.4"

@@ -1,13 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import permissions
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response 
 from rest_framework.reverse import reverse
 
-from rest_framework import renderers
-from rest_framework import viewsets
-from rest_framework.decorators import action
+from rest_framework import renderers, viewsets, mixins, permissions
 
 from .models import (
     Post,
@@ -20,7 +17,6 @@ from .serializers import (
     CommentSerializer,
     VoteSerializer,
 )
-from .permissions import IsOwnerOrReadCreateOnly
 from .bc import PostsContract, get_contract_abi, get_contract_address, default_web3
 
 from django.contrib.auth.models import User, AnonymousUser
@@ -37,12 +33,16 @@ def api_root(request, format=None):
     })
 
 
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    # TODO maybe instead of permission classes just create a custom abstract
-    # ViewSet that will only be able to handle getting or creating new data?
-    permission_classes = (IsOwnerOrReadCreateOnly,)
+class CreateListRetrieveViewSet(mixins.CreateModelMixin,
+                                mixins.ListModelMixin,
+                                mixins.RetrieveModelMixin,
+                                viewsets.GenericViewSet):
+    """
+    A viewset that provides `retrieve`, `create`, and `list` actions.
+
+    To use it, override the class and set the `.queryset` and
+    `.serializer_class` attributes.
+    """
 
     def perform_create(self, serializer):
         author = self.request.user
@@ -50,8 +50,13 @@ class PostViewSet(viewsets.ModelViewSet):
             logging.debug('Got anonymous user! Changing to None')
             author = None
         else:
-            logging.debug('Got authenticated user! (%s)' % author)
+            logging.debug('Got authenticated user! (%s)' % author.username)
         serializer.save(author=author)
+
+
+class PostViewSet(CreateListRetrieveViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
     @action(detail=True, methods=['GET'])
     def comments(self, request, pk=None):
@@ -75,6 +80,8 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+    # TODO maybe those methods using querysets of other models
+    # should be moved somewhere else.
     @action(detail=False, methods=['GET'])
     def verified(self, request):
         queryset = Post.objects.filter(verified=True)
@@ -109,35 +116,14 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class VoteViewSet(viewsets.ModelViewSet):
+class VoteViewSet(CreateListRetrieveViewSet):
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
-    permission_classes = (IsOwnerOrReadCreateOnly,)
-
-    def perform_create(self, serializer):
-        author = self.request.user
-        if isinstance(author, AnonymousUser):
-            logging.debug('Got anonymous user! Changing to None')
-            author = None
-        else:
-            logging.debug('Got authenticated user! (%s)' % author)
-        serializer.save(author=author)
 
 
-
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(CreateListRetrieveViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = (IsOwnerOrReadCreateOnly,)
-
-    def perform_create(self, serializer):
-        author = self.request.user
-        if isinstance(author, AnonymousUser):
-            logging.debug('Got anonymous user! Changing to None')
-            author = None
-        else:
-            logging.debug('Got authenticated user! (%s)' % author)
-        serializer.save(author=author)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
