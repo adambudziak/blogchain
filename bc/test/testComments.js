@@ -21,4 +21,4 @@ contract('Comments', async accounts => {
         assert.equal(firstComment[0], commentHash);
         assert.equal(firstComment[1], postHash);
     })
-})
+});

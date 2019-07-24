@@ -1,17 +1,27 @@
 from django.db import models
 
-import logging
-
 
 class Tag(models.Model):
     name = models.CharField(max_length=40)
 
+
 class BcModelMixin(models.Model):
+    """
+    An abstract base class for all the objects that reside on the blockchain.
+
+    It defines three columns which are common for all such objects:
+
+     * `data_hash` field that identifies the object on the blockchain;
+     * `creation_datetime` which is used while computing the hash on the
+        client-side (hence it's not computed automatically by the database),
+     * a `verified` field that marks whether an object has been successfully
+        verified on the blockchain.
+    """
     class Meta:
         abstract = True
 
     creation_datetime = models.DateTimeField('Post creation datetime')
-    data_hash = models.CharField(max_length=66, null=False) # Two characters for the 0x
+    data_hash = models.CharField(max_length=66, null=False)  # Two characters for the 0x
     verified = models.BooleanField(default=False)
 
 
@@ -50,4 +60,3 @@ class Vote(BcModelMixin):
 
     class Meta:
         unique_together = ('author', 'post',)
-

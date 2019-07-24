@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view, action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response 
 from rest_framework.reverse import reverse
 
@@ -79,9 +80,8 @@ class PostViewSet(CreateListRetrieveViewSet):
         })
         return Response(serializer.data)
 
-
     # TODO maybe those methods using querysets of other models
-    # should be moved somewhere else.
+    #      should be moved somewhere else.
     @action(detail=False, methods=['GET'])
     def verified(self, request):
         queryset = Post.objects.filter(verified=True)
@@ -119,6 +119,11 @@ class PostViewSet(CreateListRetrieveViewSet):
 class VoteViewSet(CreateListRetrieveViewSet):
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
+
+    # TODO temporary until find out how we want to design votes for
+    #      anonymous users
+    def get_permissions(self):
+        return [IsAuthenticated()]
 
 
 class CommentViewSet(CreateListRetrieveViewSet):

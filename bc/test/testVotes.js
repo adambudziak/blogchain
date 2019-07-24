@@ -20,7 +20,7 @@ contract('Upvotes', async accounts => {
         assert.equal(upvoteCountAfter, 1);
         upvoteCountForPost = await upvotes.getUpvoteCountForPost(postHash);
         assert.equal(upvoteCountForPost, 1);
-    })
+    });
 
     it('Should not mix with downvotes', async () => {
         const upvotes = await Upvotes.deployed();
@@ -43,14 +43,9 @@ contract('Upvotes', async accounts => {
             value: web3.utils.toWei('0.001', 'ether')
         });
 
-        let upvoteCountAfter = await upvotes.getUpvoteCountForPost(postHash);
+        const upvoteCountAfter = await upvotes.getUpvoteCountForPost(postHash);
         assert.equal(upvoteCountAfter, 2);
-        let downvoteCountAfter = await downvotes.getDownvoteCountForPost(postHash);
+        const downvoteCountAfter = await downvotes.getDownvoteCountForPost(postHash);
         assert.equal(downvoteCountAfter, 1);
-
-        upvoteCountForPost = await upvotes.getUpvoteCountForPost(postHash);
-        downvoteCountForPost = await downvotes.getDownvoteCountForPost(postHash);
-        assert.equal(upvoteCountForPost, 2);
-        assert.equal(downvoteCountForPost, 1);
     })
-})
+});

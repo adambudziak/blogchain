@@ -17,4 +17,4 @@ contract('Posts', async accounts => {
         assert.equal(newPost[0], date);
         assert.equal(newPost[1], postHash);
     })
-})
+});

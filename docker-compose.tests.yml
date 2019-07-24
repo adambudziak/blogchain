@@ -9,8 +9,9 @@ services:
      - ./backend:/app
 
   truffle_test:
-    build: bc
+    build:
+      context: .
+      dockerfile: bc/Dockerfile
     entrypoint: ["truffle", "test"]
     volumes:
-      - ./bc:/app
-      - ./assets:/assets
+      - ./bc:/app:ro
