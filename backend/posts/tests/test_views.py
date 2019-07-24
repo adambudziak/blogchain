@@ -1,24 +1,21 @@
-import os
-from datetime import datetime, timedelta
+from datetime import datetime
+
 import pytz
-
-from django.test import TestCase
 from django.contrib.auth.models import User
-
-from rest_framework.test import APIRequestFactory, force_authenticate
+from django.test import TestCase
 from rest_framework import status
+from rest_framework.test import APIRequestFactory, force_authenticate
 
-from ..views import PostViewSet, CommentViewSet, VoteViewSet
-from ..models import Post, Comment, Vote
+from .utils import make_post_factory, model_to_dict
 from ..bc import (
     compute_comment_hash,
     compute_post_hash,
     compute_vote_hash
 )
+from ..models import Post, Comment, Vote
+from ..views import PostViewSet, CommentViewSet, VoteViewSet
 
-from .utils import post_factory, model_to_dict
-
-post_factory = post_factory('Post title', 'Post content')
+post_factory = make_post_factory('Post title', 'Post content')
 
 
 class TestPostViews(TestCase):
@@ -69,6 +66,7 @@ class TestPostViews(TestCase):
         }
         self.assertEqual(expected_post,
                          model_to_dict(stored_post, expected_post))
+
 
 class TestCommentViews(TestCase):
     def setUp(self):
@@ -187,7 +185,7 @@ class TestVoteViews(TestCase):
             True
         )
         request = self.factory.post('/api/votes/', self.vote_data)
-        self._assert_post_response_status(request, status.HTTP_400_BAD_REQUEST)
+        self._assert_post_response_status(request, status.HTTP_401_UNAUTHORIZED)
 
     def test_second_vote_is_forbidden(self):
         request = self.factory.post('/api/votes/', self.vote_data)
@@ -201,4 +199,3 @@ class TestVoteViews(TestCase):
         votes_count = Vote.objects.filter(post=self.vote_data['post'],
                                           author__username='admin').count()
         self.assertEqual(votes_count, 1)
-

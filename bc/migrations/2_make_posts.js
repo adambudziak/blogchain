@@ -18,4 +18,4 @@ module.exports = async (deployer) => {
         Upvotes: Upvotes.address,
         Downvotes: Downvotes.address,
     }));
-}
+};

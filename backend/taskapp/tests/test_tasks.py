@@ -6,12 +6,13 @@ from unittest.mock import MagicMock, patch
 from web3 import Web3
 
 from posts.bc import PostsContract, CommentsContract
-from posts.tests.utils import post_factory, comment_factory
+from posts.tests.utils import make_post_factory, make_comment_factory
 from taskapp.tasks import verify_posts, verify_comments
 
 from posts.models import Post, Comment
 
-post_factory = post_factory('Some title', 'Some content')
+post_factory = make_post_factory('Some title', 'Some content')
+
 
 def mock_contract_function(callback):
     """
@@ -22,6 +23,8 @@ def mock_contract_function(callback):
     passes them to the callback when the .call method
     is called.
 
+    :param callback: Function to be called when Inner().call() is called
+    :return: The Inner class that mocks the function.
     """
     class Inner():
         def __init__(self, *args):
@@ -46,10 +49,7 @@ class TestVerifyPostsTask(TestCase):
         self.contract_mock.functions.getPostsCount = mock_contract_function(lambda: len(self.bc_posts))
         self.contract_mock.functions.posts = mock_contract_function(lambda i: self.bc_posts[i])
 
-        self.web3_mock = MagicMock()
-        self.web3_mock.eth.contract = MagicMock(return_value=self.contract_mock)
-        self.posts_contract = PostsContract(self.web3_mock, None, None)
-
+        self.posts_contract = PostsContract(self.contract_mock)
 
     @patch('taskapp.tasks.PostsContract')
     def test_verify_all_correct(self, mock_posts_contract):
@@ -76,8 +76,8 @@ class TestVerifyCommentsTask(TestCase):
     def setUp(self):
         self.post = post_factory()
         self.now = datetime.now(pytz.UTC)
-        comment_f = comment_factory(self.post, 'Some comment')
-        self.comments = [comment_f(timestamp=(self.now + timedelta(i))) for i in range(5)]
+        comment_factory = make_comment_factory(self.post, 'Some comment')
+        self.comments = [comment_factory(timestamp=(self.now + timedelta(i))) for i in range(5)]
         self.bc_comments = [
             [bytes.fromhex(comment.data_hash[2:]), bytes.fromhex(self.post.data_hash[2:])]
             for comment in self.comments
@@ -86,10 +86,7 @@ class TestVerifyCommentsTask(TestCase):
         self.contract_mock.functions.getCommentCount = mock_contract_function(lambda: len(self.bc_comments))
         self.contract_mock.functions.comments = mock_contract_function(lambda i: self.bc_comments[i])
 
-        self.web3_mock = MagicMock()
-        self.web3_mock.eth.contract = MagicMock(return_value=self.contract_mock)
-        self.comments_contract = CommentsContract(self.web3_mock, None, None)
-
+        self.comments_contract = CommentsContract(self.contract_mock)
 
     @patch('taskapp.tasks.CommentsContract')
     def test_verify_all_correct(self, mock_comments_contract):

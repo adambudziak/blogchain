@@ -27,8 +27,7 @@ def compute_comment_hash(username, date: datetime, content):
 
 def compute_vote_hash(username, date: datetime, is_upvote):
     date = date.replace(tzinfo=None).isoformat()[:-3]
-    is_upvote = '1' if is_upvote else '0'
-    return Web3.sha3(text=(username + date + is_upvote)).hex()
+    return Web3.sha3(text=(username + date + str(is_upvote.real))).hex()
 
 
 def default_web3():
@@ -37,7 +36,10 @@ def default_web3():
 
 def get_contract_abi(contract_name):
     """
-    Load the ABI of a contract form a shared static config file.
+    Load the ABI of a contract from a shared static config file.
+
+    :param contract_name: name of the contract whose ABI will be loaded;
+    :return dict: representing the ABI of the contract.
     """
     response = requests.get(CONTRACT_ABI_URL.format(contract_name=contract_name))
     if response.status_code != status.HTTP_200_OK:
@@ -50,6 +52,9 @@ def get_contract_abi(contract_name):
 def get_contract_address(contract_name: str):
     """
     Load the address of a contract from a shared static config file.
+
+    :param contract_name: name of the contract whose address will be loaded;
+    :return string: address of the contract encoded as hex with a `0x` prefix.
     """
     response = requests.get(CONTRACT_ADDRESS_STORE_URL)
     if response.status_code != status.HTTP_200_OK:
@@ -64,17 +69,34 @@ class PostsContract:
     name = 'Posts'
 
     _Post = namedtuple('Post', 'datetime, data_hash')
+    """
+    A namedtuple used to give names to the fields of the Posts
+    stored on the blockchain.
+    """
 
-    def __init__(self, web3: Web3, abi, address):
-        self.contract = web3.eth.contract(abi=abi, address=address)
+    def __init__(self, contract):
+        """
+        A simple wrapper around the PostsContract stored on the blockchain.
+
+        It provides methods for all the accessible functions of the contract
+        along with additional utilities.
+
+        :param contract: the internal PostsContract on the blockchain.
+        """
+        self.contract = contract
 
     @classmethod
     def default(cls):
+        """
+        A class method simplifying the process of instantiating PostsContract
+        by fetching a default Web3 provider, contract's address and its ABI.
+
+        :return: a PostsContract instance.
+        """
         web3 = default_web3()
         address = get_contract_address(cls.name)
         abi = get_contract_abi(cls.name)
-        return cls(web3, abi, address)
-
+        return cls(web3.eth.contract(abi=abi, address=address))
 
     def posts_count(self):
         return self.contract.functions.getPostsCount().call()
@@ -83,13 +105,29 @@ class PostsContract:
         return self.contract.functions.posts(index).call()
 
     def iter_posts(self):
+        """
+        Iterate all posts on the blockchain ordered from the newest
+        to the oldest.
+
+        Each post is cast to the internal _Post type.
+
+        :return: an iterator over all Posts in the contract.
+        """
         for i in reversed(range(self.posts_count())):
             yield PostsContract._Post(*self.get_post(i))
 
     def verify_posts(self, posts: Iterable[Post]):
         """
-        Takes an iterable of unverified posts and checks whether any
-        of them has a proof on the blockchain.
+        Verify an iterable of Posts by checking which of them
+        have a confirmation on the blockchain.
+
+        Posts which have been successfully verified are updated
+        in the database one-by-one.
+        TODO check if it's possible to update them all at once,
+        TODO and maybe delegate this back to the celery task.
+
+        :param posts: an iterable of posts to verify.
+        :return: The number of positively verified posts.
         """
         verified = 0
         for stored_post in self.iter_posts():
@@ -105,17 +143,36 @@ class CommentsContract:
     name = 'Comments'
 
     _Comment = namedtuple('Comment', 'data_hash, post_hash')
+    """
+    A namedtuple used to give names to the fields of the Comments
+    stored on the blockchain.
+    """
 
-    def __init__(self, web3: Web3, abi, address):
-        self.contract = web3.eth.contract(abi=abi, address=address)
+    def __init__(self, contract):
+        """
+        A simple wrapper around the CommentsContract stored on the blockchain.
+
+        It provides methods for all the accessible functions of the contract
+        along with additional utilities.
+
+        This class is analogous to the PostsContract.
+
+        :param contract: the internal CommentsContract on the blockchain.
+        """
+        self.contract = contract
 
     @classmethod
     def default(cls):
+        """
+        A class method simplifying the process of instantiating CommentsContract
+        by fetching a default Web3 provider, contract's address and its ABI.
+
+        :return: a CommentsContract instance.
+        """
         web3 = default_web3()
         address = get_contract_address(cls.name)
         abi = get_contract_abi(cls.name)
-        return cls(web3, abi, address)
-
+        return cls(web3.eth.contract(abi=abi, address=address))
 
     def comments_count(self):
         return self.contract.functions.getCommentCount().call()
@@ -125,16 +182,25 @@ class CommentsContract:
 
     def iter_comments(self):
         """
-        Returns an iterator over all comments on the blockchain
-        ordered from the newest to the oldest.
+        Iterate all comments on the blockchain ordered from the newest
+        to the oldest.
+
+        Each post is cast to the internal _Comment type.
+
+        :return: an iterator over all Posts in the contract.
         """
         for i in reversed(range(self.comments_count())):
             yield CommentsContract._Comment(*map(Web3.toHex, self.get_comment(i)))
 
     def verify_comments(self, comments: Iterable[Comment]):
         """
-        Takes an iterable of unverified comments and checks whether any
-        of them has a proof on the blockchain.
+        Verify an iterable of Comments by checking which of them
+        have a confirmation on the blockchain.
+
+        See PostsContract.verify_posts for more details.
+
+        :param comments: an iterable of comments to verify.
+        :return: The number of positively verified comments.
         """
         verified = 0
         for stored_comment in self.iter_comments():

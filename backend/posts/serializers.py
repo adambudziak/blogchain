@@ -3,9 +3,6 @@ from rest_framework import serializers
 from .models import Post, Tag, Comment, Vote
 from .bc import compute_post_hash, compute_comment_hash, compute_vote_hash
 
-import base64
-from datetime import datetime
-
 
 class HashValidatorMixin():
     """
@@ -47,7 +44,6 @@ class HashValidatorMixin():
             raise serializers.ValidationError('The data-hash is invalid.')
 
         return data
-
 
 
 class PostSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializer):

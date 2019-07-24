@@ -8,9 +8,10 @@ from django.db.utils import IntegrityError
 from ..models import Vote, Post
 from ..bc import compute_post_hash, compute_vote_hash
 
-from .utils import post_factory
+from .utils import make_post_factory
 
-post_factory = post_factory('Post title', 'Post content')
+post_factory = make_post_factory('Post title', 'Post content')
+
 
 class TestVoteModel(TestCase):
 

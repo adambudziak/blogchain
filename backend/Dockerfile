@@ -13,4 +13,3 @@ WORKDIR /app
 RUN pip install --user -r requirements.txt
 
 ENTRYPOINT ["./start.sh"]
-# ENTRYPOINT ["gunicorn", "blogchain.wsgi:application", "-w 2", "-b :8000"]

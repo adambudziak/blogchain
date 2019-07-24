@@ -5,7 +5,23 @@ from ..models import Post, Comment
 from ..bc import compute_post_hash, compute_comment_hash
 
 
-def post_factory(title, content):
+def make_post_factory(title, content):
+    """
+    Factory returning a function that makes the process of creating
+    a new instance of a Post easier.
+
+    Used mostly for testing.
+
+    It assumes that all posts have the same title and content
+    (this is usually the case while testing).
+
+    The new instances are immediately saved in the database.
+
+    :param title: Post title used for all generated posts.
+    :param content: Post content used for all generated posts.
+    :return: Function taking an author and a timestamp of a post and
+             returning a Post instance.
+    """
     def inner(author=None, timestamp: datetime=None):
         timestamp = timestamp or datetime.now(pytz.UTC)
         author_name = author or 'anonymous'
@@ -20,7 +36,15 @@ def post_factory(title, content):
     return inner
 
 
-def comment_factory(post, content):
+def make_comment_factory(post, content):
+    """
+    Factory analogous to `post_factory`.
+
+    :param post: Post used for all generated comments.
+    :param content: Comment content used for all generated comments.
+    :return: Function taking an author and a timestamp of a comment
+             and returning a Comment instance.
+    """
     def inner(author=None, timestamp: datetime=None):
         timestamp = timestamp or datetime.now(pytz.UTC)
         author_name = author or 'anonymous'
@@ -35,5 +59,16 @@ def comment_factory(post, content):
     return inner
 
 
-def model_to_dict(model, dict_schema):
-    return {k: getattr(model, k) for k in dict_schema}
+def model_to_dict(model, keys):
+    """
+    Utility function that transforms an instance of a django model
+    into a dictionary by getting attributes listed in the keys iterable.
+
+    It is used mostly for testing.
+
+    :param model: An instance whose attributes will be taken.
+    :param keys: A list of names of the attributes to take.
+    :return: Dictionary mapping all the keys in the `keys` parameter to
+             the values of the attributes in the model.
+    """
+    return {k: getattr(model, k) for k in keys}

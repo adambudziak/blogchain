@@ -11,9 +11,10 @@ from ..bc import compute_comment_hash, compute_post_hash, compute_vote_hash
 from ..serializers import PostSerializer, CommentSerializer, VoteSerializer
 from ..models import Post, Comment, Vote
 
-from .utils import post_factory, model_to_dict
+from .utils import make_post_factory, model_to_dict
 
-post_factory = post_factory('Post title', 'Post content')
+post_factory = make_post_factory('Post title', 'Post content')
+
 
 class TestCommentSerializer(TestCase):
     
