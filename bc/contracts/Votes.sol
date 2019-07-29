@@ -6,16 +6,16 @@ contract Votes is Ownable {
 
     uint voteFee = 0.001 ether;
 
-     struct Vote {
+     struct PostVote {
          bytes32 vote_hash;
          bytes32 post_hash;
      }
 
-    Vote[] public votes;
+    PostVote[] public votes;
 
     function vote(bytes32 _vote_hash, bytes32 _post_hash) external payable {
         require(msg.value == voteFee, "Not enough funds to vote!");
-        votes.push(Vote(_vote_hash, _post_hash));
+        votes.push(PostVote(_vote_hash, _post_hash));
     }
 
     function getVoteCount() internal view returns(uint) {

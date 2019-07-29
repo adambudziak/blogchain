@@ -1,6 +1,6 @@
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Post, Tag, Comment, Vote
+from .models import Post, Tag, Comment, PostVote, CommentVote
 from .bc import compute_post_hash, compute_comment_hash, compute_vote_hash
 
 
@@ -48,6 +48,7 @@ class HashValidatorMixin():
 
 class PostSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
+
     class Meta:
         model = Post
         fields = ('url', 'id', 'creation_datetime', 'author', 'verified',
@@ -82,23 +83,43 @@ class CommentSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializ
         return super(CommentSerializer, self).validate(data)
 
 
-class VoteSerializer(HashValidatorMixin, serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
-
-    class Meta:
-        model = Vote
-        fields = ('id', 'author', 'creation_datetime', 'data_hash', 'post', 'is_upvote')
+class BaseVoteSerializer(HashValidatorMixin):
+    base_fields = ('id', 'author', 'creation_datetime', 'data_hash', 'is_upvote')
 
     @staticmethod
     def compute_hash(author, datetime, data):
         return compute_vote_hash(author, datetime, data['is_upvote'])
 
     def validate(self, data):
-        if Vote.objects.filter(author=self.context['request'].user, post=data['post']).exists():
-            raise serializers.ValidationError('You have already voted on this post.')
-        
-        return super(VoteSerializer, self).validate(data)
+        return super(BaseVoteSerializer, self).validate(data)
 
+
+class PostVoteSerializer(BaseVoteSerializer, serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = PostVote
+        fields = BaseVoteSerializer.base_fields + ('post',)
+
+    def validate(self, data):
+        if PostVote.objects.filter(author=self.context['request'].user, post=data['post']).exists():
+            raise serializers.ValidationError('You have already voted on this post.')
+
+        return super(PostVoteSerializer, self).validate(data)
+
+
+class CommentVoteSerializer(BaseVoteSerializer, serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = CommentVote
+        fields = BaseVoteSerializer.base_fields + ('comment',)
+
+    def validate(self, data):
+        if CommentVote.objects.filter(author=self.context['request'].user, comment=data['comment']).exists():
+            raise serializers.ValidationError('You have already voted on this comment.')
+
+        return super(CommentVoteSerializer, self).validate(data)
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

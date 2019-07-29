@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 
-from ..models import Vote, Post
+from ..models import PostVote, Post
 from ..bc import compute_post_hash, compute_vote_hash
 
 from .utils import make_post_factory
@@ -22,7 +22,7 @@ class TestVoteModel(TestCase):
         now = datetime.now(pytz.UTC) 
         vote_hash = compute_vote_hash('admin', now, True)
         
-        Vote.objects.create(
+        PostVote.objects.create(
             author=User.objects.get(username='admin'),
             creation_datetime=now.isoformat(),
             data_hash=vote_hash,
@@ -34,7 +34,7 @@ class TestVoteModel(TestCase):
         now = datetime.now(pytz.UTC)
         vote_hash = compute_vote_hash('admin', now, True)
         with self.assertRaises(IntegrityError):
-            Vote.objects.create(
+            PostVote.objects.create(
                 author=User.objects.get(username='admin'),
                 creation_datetime=now.isoformat(),
                 data_hash=vote_hash,

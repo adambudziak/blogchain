@@ -52,11 +52,24 @@ class Comment(BcModelMixin):
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
 
 
-class Vote(BcModelMixin):
-    author = models.ForeignKey('auth.User', related_name='votes',
+class PostVote(BcModelMixin):
+    author = models.ForeignKey('auth.User', related_name='post_votes',
                                on_delete=models.SET_NULL, null=True, blank=True)
     is_upvote = models.BooleanField('Is this upvote?', default=False, null=False)
     post = models.ForeignKey(Post, related_name='votes', on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('author', 'post',)
+
+
+class CommentVote(BcModelMixin):
+    author = models.ForeignKey('auth.User', related_name='comment_votes',
+                               on_delete=models.SET_NULL, null=True, blank=True)
+    is_upvote = models.BooleanField('Is this upvote?', default=False, null=False)
+    comment = models.ForeignKey(Comment, related_name='votes', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('author', 'comment',)
+
+
+
