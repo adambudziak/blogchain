@@ -1,13 +1,15 @@
 from django.urls import path, include
+from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
-from . import views
+from .views import posts, votes
 
 router = DefaultRouter()
-router.register('posts', views.PostViewSet)
-router.register('users', views.UserViewSet)
-router.register('comments', views.CommentViewSet)
-router.register('votes', views.VoteViewSet)
+router.register('posts', posts.PostViewSet)
+router.register('users', posts.UserViewSet)
+router.register('comments', posts.CommentViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    url(r'^posts/(?P<post_pk>\d+)/(?P<vote_type>up|down)?votes/$', votes.post_votes),
+    url(r'^comments/(?P<comment_pk>\d+)/(?P<vote_type>up|down)?votes/$', votes.comment_votes),
 ]

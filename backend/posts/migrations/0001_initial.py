@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Vote',
+            name='PostVote',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('creation_datetime', models.DateTimeField(verbose_name='Post creation datetime')),

@@ -6,9 +6,10 @@ const API_URLS = {
     POST_VOTES: 'http://localhost:8000/api/posts/<pk>/votes/',
     POST_UPVOTES: 'http://localhost:8000/api/posts/<pk>/upvotes/',
     POST_DOWNVOTES: 'http://localhost:8000/api/posts/<pk>/downvotes/',
-    COMMENTS: 'http://localhost:8000/api/comments/',
-    VOTES: 'http://localhost:8000/api/votes/',
-}
+    COMMENT_VOTES: 'http://localhost:8000/api/comments/<pk>/votes/',
+    COMMENT_UPVOTES: 'http://localhost:8000/api/comments/<pk>/upvotes/',
+    COMMENT_DOWNVOTES: 'http://localhost:8000/api/comments/<pk>/downvotes/',
+};
 
 function defaultConfig() {
   return {
@@ -37,12 +38,21 @@ function createComment(comment) {
 }
 
 function createVote(vote) {
-  return axios.post(API_URLS.VOTES, {
+  return axios.post(API_URLS.POST_VOTES.replace('<pk>', vote.post), {
     post: vote.post,
     is_upvote: vote.isUpvote,
     data_hash: vote.hash,
     creation_datetime: vote.datetime,
   }, defaultConfig());
+}
+
+function createCommentVote(vote) {
+    return axios.post(API_URLS.COMMENT_VOTES.replace('<pk>', vote.comment), {
+        comment: vote.comment,
+        is_upvote: vote.isUpvote,
+        data_hash: vote.hash,
+        creation_datetime: vote.datetime,
+    }, defaultConfig());
 }
 
 export { API_URLS, createPost, createComment, createVote };

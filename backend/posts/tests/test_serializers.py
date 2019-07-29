@@ -8,8 +8,8 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from ..bc import compute_comment_hash, compute_post_hash, compute_vote_hash
-from ..serializers import PostSerializer, CommentSerializer, VoteSerializer
-from ..models import Post, Comment, Vote
+from ..serializers import PostSerializer, CommentSerializer, PostVoteSerializer
+from ..models import Post, Comment, PostVote
 
 from .utils import make_post_factory, model_to_dict
 
@@ -51,14 +51,14 @@ class TestCommentSerializer(TestCase):
 class TestVoteSerializer(TestCase):
 
     def setUp(self):
-        self.serializer = VoteSerializer
+        self.serializer = PostVoteSerializer
         self.post = post_factory()
 
         now = datetime.now(pytz.UTC)
         vote_hash = compute_vote_hash('admin', now, True)
         self.user = User.objects.create_user('admin', password=None)
 
-        Vote.objects.create(
+        PostVote.objects.create(
             author=User.objects.get(username='admin'),
             is_upvote=True,
             post=self.post,
@@ -67,8 +67,8 @@ class TestVoteSerializer(TestCase):
         )
 
     def test_serialize(self):
-        vote = Vote.objects.first()
-        serialized = self.serializer(Vote.objects.first(), context={
+        vote = PostVote.objects.first()
+        serialized = self.serializer(PostVote.objects.first(), context={
             'request': None
         }).data
         expected_date = vote.creation_datetime.isoformat().replace('+00:00', 'Z')

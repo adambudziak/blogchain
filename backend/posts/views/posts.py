@@ -1,26 +1,21 @@
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User, AnonymousUser
 
 from rest_framework.decorators import api_view, action
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response 
+from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from rest_framework import renderers, viewsets, mixins, permissions
+from rest_framework import viewsets, mixins
 
-from .models import (
+from posts.models import (
     Post,
     Comment,
-    Vote
 )
-from .serializers import (
+from posts.serializers import (
     UserSerializer,
     PostSerializer,
     CommentSerializer,
-    VoteSerializer,
 )
-from .bc import PostsContract, get_contract_abi, get_contract_address, default_web3
-
-from django.contrib.auth.models import User, AnonymousUser
 
 import logging
 
@@ -80,8 +75,6 @@ class PostViewSet(CreateListRetrieveViewSet):
         })
         return Response(serializer.data)
 
-    # TODO maybe those methods using querysets of other models
-    #      should be moved somewhere else.
     @action(detail=False, methods=['GET'])
     def verified(self, request):
         queryset = Post.objects.filter(verified=True)
@@ -90,40 +83,6 @@ class PostViewSet(CreateListRetrieveViewSet):
         })
 
         return Response(serializer.data)
-
-    @action(detail=True, methods=['GET'])
-    def votes(self, request, pk=None):
-        queryset = Vote.objects.filter(post__pk=pk)
-        serializer = VoteSerializer(queryset, many=True, context={
-            'request': request
-        })
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['GET'])
-    def upvotes(self, request, pk=None):
-        queryset = Vote.objects.filter(post__pk=pk).filter(is_upvote=True)
-        serializer = VoteSerializer(queryset, many=True, context={
-            'request': request
-        })
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['GET'])
-    def downvotes(self, request, pk=None):
-        queryset = Vote.objects.filter(post__pk=pk).filter(is_upvote=False)
-        serializer = VoteSerializer(queryset, many=True, context={
-            'request': request
-        })
-        return Response(serializer.data)
-
-
-class VoteViewSet(CreateListRetrieveViewSet):
-    queryset = Vote.objects.all()
-    serializer_class = VoteSerializer
-
-    # TODO temporary until find out how we want to design votes for
-    #      anonymous users
-    def get_permissions(self):
-        return [IsAuthenticated()]
 
 
 class CommentViewSet(CreateListRetrieveViewSet):
