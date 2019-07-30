@@ -71,6 +71,7 @@ services:
       - ganache
     volumes:
       - ./assets:/assets
+      - ./bc:/app:ro
 
 volumes:
   pgdata:

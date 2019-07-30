@@ -6,26 +6,46 @@ contract Votes is Ownable {
 
     uint voteFee = 0.001 ether;
 
-     struct PostVote {
+     struct Vote {
          bytes32 vote_hash;
-         bytes32 post_hash;
+         bytes32 target_hash;
      }
 
-    PostVote[] public votes;
+    Vote[] public posts_votes;
+    Vote[] public comments_votes;
 
-    function vote(bytes32 _vote_hash, bytes32 _post_hash) external payable {
+    function voteForPost(bytes32 _vote_hash, bytes32 _target_hash) external payable {
         require(msg.value == voteFee, "Not enough funds to vote!");
-        votes.push(PostVote(_vote_hash, _post_hash));
+        posts_votes.push(Vote(_vote_hash, _target_hash));
     }
 
-    function getVoteCount() internal view returns(uint) {
-        return votes.length;
+    function voteForComment(bytes32 _vote_hash, bytes32 _target_hash) external payable {
+        require(msg.value == voteFee, "Not enough funds to vote!");
+        comments_votes.push(Vote(_vote_hash, _target_hash));
+    }
+
+    function getPostsVoteCount() internal view returns(uint) {
+        return posts_votes.length;
+    }
+
+    function getCommentsVoteCount() internal view returns(uint) {
+        return comments_votes.length;
     }
 
     function getVoteCountForPost(bytes32 post_hash) internal view returns(uint) {
         uint count = 0;
-        for (uint index = 0; index < votes.length; index++) {
-            if (votes[index].post_hash == post_hash) {
+        for (uint index = 0; index < posts_votes.length; index++) {
+            if (posts_votes[index].target_hash == post_hash) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    function getVoteCountForComment(bytes32 comment_hash) internal view returns(uint) {
+        uint count = 0;
+        for (uint index = 0; index < comments_votes.length; index++) {
+            if (comments_votes[index].target_hash == comment_hash) {
                 count++;
             }
         }
