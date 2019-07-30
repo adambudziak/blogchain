@@ -5,6 +5,8 @@ import {
     SUBMIT_COMMENT_SERVER_FAIL,
     SUBMIT_COMMENT_BC_SUCCESS,
     SUBMIT_COMMENT_BC_FAIL,
+    FETCH_UPVOTES_FOR_COMMENT,
+    FETCH_DOWNVOTES_FOR_COMMENT,
 } from './types';
 
 import moment from 'moment';
@@ -17,39 +19,39 @@ export const fetchComments = () => dispatch => {
         type: FETCH_COMMENTS,
         payload: response.data.results,
     }));
-}
+};
 
 const submitCommentStart = () => {
     return {
         type: SUBMIT_COMMENT_START,
     }
-}
+};
 
 const submitCommentServerFail = error => {
     return {
         type: SUBMIT_COMMENT_SERVER_FAIL,
         error,
     }
-}
+};
 
 const submitCommentServerSuccess = () => {
     return {
         type: SUBMIT_COMMENT_SERVER_SUCCESS,
     }
-}
+};
 
 const submitCommentBcSuccess = () => {
     return {
         type: SUBMIT_COMMENT_BC_SUCCESS,
     }
-}
+};
 
 const submitCommentBcFail = error => {
     return {
         type: SUBMIT_COMMENT_BC_FAIL,
         error
     }
-}
+};
 
 export const submitComment = (web3Context, comment, postHash) => dispatch => {
     dispatch(submitCommentStart());
@@ -77,7 +79,39 @@ export const submitComment = (web3Context, comment, postHash) => dispatch => {
         console.error(error);
         dispatch(submitCommentServerFail(error));
     })
-}
+};
+
+const fetchCommentDetails = (commentId, apiUrl, type, dispatch) => {
+    axios.get(apiUrl.replace('<pk>', commentId))
+        .then(response => dispatch({
+            type,
+            payload: response.data,
+            commentId
+        }))
+        .catch(error => {
+            if (error.message.indexOf('404') === -1) {
+                console.error(error);
+            }
+        })
+};
+
+export const fetchUpvotesForComment = (commentId) => dispatch => {
+    return fetchCommentDetails(
+        commentId,
+        API_URLS.COMMENT_UPVOTES,
+        FETCH_UPVOTES_FOR_COMMENT,
+        dispatch,
+    );
+};
+
+export const fetchDownvotesForComment = (commentId) => dispatch => {
+    return fetchCommentDetails(
+        commentId,
+        API_URLS.COMMENT_DOWNVOTES,
+        FETCH_DOWNVOTES_FOR_COMMENT,
+        dispatch,
+    );
+};
 
 function hashComment(web3, comment, author, now) {
     const digest = author + now + comment.content;

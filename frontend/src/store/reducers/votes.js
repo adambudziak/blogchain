@@ -6,7 +6,7 @@ const initialState = {
     submitLoading: false,
     submitError: null,
     items: [],
-}
+};
 
 const reducer = (state=initialState, action) => {
     switch (action.type) {

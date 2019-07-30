@@ -7,7 +7,7 @@ import PostVotes from '../components/PostVotes';
 import { connect } from 'react-redux';
 import { fetchPosts, storePost } from '../store/actions/posts';
 import { fetchComments, submitComment } from '../store/actions/comments';
-import { submitVote } from '../store/actions/votes';
+import { submitPostVote } from '../store/actions/votes';
 import { initWeb3 } from '../store/actions/bc';
 
 class Posts extends React.Component {
@@ -19,6 +19,7 @@ class Posts extends React.Component {
     setInterval(this.props.fetchPosts, 5000);
   }
 
+  // TODO this probably should go to the store
   defaultWeb3Context = () => {
     return {
       web3: this.props.web3,
@@ -28,21 +29,21 @@ class Posts extends React.Component {
       upvotesContract: this.props.upvotesContract,
       downvotesContract: this.props.downvotesContract,
     }
-  }
+  };
 
   storePost = (post) => {
     this.props.storePost(this.defaultWeb3Context(), post);
-  }
+  };
 
   submitComment = (comment) => {
     const postHash = this.props.posts.find(p => p.id === comment.postId).data_hash;
     this.props.submitComment(this.defaultWeb3Context(), comment, postHash);
-  }
+  };
 
-  submitVote = (vote) => {
+  submitPostVote = (vote) => {
     const postHash = this.props.posts.find(p => p.id === vote.postId).data_hash;
-    this.props.submitVote(this.defaultWeb3Context(), vote, postHash);
-  }
+    this.props.submitPostVote(this.defaultWeb3Context(), vote, postHash);
+  };
 
   render() {
     if (this.props.accounts === null) {
@@ -65,7 +66,7 @@ class Posts extends React.Component {
                 p.verified
                 ? <span style={{color: "green"}}>Yes</span>
                 : <span style={{color: "red"}}>No</span>
-                }</span><span><PostVotes postId={p.id} submitVote={this.submitVote} /></span>
+                }</span><span><PostVotes postId={p.id} submitVote={this.submitPostVote} /></span>
               </h3>
               <p>{p.content}</p>
               <PostComments postId={p.id} />
@@ -90,7 +91,9 @@ const mapStateToProps = state => ({
   },
   comments: state.comments.items,
   commentsContract: state.bc.commentsContract,
-})
+  upvotesContract: state.bc.upvotesContract,
+  downvotesContract: state.bc.downvotesContract,
+});
 
 export default connect(mapStateToProps, {
   fetchPosts,
@@ -98,5 +101,5 @@ export default connect(mapStateToProps, {
   storePost,
   fetchComments,
   submitComment,
-  submitVote,
+  submitPostVote,
 })(Posts);

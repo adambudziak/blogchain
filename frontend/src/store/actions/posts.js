@@ -21,7 +21,7 @@ export const fetchPosts = () => dispatch => {
         type: FETCH_POSTS,
         payload: response.data.results,
     }));
-}
+};
 
 const fetchPostDetails = (postId, apiUrl, type, dispatch) => {
     axios.get(apiUrl.replace('<pk>', postId))
@@ -35,7 +35,7 @@ const fetchPostDetails = (postId, apiUrl, type, dispatch) => {
             console.error(error);
         }
     })
-}
+};
 
 export const fetchCommentsForPost = (postId) => dispatch => {
     return fetchPostDetails(
@@ -44,7 +44,7 @@ export const fetchCommentsForPost = (postId) => dispatch => {
         FETCH_COMMENTS_FOR_POST,
         dispatch
     );
-}
+};
 
 export const fetchVotesForPost = (postId) => dispatch => {
     return fetchPostDetails(

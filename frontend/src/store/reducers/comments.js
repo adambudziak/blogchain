@@ -1,5 +1,7 @@
 import {
     FETCH_COMMENTS,
+    FETCH_DOWNVOTES_FOR_COMMENT,
+    FETCH_UPVOTES_FOR_COMMENT,
     SUBMIT_COMMENT_BC_FAIL,
     SUBMIT_COMMENT_BC_SUCCESS,
     SUBMIT_COMMENT_SERVER_FAIL,
@@ -11,7 +13,9 @@ const initialState = {
     items: [],
     submitLoading: false,
     submitError: null,
-}
+    commentUpvotes: {},
+    commentDownvotes: {},
+};
 
 const reducer = (state=initialState, action) => {
     switch (action.type) {
@@ -20,36 +24,50 @@ const reducer = (state=initialState, action) => {
                 ...state,
                 submitLoading: true,
                 submitError: null,
-            }
+            };
         case SUBMIT_COMMENT_SERVER_FAIL:
             return {
                 ...state,
                 submitLoading: false,
                 submitError: action.error,
-            }
+            };
         case SUBMIT_COMMENT_SERVER_SUCCESS:
             return {
                 ...state, // maybe add another state to loading so we can show both stages?
-            }
+            };
         case SUBMIT_COMMENT_BC_FAIL:
             return {
                 ...state,
                 submitLoading: false,
                 submitError: action.error,
-            }
+            };
         case SUBMIT_COMMENT_BC_SUCCESS:
             return {
                 ...state,
                 submitLoading: false,
-            }
+            };
         case FETCH_COMMENTS:
             return {
                 ...state,
                 items: action.payload
-            }
+            };
+        case FETCH_UPVOTES_FOR_COMMENT:
+            const commentUpvotes = {...state.commentUpvotes};
+            commentUpvotes[action.commentId] = action.payload;
+            return {
+                ...state,
+                commentUpvotes,
+            };
+        case FETCH_DOWNVOTES_FOR_COMMENT:
+            const commentDownvotes = {...state.commentDownvotes};
+            commentDownvotes[action.commentId] = action.payload;
+            return {
+                ...state,
+                commentDownvotes,
+            };
         default:
             return state;
     }
-}
+};
 
 export default reducer;
