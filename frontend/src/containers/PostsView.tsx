@@ -9,8 +9,35 @@ import { fetchPosts, storePost } from '../store/actions/posts';
 import { fetchComments, submitComment } from '../store/actions/comments';
 import { submitPostVote } from '../store/actions/votes';
 import { initWeb3 } from '../store/actions/bc';
+import Web3 from 'web3';
+import Contract from "web3/eth/contract";
+import {Dispatch} from "redux";
 
-class Posts extends React.Component {
+interface StateProps {
+  posts: object[],
+  accounts: string[],
+  web3: Web3,
+  currentAccount: string,
+  postsContract: Contract,
+  commentsContract: Contract,
+  upvotesContract: Contract,
+  downvotesContract: Contract,
+  submitPost: any, // TODO temporary
+  comments: any[],
+}
+
+interface DispatchProps {
+  initWeb3: () => void,
+  fetchPosts: () => void,
+  storePost: (web3Context: any, post: any) => void,
+  fetchComments: () => void,
+  submitComment: (web3Context: any, comment: any, postHash: string) => void,
+  submitPostVote: (web3Context:any, vote: any, postHash: string) => void,
+}
+
+type Props = StateProps & DispatchProps;
+
+class Posts extends React.Component<Props> {
 
   componentWillMount() {
     this.props.initWeb3();
@@ -79,7 +106,7 @@ class Posts extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any): StateProps => ({
   posts: state.posts.items,
   accounts: state.bc.accounts,
   web3: state.bc.web3,
@@ -95,11 +122,14 @@ const mapStateToProps = state => ({
   downvotesContract: state.bc.downvotesContract,
 });
 
-export default connect(mapStateToProps, {
+const mapDispatchToProps = (_dispatch: Dispatch): DispatchProps => ({
   fetchPosts,
   initWeb3,
   storePost,
   fetchComments,
   submitComment,
   submitPostVote,
-})(Posts);
+});
+
+
+export default connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(Posts);

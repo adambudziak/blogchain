@@ -8,6 +8,7 @@ import {
     SUBMIT_COMMENT_SERVER_SUCCESS,
     SUBMIT_COMMENT_START,
 } from '../actions/types';
+import {AnyAction} from "redux";
 
 const initialState = {
     items: [],
@@ -17,7 +18,7 @@ const initialState = {
     commentDownvotes: {},
 };
 
-const reducer = (state=initialState, action) => {
+const reducer = (state=initialState, action: AnyAction) => {
     switch (action.type) {
         case SUBMIT_COMMENT_START:
             return {

@@ -44,6 +44,6 @@ const mapDispatchToProps = dispatch => {
   return {
     logout: () => dispatch(actions.logout())
   }
-}
+};
 
 export default withRouter(connect(null, mapDispatchToProps)(LayoutWrapper));
