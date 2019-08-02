@@ -6,6 +6,8 @@ import 'antd/dist/antd.css';
 import LayoutWrapper from './containers/Layout';
 
 import * as actions from './store/actions/auth';
+import {Dispatch} from "redux";
+import PropTypes from 'prop-types';
 
 class App extends React.Component {
 
@@ -30,12 +32,12 @@ const mapStateToProps = state => {
   return {
     isAuthenticated: state.auth.token !== null
   }
-}
+};
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     onTryAutoSignup: () => dispatch(actions.authCheckState())
   }
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

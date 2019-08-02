@@ -1,6 +1,6 @@
 {
-  "short_name": "BlogChain",
-  "name": "A distributed payable Blog",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",

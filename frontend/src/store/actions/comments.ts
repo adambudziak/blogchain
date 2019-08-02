@@ -13,8 +13,9 @@ import moment from 'moment';
 import axios from 'axios';
 import { API_URLS, createComment } from '../../api';
 import { getUser } from '../utility';
+import {Dispatch} from "redux";
 
-export const fetchComments = () => dispatch => {
+export const fetchComments = () => (dispatch: Dispatch) => {
     axios.get(API_URLS.COMMENTS).then(response => dispatch({
         type: FETCH_COMMENTS,
         payload: response.data.results,
@@ -53,7 +54,7 @@ const submitCommentBcFail = error => {
     }
 };
 
-export const submitComment = (web3Context, comment, postHash) => dispatch => {
+export const submitComment = (web3Context, comment, postHash: string) => (dispatch: Dispatch) => {
     dispatch(submitCommentStart());
     const now = moment().format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
     const author = getUser();
@@ -81,8 +82,8 @@ export const submitComment = (web3Context, comment, postHash) => dispatch => {
     })
 };
 
-const fetchCommentDetails = (commentId, apiUrl, type, dispatch) => {
-    axios.get(apiUrl.replace('<pk>', commentId))
+const fetchCommentDetails = (commentId: number, apiUrl: string, type: string, dispatch: Dispatch) => {
+    axios.get(apiUrl.replace('<pk>', String(commentId)))
         .then(response => dispatch({
             type,
             payload: response.data,
@@ -95,7 +96,7 @@ const fetchCommentDetails = (commentId, apiUrl, type, dispatch) => {
         })
 };
 
-export const fetchUpvotesForComment = (commentId) => dispatch => {
+export const fetchUpvotesForComment = (commentId: number) => (dispatch: Dispatch) => {
     return fetchCommentDetails(
         commentId,
         API_URLS.COMMENT_UPVOTES,
@@ -104,7 +105,7 @@ export const fetchUpvotesForComment = (commentId) => dispatch => {
     );
 };
 
-export const fetchDownvotesForComment = (commentId) => dispatch => {
+export const fetchDownvotesForComment = (commentId: number) => (dispatch: Dispatch) => {
     return fetchCommentDetails(
         commentId,
         API_URLS.COMMENT_DOWNVOTES,
@@ -113,7 +114,7 @@ export const fetchDownvotesForComment = (commentId) => dispatch => {
     );
 };
 
-function hashComment(web3, comment, author, now) {
+function hashComment(web3, comment, author: string, now: string) {
     const digest = author + now + comment.content;
     return web3.utils.keccak256(digest);
 }
