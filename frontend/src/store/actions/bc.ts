@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import axios from 'axios';
 
 import { INIT_WEB3 } from './types';
+import {Dispatch} from "redux";
 
 async function collectAbis() {
     const contracts = [
@@ -13,14 +14,14 @@ async function collectAbis() {
     const responses = await Promise.all(
         contracts.map(async c => await axios.get(`http://localhost:8000/assets/abi/${c}.json`))
         );
-    const abis = {};
+    const abis: any = {};
     responses.forEach((r, i) => abis[contracts[i]] = r.data.abi);
     return abis;
 }
 
-export const initWeb3 = () => dispatch => {
+export const initWeb3 = () => (dispatch: Dispatch) => {
     const web3 = new Web3('http://localhost:8545');
-    let accounts;
+    let accounts: string[];
     let addresses;
     web3.eth.getAccounts()
     .then(_accounts => {
@@ -30,19 +31,19 @@ export const initWeb3 = () => dispatch => {
     .then(async response => {
         addresses = response.data;
         const abis = await collectAbis();
-        const postsContract = web3.eth.Contract(
+        const postsContract = new web3.eth.Contract(
             abis['Posts'],
             addresses.Posts,
         );
-        const commentsContract = web3.eth.Contract(
+        const commentsContract = new web3.eth.Contract(
             abis['Comments'],
             addresses.Comments
         );
-        const upvotesContract = web3.eth.Contract(
+        const upvotesContract = new web3.eth.Contract(
             abis['Upvotes'],
             addresses.Upvotes,
         );
-        const downvotesContract = web3.eth.Contract(
+        const downvotesContract = new web3.eth.Contract(
             abis['Downvotes'],
             addresses.Downvotes
         );
@@ -59,4 +60,4 @@ export const initWeb3 = () => dispatch => {
         });
     })
     .catch(console.error);
-}
+};

@@ -3,11 +3,12 @@ import { Form, Spin, Icon, Input, Button } from 'antd';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import * as actions from '../store/actions/auth';
+import {Dispatch} from "redux";
 
 const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
 class NormalLoginForm extends React.Component {
-  handleSubmit = e => {
+  handleSubmit = (e: Event) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -77,17 +78,17 @@ class NormalLoginForm extends React.Component {
 
 const WrappedNormalLoginForm = Form.create({ name: 'normal_login' })(NormalLoginForm);
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
   return {
     loading: state.loading,
     error: state.error,
   }
-}
+};
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onAuth: (username, password) => dispatch(actions.authLogin(username, password))
+    onAuth: (username: string, password: string) => dispatch(actions.authLogin(username, password))
   }
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(WrappedNormalLoginForm);

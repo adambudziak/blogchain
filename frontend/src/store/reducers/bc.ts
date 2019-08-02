@@ -1,4 +1,5 @@
 import { INIT_WEB3 } from '../actions/types';
+import {AnyAction} from "redux";
 
 const initialState = {
     web3: null,
@@ -7,18 +8,18 @@ const initialState = {
     addresses: null,
     postsContract: null,
     commentsContract: null,
-}
+};
 
-const reducer = (state=initialState, action) => {
+const reducer = (state=initialState, action: AnyAction) => {
     switch (action.type) {
         case INIT_WEB3:
             return {
                 ...state,
                 ...action,
-            }
+            };
         default:
             return state;
     }
-}
+};
 
 export default reducer;
