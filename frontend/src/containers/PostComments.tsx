@@ -2,10 +2,29 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { fetchCommentsForPost } from '../store/actions/posts';
-import { submitCommentVote } from '../store/actions/votes';
+import {CommentVoteData, submitCommentVote} from '../store/actions/votes';
 import CommentVotes from '../components/CommentVotes';
+import {Dispatch} from "redux";
+import {ApiComment} from "../store/actions/comments";
+import {Web3Context} from "../store/reducers/bc";
 
-class PostCommentsComponent extends React.Component {
+interface StateProps {
+    web3Context: Web3Context,
+    postComments: {[postId: number]: ApiComment[]},
+}
+
+interface DispatchProps {
+    fetchCommentsForPost: (postId: number) => void,
+    submitCommentVote: (web3Context: any, vote: any, commentHash: string) => void,
+}
+
+interface OwnProps {
+    postId: number,
+}
+
+type Props = StateProps & DispatchProps & OwnProps;
+
+class PostCommentsComponent extends React.Component<Props> {
 
     componentWillMount() {
         this.props.fetchCommentsForPost(this.props.postId);
@@ -13,17 +32,6 @@ class PostCommentsComponent extends React.Component {
             this.props.fetchCommentsForPost(this.props.postId);
         }, 5000);
     }
-
-    defaultWeb3Context = () => {
-        return {
-            web3: this.props.web3,
-            currentAccount: this.props.currentAccount,
-            postsContract: this.props.postsContract,
-            commentsContract: this.props.commentsContract,
-            upvotesContract: this.props.upvotesContract,
-            downvotesContract: this.props.downvotesContract,
-        }
-    };
 
     getComments = () => {
         const propComments = this.props.postComments[this.props.postId];
@@ -33,9 +41,14 @@ class PostCommentsComponent extends React.Component {
         return propComments;
     };
 
-    submitVote = (vote) => {
-        const commentHash = this.props.postComments[this.props.postId].find(c => c.id === vote.commentId).data_hash;
-        this.props.submitCommentVote(this.defaultWeb3Context(), vote, commentHash);
+    submitVote = (vote: CommentVoteData) => {
+        const comment = this.props.postComments[this.props.postId]
+            .find(c => c.id === vote.commentId);
+        if (comment === undefined) {
+            console.log('Vote.comment is undefined?');
+            return;
+        }
+        this.props.submitCommentVote(this.props.web3Context, vote, comment.data_hash);
     };
 
     render() {
@@ -65,19 +78,16 @@ class PostCommentsComponent extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any): StateProps => {
     return {
-        web3: state.bc.web3,
-        currentAccount: state.bc.account,
-        postsContract: state.bc.postsContract,
-        commentsContract: state.bc.commentsContract,
+        web3Context: state.bc.web3Context,
         postComments: state.posts.postComments,
-        upvotesContract: state.bc.upvotesContract,
-        downvotesContract: state.bc.downvotesContract,
     }
 };
 
-export default connect(mapStateToProps, {
-    fetchCommentsForPost,
-    submitCommentVote,
-})(PostCommentsComponent);
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+    fetchCommentsForPost: (postId) => fetchCommentsForPost(postId)(dispatch),
+    submitCommentVote: (web3Context, vote, commentHash) => submitCommentVote(web3Context, vote, commentHash)(dispatch),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostCommentsComponent);

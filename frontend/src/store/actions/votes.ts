@@ -3,10 +3,25 @@ import {
 } from './types';
 
 import moment from 'moment';
-import { createPostVote, createCommentVote } from '../../api';
+import {createPostVote, createCommentVote} from '../../api';
 import { getUser } from '../utility';
 import {Dispatch} from "redux";
 import Web3 from 'web3';
+import PromiEvent from "web3/promiEvent";
+import {Web3Context} from "../reducers/bc";
+import {AxiosResponse} from "axios";
+
+export type CommentVoteData = {
+    commentId: number,
+    isUpvote: boolean
+}
+
+export type PostVoteData = {
+    postId: number,
+    isUpvote: boolean,
+}
+
+export type VoteData = CommentVoteData | PostVoteData;
 
 const submitVoteStart = () => {
     return {
@@ -20,7 +35,7 @@ const submitVoteServerSuccess = () => {
     }
 };
 
-const submitVoteServerFail = error => {
+const submitVoteServerFail = (error: Error) => {
     return {
         type: SUBMIT_VOTE.SERVER_FAIL,
         error,
@@ -33,14 +48,16 @@ const submitVoteBcSuccess = () => {
     }
 };
 
-const submitVoteBcFail = error => {
+const submitVoteBcFail = (error: Error) => {
     return {
         type: SUBMIT_VOTE.BC_FAIL,
         error,
     }
 };
 
-const submitVote = (dispatch: Dispatch, vote, web3: Web3, createVoteCallback, bcCallback: (hash: string) => void) => {
+const submitVote = (dispatch: Dispatch, vote: VoteData, web3: Web3,
+                    createVoteCallback: (vote: any) => Promise<AxiosResponse<any>>,
+                    bcCallback: (hash: string) => PromiEvent<any>) => {
     dispatch(submitVoteStart());
     const now = moment().format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
     const author = getUser();
@@ -56,18 +73,18 @@ const submitVote = (dispatch: Dispatch, vote, web3: Web3, createVoteCallback, bc
                 .on('confirmation', () => dispatch(submitVoteBcSuccess()))
                 .on('error', error => dispatch(submitVoteBcFail(error)));
         })
-        .catch(error => {
+        .catch((error: Error) => {
             console.error(error);
             dispatch(submitVoteServerFail(error))
         })
 };
 
 
-export const submitPostVote = (web3Context, vote, postHash: string) => (dispatch: Dispatch) => {
+export const submitPostVote = (web3Context: Web3Context, vote: VoteData, postHash: string) => (dispatch: Dispatch) => {
     submitVote(dispatch, vote, web3Context.web3, createPostVote, (hash: string) => {
         const contract = vote.isUpvote ? web3Context.upvotesContract : web3Context.downvotesContract;
         return contract.methods.voteForPost(hash, postHash).send({
-            from: web3Context.currentAccount,
+            from: web3Context.account,
             value: web3Context.web3.utils.toWei('0.001', 'ether'),
         })
         ;
@@ -75,17 +92,17 @@ export const submitPostVote = (web3Context, vote, postHash: string) => (dispatch
 };
 
 // TODO this should probably get separate actions
-export const submitCommentVote = (web3Context, vote, commentHash: string) => (dispatch: Dispatch) => {
+export const submitCommentVote = (web3Context: Web3Context, vote: VoteData, commentHash: string) => (dispatch: Dispatch) => {
     submitVote(dispatch, vote, web3Context.web3, createCommentVote, (hash: string) => {
         const contract = vote.isUpvote ? web3Context.upvotesContract : web3Context.downvotesContract;
         return contract.methods.voteForComment(hash, commentHash).send({
-            from: web3Context.currentAccount,
+            from: web3Context.account,
             value: web3Context.web3.utils.toWei('0.001', 'ether')
         });
     });
 };
 
-function hashVote(web3: Web3, vote, author: string, now: string) {
+function hashVote(web3: Web3, vote: VoteData, author: string, now: string) {
     const isUpvote = vote.isUpvote ? '1' : '0';
     const digest = author + now + isUpvote;
     return web3.utils.keccak256(digest);

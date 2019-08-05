@@ -1,10 +1,18 @@
-import React from 'react';
+import React, {FormEvent} from 'react';
 import { Form, Input, Button } from 'antd';
+import { FormComponentProps } from 'antd/lib/form/Form';
 import { connect } from 'react-redux';
+import {CommentData} from "../store/actions/comments";
 
+interface OwnProps {
+  postId: number,
+  onSubmit: (comment: CommentData) => void
+}
 
-class CreateCommentForm extends React.Component {
-  handleSubmit = event => {
+type Props = OwnProps & FormComponentProps;
+
+class CreateCommentForm extends React.Component<Props> {
+  handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {

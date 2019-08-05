@@ -7,9 +7,18 @@ import LayoutWrapper from './containers/Layout';
 
 import * as actions from './store/actions/auth';
 import {Dispatch} from "redux";
-import PropTypes from 'prop-types';
 
-class App extends React.Component {
+interface StateProps {
+  isAuthenticated: boolean,
+}
+
+interface DispatchProps {
+  onTryAutoSignup: () => void,
+}
+
+type Props = StateProps & DispatchProps;
+
+class App extends React.Component<Props> {
 
   componentDidMount() {
     this.props.onTryAutoSignup();
@@ -28,15 +37,15 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any): StateProps => {
   return {
     isAuthenticated: state.auth.token !== null
   }
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
   return {
-    onTryAutoSignup: () => dispatch(actions.authCheckState())
+    onTryAutoSignup: () => actions.authCheckState(dispatch)
   }
 };
 

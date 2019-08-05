@@ -1,39 +1,47 @@
 import * as actionTypes from '../actions/types';
-import { updateObject } from '../utility';
 import {AnyAction} from "redux";
 
-const initialState = {
+export interface AuthState {
+    token: string | null,
+    error: Error | null,
+    loading: boolean,
+}
+
+const initialState: AuthState = {
     token: null,
     error: null,
     loading: false,
 };
 
-const authStart = (state, action: AnyAction) => {
-    return updateObject(state, {
+const authStart = (state: AuthState, action: AnyAction): AuthState => {
+    return {
+        ...state,
         error: null,
         loading: true,
-    })
+    };
 };
 
-const authSuccess = (state, action: AnyAction) => {
-    return updateObject(state, {
-        token: action.token,
+const authSuccess = (state: AuthState, action: AnyAction): AuthState => {
+    return {
+        ...state,
         error: null,
         loading: false,
-    })
+    };
 };
 
-const authFail = (state, action: AnyAction) => {
-    return updateObject(state, {
+const authFail = (state: AuthState, action: AnyAction): AuthState => {
+    return {
+        ...state,
         error: action.error,
         loading: false,
-    })
+    };
 };
 
-const authLogout = (state, action: AnyAction) => {
-    return updateObject(state, {
+const authLogout = (state: AuthState, action: AnyAction): AuthState => {
+    return {
+        ...state,
         token: null,
-    })
+    };
 };
 
 const reducer = (state=initialState, action: AnyAction) => {
