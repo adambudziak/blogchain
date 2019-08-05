@@ -3,10 +3,21 @@ import { Layout, Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../store/actions/auth';
+import {Dispatch} from "redux";
 
 const { Header, Content, Footer } = Layout;
 
-class LayoutWrapper extends React.Component {
+interface OwnProps {
+    isAuthenticated: boolean,
+}
+
+interface DispatchProps {
+    logout: () => void,
+}
+
+type Props = OwnProps & DispatchProps;
+
+class LayoutWrapper extends React.Component<Props> {
 
   render() {
     return (
@@ -40,10 +51,11 @@ class LayoutWrapper extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
   return {
     logout: () => dispatch(actions.logout())
   }
 };
 
+// TODO this also seems broken (TS2345) "Types of property propTypes are incompatible"
 export default withRouter(connect(null, mapDispatchToProps)(LayoutWrapper));

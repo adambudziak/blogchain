@@ -1,10 +1,17 @@
-import React from 'react';
+import React, {FormEvent} from 'react';
 import { Form, Input, Button } from 'antd';
 import { connect } from 'react-redux';
+import {FormComponentProps} from "antd/lib/form";
 
-class CreatePostForm extends React.Component {
+interface OwnProps {
+    onSubmit: (post: {title: string, content: string}) => void,
+}
 
-  handleSubmit = event => {
+type Props = OwnProps & FormComponentProps;
+
+class CreatePostForm extends React.Component<Props> {
+
+  handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -14,7 +21,7 @@ class CreatePostForm extends React.Component {
         });
       }
     })
-  }
+  };
 
 
   render() {

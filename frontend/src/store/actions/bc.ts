@@ -3,26 +3,26 @@ import axios from 'axios';
 
 import { INIT_WEB3 } from './types';
 import {Dispatch} from "redux";
+const contractNames = [
+    'Posts',
+    'Comments',
+    'Upvotes',
+    'Downvotes',
+];
 
 async function collectAbis() {
-    const contracts = [
-        'Posts',
-        'Comments',
-        'Upvotes',
-        'Downvotes',
-    ];
     const responses = await Promise.all(
-        contracts.map(async c => await axios.get(`http://localhost:8000/assets/abi/${c}.json`))
+        contractNames.map(async c => await axios.get(`http://localhost:8000/assets/abi/${c}.json`))
         );
     const abis: any = {};
-    responses.forEach((r, i) => abis[contracts[i]] = r.data.abi);
+    responses.forEach((r, i) => abis[contractNames[i]] = r.data.abi);
     return abis;
 }
 
-export const initWeb3 = () => (dispatch: Dispatch) => {
+export const initWeb3 = (dispatch: Dispatch) => {
     const web3 = new Web3('http://localhost:8545');
     let accounts: string[];
-    let addresses;
+    let addresses: {[name: string]: string};
     web3.eth.getAccounts()
     .then(_accounts => {
         accounts = _accounts;
@@ -30,33 +30,25 @@ export const initWeb3 = () => (dispatch: Dispatch) => {
     })
     .then(async response => {
         addresses = response.data;
+        console.log(addresses);
         const abis = await collectAbis();
-        const postsContract = new web3.eth.Contract(
-            abis['Posts'],
-            addresses.Posts,
+        const contracts: any = {};
+        contractNames.forEach(
+            name => contracts[name] = new web3.eth.Contract(abis[name], addresses[name])
         );
-        const commentsContract = new web3.eth.Contract(
-            abis['Comments'],
-            addresses.Comments
-        );
-        const upvotesContract = new web3.eth.Contract(
-            abis['Upvotes'],
-            addresses.Upvotes,
-        );
-        const downvotesContract = new web3.eth.Contract(
-            abis['Downvotes'],
-            addresses.Downvotes
-        );
+
         dispatch({
             type: INIT_WEB3,
-            web3: web3,
-            account: accounts[0],
-            accounts,
-            addresses,
-            postsContract,
-            commentsContract,
-            upvotesContract,
-            downvotesContract,
+            web3Context: {
+                web3: web3,
+                account: accounts[0],
+                accounts,
+                addresses,
+                postsContract: contracts['Posts'],
+                commentsContract: contracts['Comments'],
+                upvotesContract: contracts['Upvotes'],
+                downvotesContract: contracts['Downvotes'],
+            }
         });
     })
     .catch(console.error);

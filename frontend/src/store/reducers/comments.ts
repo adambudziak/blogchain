@@ -9,8 +9,17 @@ import {
     SUBMIT_COMMENT_START,
 } from '../actions/types';
 import {AnyAction} from "redux";
+import {ApiComment} from "../actions/comments";
 
-const initialState = {
+export interface CommentsState {
+    items: ApiComment[],
+    submitLoading: boolean,
+    submitError: Error | null,
+    commentUpvotes: any,
+    commentDownvotes: any,
+}
+
+const initialState: CommentsState = {
     items: [],
     submitLoading: false,
     submitError: null,
@@ -18,7 +27,7 @@ const initialState = {
     commentDownvotes: {},
 };
 
-const reducer = (state=initialState, action: AnyAction) => {
+const reducer = (state=initialState, action: AnyAction): CommentsState => {
     switch (action.type) {
         case SUBMIT_COMMENT_START:
             return {
@@ -48,7 +57,7 @@ const reducer = (state=initialState, action: AnyAction) => {
                 submitLoading: false,
             };
         case FETCH_COMMENTS:
-            return {
+           return {
                 ...state,
                 items: action.payload
             };
