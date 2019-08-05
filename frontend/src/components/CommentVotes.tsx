@@ -3,7 +3,29 @@ import { connect } from 'react-redux';
 
 import { fetchUpvotesForComment, fetchDownvotesForComment } from '../store/actions/comments';
 
-class CommentVotesComponents extends React.Component {
+interface StateProps {
+    commentUpvotes: any,
+    commentDownvotes: any,
+}
+
+interface DispatchProps {
+    fetchUpvotesForComment: (commentId: number) => void,
+    fetchDownvotesForComment: (commentId: number) => void,
+}
+
+interface OwnProps {
+    commentId: number,
+    submitVote: (comment: {commentId: number, isUpvote: boolean}) => void,
+}
+
+type Props = StateProps & DispatchProps & OwnProps;
+
+enum VoteType {
+    Upvote = 'commentUpvotes',
+    Downvote = 'commentDownvotes',
+}
+
+class CommentVotesComponents extends React.Component<Props> {
 
     componentWillMount() {
         this.props.fetchUpvotesForComment(this.props.commentId);
@@ -14,7 +36,7 @@ class CommentVotesComponents extends React.Component {
         }, 5000);
     }
 
-    getCommentVotes = (voteType) => {
+    getCommentVotes = (voteType: VoteType) => {
         const propVotes = this.props[voteType][this.props.commentId];
         if (propVotes === undefined || propVotes === null) {
             return [];
@@ -22,7 +44,7 @@ class CommentVotesComponents extends React.Component {
         return propVotes;
     };
 
-    submitVote = (isUpvote) => {
+    submitVote = (isUpvote: boolean) => {
         this.props.submitVote({
             commentId: this.props.commentId,
             isUpvote
@@ -30,8 +52,8 @@ class CommentVotesComponents extends React.Component {
     };
 
     render() {
-        const upvotes = this.getCommentVotes('commentUpvotes');
-        const downvotes = this.getCommentVotes('commentDownvotes');
+        const upvotes = this.getCommentVotes(VoteType.Upvote);
+        const downvotes = this.getCommentVotes(VoteType.Downvote);
         return (
             <div>
                 <div>{upvotes.length} upvotes</div>
@@ -43,14 +65,15 @@ class CommentVotesComponents extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        commentUpvotes: state.comments.commentUpvotes,
-        commentDownvotes: state.comments.commentDownvotes,
-    }
-};
+const mapStateToProps = (state: any): StateProps => ({
+    commentUpvotes: state.comments.commentUpvotes,
+    commentDownvotes: state.comments.commentDownvotes,
+});
 
-export default connect(mapStateToProps, {
+const mapDispatchToProps = (): DispatchProps => ({
     fetchUpvotesForComment,
     fetchDownvotesForComment,
-})(CommentVotesComponents);
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(CommentVotesComponents);

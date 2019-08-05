@@ -83,4 +83,3 @@ export function createCommentVote(vote: CommentVote) {
         creation_datetime: vote.datetime,
     }, defaultConfig());
 }
-

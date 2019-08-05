@@ -17,8 +17,23 @@ import { getUser } from '../utility';
 import { API_URLS, createPost } from '../../api';
 import {Dispatch} from "redux";
 import Web3 from 'web3';
+import {Web3Context} from "../reducers/bc";
 
-export const fetchPosts = () => (dispatch: Dispatch) => {
+// TODO where should we define types like these?
+export type PostData = {title: string, content: string}
+export type ApiPost = {
+    author: string,
+    title: string,
+    content: string,
+    id: number,
+    verified: boolean,
+    url: string,
+    tags: string[],
+    creation_datetime: string,
+    data_hash: string,
+}
+
+export const fetchPosts = (dispatch: Dispatch) => {
     axios.get(API_URLS.POSTS).then(response => dispatch({
         type: FETCH_POSTS,
         payload: response.data.results,
@@ -88,7 +103,7 @@ const storePostServerSuccess = () => {
     };
 };
 
-const storePostServerFail = (error) => {
+const storePostServerFail = (error: Error) => {
     return {
         type: STORE_POST_SERVER_FAIL,
         error,
@@ -101,14 +116,16 @@ const storePostBcSuccess = () => {
     };
 };
 
-const storePostBcFail = (error) => {
+const storePostBcFail = (error: Error) => {
     return {
         type: STORE_POST_BC_FAIL,
         error,
     };
 };
 
-export const storePost = (web3Context, post) => (dispatch: Dispatch) => {
+// TODO it's annoying to pass the dispatch here via an argument but I don't know
+//      how to make it better.
+export const storePost = (web3Context: Web3Context, post: PostData) => (dispatch: Dispatch) => {
     dispatch(storePostStart());
     const now = moment().format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
     const author = getUser();
@@ -123,17 +140,17 @@ export const storePost = (web3Context, post) => (dispatch: Dispatch) => {
         dispatch(storePostServerSuccess());
         web3Context.postsContract.methods.addPost(String(now), hash)
         .send({
-            from: web3Context.currentAccount,
+            from: web3Context.account,
             value: web3Context.web3.utils.toWei('0.005', 'ether')
         })
         .on('confirmation', () => dispatch(storePostBcSuccess()))
-        .on('error', (error) => dispatch(storePostBcFail(error)));
+        .on('error', (error: Error) => dispatch(storePostBcFail(error)));
     })
     .catch(error => dispatch(storePostServerFail(error)));
 };
 
 
-function hashPost(web3: Web3, post, author: string, now: string) {
+function hashPost(web3: Web3, post: PostData, author: string, now: string) {
     const digest = author + now + post.title + post.content;
     return web3.utils.keccak256(digest);
 }

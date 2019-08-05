@@ -3,7 +3,29 @@ import { connect } from 'react-redux';
 
 import { fetchUpvotesForPost, fetchDownvotesForPost } from '../store/actions/posts';
 
-class PostVotesComponents extends React.Component {
+interface OwnProps {
+    postId: number,
+    submitVote: (post: {postId: number, isUpvote: boolean}) => void,
+}
+
+interface StateProps {
+    postUpvotes: any,
+    postDownvotes: any
+}
+
+interface DispatchProps {
+    fetchUpvotesForPost: (postId: number) => void,
+    fetchDownvotesForPost: (postId: number) => void,
+}
+
+type Props = OwnProps & StateProps & DispatchProps;
+
+enum VoteType {
+    Upvote = 'postUpvotes',
+    Downvote = 'postDownvotes',
+}
+
+class PostVotesComponents extends React.Component<Props> {
 
     componentWillMount() {
         this.props.fetchUpvotesForPost(this.props.postId);
@@ -14,24 +36,24 @@ class PostVotesComponents extends React.Component {
         }, 5000);
     }
 
-    getPostVotes = (voteType) => {
+    getPostVotes = (voteType: VoteType) => {
         const propVotes = this.props[voteType][this.props.postId];
         if (propVotes === undefined || propVotes === null) {
             return [];
         }
         return propVotes;
-    }
+    };
 
-    submitVote = (isUpvote) => {
+    submitVote = (isUpvote: boolean) => {
         this.props.submitVote({
             postId: this.props.postId,
             isUpvote
         })
-    }
+    };
 
     render() {
-        const upvotes = this.getPostVotes('postUpvotes');
-        const downvotes = this.getPostVotes('postDownvotes');
+        const upvotes = this.getPostVotes(VoteType.Upvote);
+        const downvotes = this.getPostVotes(VoteType.Downvote);
         return (
             <div>
                 <div>{upvotes.length} upvotes</div>
@@ -43,14 +65,17 @@ class PostVotesComponents extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any): StateProps => {
     return {
         postUpvotes: state.posts.postUpvotes,
         postDownvotes: state.posts.postDownvotes,
     }
-}
+};
 
-export default connect(mapStateToProps, {
+const mapDispatchToProps = (): DispatchProps => ({
     fetchUpvotesForPost,
     fetchDownvotesForPost,
-})(PostVotesComponents);
+
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostVotesComponents);

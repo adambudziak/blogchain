@@ -10,17 +10,31 @@ import {
     FETCH_UPVOTES_FOR_POST,
     FETCH_DOWNVOTES_FOR_POST,
 } from '../actions/types';
+import {ApiPost} from "../actions/posts";
+import {AnyAction} from "redux";
+import {ApiComment} from "../actions/comments";
 
-const initialState = {
+export interface PostsState {
+    items: ApiPost[],
+    submitLoading: boolean,
+    submitError: Error | null,
+    postComments: {[postId: number]: ApiComment[]},
+    postUpvotes: any,
+    postDownvotes: any,
+    postVotes: any,
+}
+
+const initialState: PostsState = {
     items: [],
     submitLoading: false,
     submitError: null,
     postComments: {},
     postUpvotes: {},
     postDownvotes: {},
+    postVotes: {},
 };
 
-const reducer = (state=initialState, action) => {
+const reducer = (state=initialState, action: AnyAction): PostsState => {
     switch (action.type) {
         case STORE_POST_START:
             return {

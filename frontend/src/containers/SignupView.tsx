@@ -1,16 +1,30 @@
-import React from 'react';
+import React, {FormEvent} from 'react';
 
 import { Form, Input, Icon, Button } from 'antd';
-import { NavLink } from 'react-router-dom';
+import {RouteComponentProps, NavLink} from 'react-router-dom';
 import * as actions from '../store/actions/auth';
 import { connect } from 'react-redux';
+import {FormComponentProps} from "antd/lib/form";
+import {Dispatch} from "redux";
+import {State} from "../store/reducers";
 
-class RegistrationForm extends React.Component {
+interface StateProps {
+  loading: boolean,
+  error: Error | null,
+}
+
+interface DispatchProps {
+  onAuth: (username: string, email: string, password1: string, password2: string) => void,
+}
+
+type Props = RouteComponentProps & StateProps & DispatchProps & FormComponentProps;
+
+class RegistrationForm extends React.Component<Props> {
   state = {
     confirmDirty: false,
   };
 
-  handleSubmit = e => {
+  handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -25,12 +39,7 @@ class RegistrationForm extends React.Component {
     });
   };
 
-  handleConfirmBlur = e => {
-    const { value } = e.target;
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-  };
-
-  compareToFirstPassword = (rule, value, callback) => {
+  compareToFirstPassword = (rule: any, value: any, callback: any) => {
     const { form } = this.props;
     if (value && value !== form.getFieldValue('password')) {
       callback('Two passwords that you enter is inconsistent!');
@@ -39,7 +48,7 @@ class RegistrationForm extends React.Component {
     }
   };
 
-  validateToNextPassword = (rule, value, callback) => {
+  validateToNextPassword = (rule: any, value: any, callback: any) => {
     const { form } = this.props;
     if (value && this.state.confirmDirty) {
       form.validateFields(['confirm'], { force: true });
@@ -88,7 +97,7 @@ class RegistrationForm extends React.Component {
           {getFieldDecorator('confirm', {
             rules: [{required: true, message: 'Please confirm your password!'},
                     {validator: this.compareToFirstPassword}],
-          })(<Input.Password onBlur={this.handleConfirmBlur}
+          })(<Input.Password
           prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
           placeholder="Confirm password"
           />)}
@@ -110,18 +119,19 @@ class RegistrationForm extends React.Component {
 
 const WrappedRegistrationForm = Form.create({ name: 'register' })(RegistrationForm);
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: State): StateProps => {
   return {
-    loading: state.loading,
-    error: state.error,
+    loading: state.auth.loading,
+    error: state.auth.error,  // TODO unused?
   }
-}
+};
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
   return {
-    onAuth: (username, email, password1, password2) => dispatch(actions.authSignup(username, email, password1, password2))
+    onAuth: (username, email, password1, password2) =>
+        actions.authSignup(username, email, password1, password2)(dispatch)
   }
-}
+};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(WrappedRegistrationForm);
