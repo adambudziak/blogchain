@@ -1,5 +1,5 @@
 import { INIT_WEB3 } from '../actions/types';
-import {AnyAction} from "redux";
+import { AnyAction } from "redux";
 import Web3 from 'web3';
 import Contract from "web3/eth/contract";
 

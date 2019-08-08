@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import axios from 'axios';
 
 import { INIT_WEB3 } from './types';
-import {Dispatch} from "redux";
+import { Dispatch } from "redux";
 const contractNames = [
     'Posts',
     'Comments',
@@ -30,7 +30,6 @@ export const initWeb3 = (dispatch: Dispatch) => {
     })
     .then(async response => {
         addresses = response.data;
-        console.log(addresses);
         const abis = await collectAbis();
         const contracts: any = {};
         contractNames.forEach(

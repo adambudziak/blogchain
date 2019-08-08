@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions/types';
-import {AnyAction} from "redux";
+import { AnyAction } from "redux";
 
 export interface AuthState {
     token: string | null,
@@ -24,6 +24,7 @@ const authStart = (state: AuthState, action: AnyAction): AuthState => {
 const authSuccess = (state: AuthState, action: AnyAction): AuthState => {
     return {
         ...state,
+        token: action.token,
         error: null,
         loading: false,
     };

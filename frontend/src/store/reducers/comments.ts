@@ -8,8 +8,8 @@ import {
     SUBMIT_COMMENT_SERVER_SUCCESS,
     SUBMIT_COMMENT_START,
 } from '../actions/types';
-import {AnyAction} from "redux";
-import {ApiComment} from "../actions/comments";
+import { AnyAction } from "redux";
+import { ApiComment } from "../actions/comments";
 
 export interface CommentsState {
     items: ApiComment[],

@@ -13,9 +13,9 @@ import moment from 'moment';
 import axios from 'axios';
 import { API_URLS, createComment } from '../../api';
 import { getUser } from '../utility';
-import {Dispatch} from "redux";
+import { Dispatch } from "redux";
 import Web3 from 'web3';
-import {Web3Context} from "../reducers/bc";
+import { Web3Context } from "../reducers/bc";
 
 export type CommentData = {postId: number, content: string}
 export type ApiComment = {
