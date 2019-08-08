@@ -6,17 +6,18 @@ import 'antd/dist/antd.css';
 import LayoutWrapper from './containers/Layout';
 
 import * as actions from './store/actions/auth';
-import {Dispatch} from "redux";
+import { Dispatch } from "redux";
+import { State } from "./store/reducers";
 
-interface StateProps {
+interface StateToProps {
   isAuthenticated: boolean,
 }
 
-interface DispatchProps {
+interface DispatchToProps {
   onTryAutoSignup: () => void,
 }
 
-type Props = StateProps & DispatchProps;
+type Props = StateToProps & DispatchToProps;
 
 class App extends React.Component<Props> {
 
@@ -37,13 +38,13 @@ class App extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: any): StateProps => {
+const mapStateToProps = (state: State): StateToProps => {
   return {
     isAuthenticated: state.auth.token !== null
   }
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => {
   return {
     onTryAutoSignup: () => actions.authCheckState(dispatch)
   }

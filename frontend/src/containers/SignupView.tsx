@@ -1,30 +1,30 @@
-import React, {FormEvent} from 'react';
+import React from 'react';
 
 import { Form, Input, Icon, Button } from 'antd';
-import {RouteComponentProps, NavLink} from 'react-router-dom';
+import { RouteComponentProps, NavLink } from 'react-router-dom';
 import * as actions from '../store/actions/auth';
 import { connect } from 'react-redux';
-import {FormComponentProps} from "antd/lib/form";
-import {Dispatch} from "redux";
-import {State} from "../store/reducers";
+import { FormComponentProps } from "antd/lib/form";
+import { Dispatch } from "redux";
+import { State } from "../store/reducers";
 
-interface StateProps {
+interface StateToProps {
   loading: boolean,
   error: Error | null,
 }
 
-interface DispatchProps {
+interface DispatchToProps {
   onAuth: (username: string, email: string, password1: string, password2: string) => void,
 }
 
-type Props = RouteComponentProps & StateProps & DispatchProps & FormComponentProps;
+type Props = RouteComponentProps & StateToProps & DispatchToProps & FormComponentProps;
 
 class RegistrationForm extends React.Component<Props> {
   state = {
     confirmDirty: false,
   };
 
-  handleSubmit = (e: FormEvent) => {
+  handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -119,14 +119,14 @@ class RegistrationForm extends React.Component<Props> {
 
 const WrappedRegistrationForm = Form.create({ name: 'register' })(RegistrationForm);
 
-const mapStateToProps = (state: State): StateProps => {
+const mapStateToProps = (state: State): StateToProps => {
   return {
     loading: state.auth.loading,
     error: state.auth.error,  // TODO unused?
   }
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => {
   return {
     onAuth: (username, email, password1, password2) =>
         actions.authSignup(username, email, password1, password2)(dispatch)

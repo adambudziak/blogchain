@@ -1,7 +1,7 @@
 import * as actionTypes from './types';
-import axios, {AxiosResponse} from 'axios';
+import axios from 'axios';
 import moment from 'moment';
-import {Dispatch} from "redux";
+import { Dispatch } from "redux";
 
 export const authStart = () => {
     return {
@@ -45,8 +45,6 @@ const saveSession = (dispatch: Dispatch, token: string, username: string) => {
     localStorage.setItem('user', username);
     localStorage.setItem('token', token);
     localStorage.setItem('expirationDate', expirationDate.toISOString());
-    dispatch(authSuccess(token));
-    checkAuthTimeout(moment.duration(14, 'days').asMilliseconds())(dispatch);
 };
 
 export const authLogin = (username: string, password: string) => {
@@ -57,7 +55,10 @@ export const authLogin = (username: string, password: string) => {
             password 
         })
         .then(response => {
-            saveSession(dispatch, response.data.key, username);
+            const token = response.data.key;
+            saveSession(dispatch, token, username);
+            dispatch(authSuccess(token));
+            checkAuthTimeout(moment.duration(14, 'days').asMilliseconds())(dispatch);
         })
         .catch(err => {
             dispatch(authFail(err));
@@ -75,7 +76,10 @@ export const authSignup = (username: string, email: string, password1: string, p
             password2, 
         })
         .then(response => {
-            saveSession(dispatch, response.data.key, username);
+            const token = response.data.key;
+            saveSession(dispatch, token, username);
+            dispatch(authSuccess(token));
+            checkAuthTimeout(moment.duration(14, 'days').asMilliseconds())(dispatch);
         })
         .catch(err => {
             dispatch(authFail(err));
