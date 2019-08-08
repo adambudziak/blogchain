@@ -3,7 +3,7 @@ import { Layout, Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../store/actions/auth';
-import {Dispatch} from "redux";
+import { Dispatch } from "redux";
 
 const { Header, Content, Footer } = Layout;
 
@@ -11,11 +11,11 @@ interface OwnProps {
     isAuthenticated: boolean,
 }
 
-interface DispatchProps {
+interface DispatchToProps {
     logout: () => void,
 }
 
-type Props = OwnProps & DispatchProps;
+type Props = OwnProps & DispatchToProps;
 
 class LayoutWrapper extends React.Component<Props> {
 
@@ -51,7 +51,7 @@ class LayoutWrapper extends React.Component<Props> {
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => {
+const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => {
   return {
     logout: () => dispatch(actions.logout())
   }

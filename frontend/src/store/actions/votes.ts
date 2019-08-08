@@ -3,13 +3,13 @@ import {
 } from './types';
 
 import moment from 'moment';
-import {createPostVote, createCommentVote} from '../../api';
+import { createPostVote, createCommentVote } from '../../api';
 import { getUser } from '../utility';
-import {Dispatch} from "redux";
+import { Dispatch } from "redux";
 import Web3 from 'web3';
 import PromiEvent from "web3/promiEvent";
-import {Web3Context} from "../reducers/bc";
-import {AxiosResponse} from "axios";
+import { Web3Context } from "../reducers/bc";
+import { AxiosResponse } from "axios";
 
 export type CommentVoteData = {
     commentId: number,

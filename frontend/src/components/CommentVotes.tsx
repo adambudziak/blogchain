@@ -2,13 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { fetchUpvotesForComment, fetchDownvotesForComment } from '../store/actions/comments';
+import { Dispatch } from "redux";
+import { State } from "../store/reducers";
 
-interface StateProps {
+interface StateToProps {
     commentUpvotes: any,
     commentDownvotes: any,
 }
 
-interface DispatchProps {
+interface DispatchToProps {
     fetchUpvotesForComment: (commentId: number) => void,
     fetchDownvotesForComment: (commentId: number) => void,
 }
@@ -18,7 +20,7 @@ interface OwnProps {
     submitVote: (comment: {commentId: number, isUpvote: boolean}) => void,
 }
 
-type Props = StateProps & DispatchProps & OwnProps;
+type Props = StateToProps & DispatchToProps & OwnProps;
 
 enum VoteType {
     Upvote = 'commentUpvotes',
@@ -65,14 +67,14 @@ class CommentVotesComponents extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state: any): StateProps => ({
+const mapStateToProps = (state: State): StateToProps => ({
     commentUpvotes: state.comments.commentUpvotes,
     commentDownvotes: state.comments.commentDownvotes,
 });
 
-const mapDispatchToProps = (): DispatchProps => ({
-    fetchUpvotesForComment,
-    fetchDownvotesForComment,
+const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => ({
+    fetchUpvotesForComment: (commentId: number) => fetchUpvotesForComment(commentId)(dispatch),
+    fetchDownvotesForComment: (commentId: number) => fetchDownvotesForComment(commentId)(dispatch),
 });
 
 

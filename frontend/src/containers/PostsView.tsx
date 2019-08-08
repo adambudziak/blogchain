@@ -5,22 +5,22 @@ import PostComments from '../containers/PostComments';
 import PostVotes from '../components/PostVotes';
 
 import { connect } from 'react-redux';
-import {ApiPost, fetchPosts, PostData, storePost} from '../store/actions/posts';
-import {CommentData, submitComment} from '../store/actions/comments';
-import {PostVoteData, submitPostVote} from '../store/actions/votes';
+import { ApiPost, fetchPosts, PostData, storePost } from '../store/actions/posts';
+import { CommentData, submitComment } from '../store/actions/comments';
+import { PostVoteData, submitPostVote } from '../store/actions/votes';
 import { initWeb3 } from '../store/actions/bc';
-import {Dispatch} from "redux";
-import {Web3Context} from "../store/reducers/bc";
-import {State} from "../store/reducers";
+import { Dispatch } from "redux";
+import { Web3Context } from "../store/reducers/bc";
+import { State } from "../store/reducers";
 
-interface StateProps {
+interface StateToProps {
     web3Context: Web3Context | null,
     posts: ApiPost[],
     submitPost: {error: Error | null, loading: boolean},
     comments: any[],
 }
 
-interface DispatchProps {
+interface DispatchToProps {
     initWeb3: () => void,
     fetchPosts: () => void,
     storePost: (web3Context: Web3Context, post: PostData) => void,
@@ -28,7 +28,7 @@ interface DispatchProps {
     submitPostVote: (web3Context: Web3Context, vote: any, postHash: string) => void,
 }
 
-type Props = StateProps & DispatchProps;
+type Props = StateToProps & DispatchToProps;
 
 class Posts extends React.Component<Props> {
 
@@ -105,7 +105,7 @@ class Posts extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state: State): StateProps => ({
+const mapStateToProps = (state: State): StateToProps => ({
     posts: state.posts.items,
     web3Context: state.bc.web3Context,
     submitPost: {
@@ -115,7 +115,7 @@ const mapStateToProps = (state: State): StateProps => ({
     comments: state.comments.items,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => ({
     fetchPosts: () => fetchPosts(dispatch),  // TODO how to make all these better?
     initWeb3: () => initWeb3(dispatch),
     storePost: (web3Context, post) => storePost(web3Context, post)(dispatch),

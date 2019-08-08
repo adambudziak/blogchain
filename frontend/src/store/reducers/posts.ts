@@ -10,9 +10,9 @@ import {
     FETCH_UPVOTES_FOR_POST,
     FETCH_DOWNVOTES_FOR_POST,
 } from '../actions/types';
-import {ApiPost} from "../actions/posts";
-import {AnyAction} from "redux";
-import {ApiComment} from "../actions/comments";
+import { ApiPost } from "../actions/posts";
+import { AnyAction } from "redux";
+import { ApiComment } from "../actions/comments";
 
 export interface PostsState {
     items: ApiPost[],

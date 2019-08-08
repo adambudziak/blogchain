@@ -15,9 +15,9 @@ import moment from 'moment';
 import axios from 'axios';
 import { getUser } from '../utility';
 import { API_URLS, createPost } from '../../api';
-import {Dispatch} from "redux";
+import { Dispatch } from "redux";
 import Web3 from 'web3';
-import {Web3Context} from "../reducers/bc";
+import { Web3Context } from "../reducers/bc";
 
 // TODO where should we define types like these?
 export type PostData = {title: string, content: string}

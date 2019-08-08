@@ -2,23 +2,25 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { fetchUpvotesForPost, fetchDownvotesForPost } from '../store/actions/posts';
+import { Dispatch } from "redux";
+import { State } from "../store/reducers";
 
 interface OwnProps {
     postId: number,
     submitVote: (post: {postId: number, isUpvote: boolean}) => void,
 }
 
-interface StateProps {
+interface StateToProps {
     postUpvotes: any,
     postDownvotes: any
 }
 
-interface DispatchProps {
+interface DispatchToProps {
     fetchUpvotesForPost: (postId: number) => void,
     fetchDownvotesForPost: (postId: number) => void,
 }
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = OwnProps & StateToProps & DispatchToProps;
 
 enum VoteType {
     Upvote = 'postUpvotes',
@@ -65,17 +67,16 @@ class PostVotesComponents extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state: any): StateProps => {
+const mapStateToProps = (state: State): StateToProps => {
     return {
         postUpvotes: state.posts.postUpvotes,
         postDownvotes: state.posts.postDownvotes,
     }
 };
 
-const mapDispatchToProps = (): DispatchProps => ({
-    fetchUpvotesForPost,
-    fetchDownvotesForPost,
-
+const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => ({
+    fetchUpvotesForPost: (postId: number) => fetchUpvotesForPost(postId)(dispatch),
+    fetchDownvotesForPost: (postId: number) => fetchDownvotesForPost(postId)(dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostVotesComponents);

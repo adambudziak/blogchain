@@ -1,11 +1,11 @@
-import React, {FormEvent} from 'react';
+import React from 'react';
 import { Form, Spin, Icon, Input, Button } from 'antd';
 import { connect } from 'react-redux';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
 import * as actions from '../store/actions/auth';
-import {Dispatch} from "redux";
-import {FormComponentProps} from "antd/lib/form";
-import {State} from "../store/reducers";
+import { Dispatch } from "redux";
+import { FormComponentProps } from "antd/lib/form";
+import { State } from "../store/reducers";
 
 const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
@@ -13,15 +13,15 @@ interface OwnProps {
     onAuth: (username: string, password: string) => void,
 }
 
-interface StateProps {
+interface StateToProps {
   loading: boolean,
   error: Error,
 }
 
-type Props = RouteComponentProps & OwnProps & StateProps & FormComponentProps;
+type Props = RouteComponentProps & OwnProps & StateToProps & FormComponentProps;
 
 class NormalLoginForm extends React.Component<Props> {
-  handleSubmit = (e: FormEvent) => {
+  handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {

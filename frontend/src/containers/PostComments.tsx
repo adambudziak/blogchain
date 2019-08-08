@@ -2,18 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { fetchCommentsForPost } from '../store/actions/posts';
-import {CommentVoteData, submitCommentVote} from '../store/actions/votes';
+import { CommentVoteData, submitCommentVote } from '../store/actions/votes';
 import CommentVotes from '../components/CommentVotes';
-import {Dispatch} from "redux";
-import {ApiComment} from "../store/actions/comments";
-import {Web3Context} from "../store/reducers/bc";
+import { Dispatch } from "redux";
+import { ApiComment } from "../store/actions/comments";
+import { Web3Context } from "../store/reducers/bc";
+import { State } from "../store/reducers";
 
-interface StateProps {
-    web3Context: Web3Context,
+interface StateToProps {
+    web3Context: Web3Context | null,
     postComments: {[postId: number]: ApiComment[]},
 }
 
-interface DispatchProps {
+interface DispatchToProps {
     fetchCommentsForPost: (postId: number) => void,
     submitCommentVote: (web3Context: any, vote: any, commentHash: string) => void,
 }
@@ -22,7 +23,7 @@ interface OwnProps {
     postId: number,
 }
 
-type Props = StateProps & DispatchProps & OwnProps;
+type Props = StateToProps & DispatchToProps & OwnProps;
 
 class PostCommentsComponent extends React.Component<Props> {
 
@@ -78,14 +79,14 @@ class PostCommentsComponent extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state: any): StateProps => {
+const mapStateToProps = (state: State): StateToProps => {
     return {
         web3Context: state.bc.web3Context,
         postComments: state.posts.postComments,
     }
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => ({
     fetchCommentsForPost: (postId) => fetchCommentsForPost(postId)(dispatch),
     submitCommentVote: (web3Context, vote, commentHash) => submitCommentVote(web3Context, vote, commentHash)(dispatch),
 });
