@@ -5,8 +5,7 @@ import BaseRouter from './routes';
 import 'antd/dist/antd.css';
 import LayoutWrapper from './containers/Layout';
 
-import * as actions from './store/actions/auth';
-import { Dispatch } from "redux";
+import { authCheckState } from "./store/actions/auth";
 import { State } from "./store/reducers";
 
 interface StateToProps {
@@ -14,7 +13,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  onTryAutoSignup: () => void,
+  authCheckState: () => void,
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -22,7 +21,7 @@ type Props = StateToProps & DispatchToProps;
 class App extends React.Component<Props> {
 
   componentDidMount() {
-    this.props.onTryAutoSignup();
+    this.props.authCheckState();
   }
 
   render() {
@@ -38,16 +37,12 @@ class App extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: State): StateToProps => {
-  return {
+const mapStateToProps = (state: State): StateToProps => ({
     isAuthenticated: state.auth.token !== null
-  }
-};
+});
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => {
-  return {
-    onTryAutoSignup: () => actions.authCheckState(dispatch)
-  }
+const mapDispatchToProps = {
+  authCheckState
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

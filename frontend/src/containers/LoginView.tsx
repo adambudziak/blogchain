@@ -2,15 +2,14 @@ import React from 'react';
 import { Form, Spin, Icon, Input, Button } from 'antd';
 import { connect } from 'react-redux';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
-import * as actions from '../store/actions/auth';
-import { Dispatch } from "redux";
+import { authLogin} from "../store/actions/auth";
 import { FormComponentProps } from "antd/lib/form";
 import { State } from "../store/reducers";
 
 const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
-interface OwnProps {
-    onAuth: (username: string, password: string) => void,
+interface DispatchToProps {
+    authLogin: (username: string, password: string) => void,
 }
 
 interface StateToProps {
@@ -18,14 +17,14 @@ interface StateToProps {
   error: Error,
 }
 
-type Props = RouteComponentProps & OwnProps & StateToProps & FormComponentProps;
+type Props = RouteComponentProps & DispatchToProps & StateToProps & FormComponentProps;
 
 class NormalLoginForm extends React.Component<Props> {
   handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.props.onAuth(values.username, values.password);
+        this.props.authLogin(values.username, values.password);
       }
     });
     this.props.history.push('/');
@@ -91,14 +90,10 @@ class NormalLoginForm extends React.Component<Props> {
 
 const WrappedNormalLoginForm = Form.create({ name: 'normal_login' })(NormalLoginForm);
 
-const mapStateToProps = (state: State) => {
-  return state.auth;
-};
+const mapStateToProps = (state: State) => state.auth;
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    onAuth: (username: string, password: string) => actions.authLogin(username, password)(dispatch)
-  }
+const mapDispatchToProps: DispatchToProps = {
+  authLogin,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(WrappedNormalLoginForm);

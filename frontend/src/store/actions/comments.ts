@@ -1,21 +1,15 @@
 import {
     FETCH_COMMENTS,
     SUBMIT_COMMENT_START,
-    SUBMIT_COMMENT_SERVER_SUCCESS,
-    SUBMIT_COMMENT_SERVER_FAIL,
-    SUBMIT_COMMENT_BC_SUCCESS,
-    SUBMIT_COMMENT_BC_FAIL,
     FETCH_UPVOTES_FOR_COMMENT,
     FETCH_DOWNVOTES_FOR_COMMENT,
 } from './types';
 
-import moment from 'moment';
 import axios from 'axios';
-import { API_URLS, createComment } from '../../api';
-import { getUser } from '../utility';
-import { Dispatch } from "redux";
-import Web3 from 'web3';
-import { Web3Context } from "../reducers/bc";
+
+import { API_URLS } from '../../api';
+import {Dispatch} from "redux";
+import {Web3Context} from "../reducers/bc";
 
 export type CommentData = {postId: number, content: string}
 export type ApiComment = {
@@ -36,65 +30,10 @@ export const fetchComments = (dispatch: Dispatch) => {
     }));
 };
 
-const submitCommentStart = () => {
-    return {
-        type: SUBMIT_COMMENT_START,
-    }
-};
-
-const submitCommentServerFail = (error: Error) => {
-    return {
-        type: SUBMIT_COMMENT_SERVER_FAIL,
-        error,
-    }
-};
-
-const submitCommentServerSuccess = () => {
-    return {
-        type: SUBMIT_COMMENT_SERVER_SUCCESS,
-    }
-};
-
-const submitCommentBcSuccess = () => {
-    return {
-        type: SUBMIT_COMMENT_BC_SUCCESS,
-    }
-};
-
-const submitCommentBcFail = (error: Error) => {
-    return {
-        type: SUBMIT_COMMENT_BC_FAIL,
-        error
-    }
-};
-
-export const submitComment = (web3Context: Web3Context, comment: CommentData, postHash: string) => (dispatch: Dispatch) => {
-    dispatch(submitCommentStart());
-    const now = moment().format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
-    const author = getUser();
-    const hash = hashComment(web3Context.web3, comment, author, now);
-    const postUrl = API_URLS.POSTS + comment.postId + '/';
-    createComment({
-        content: comment.content,
-        datetime: now,
-        hash,
-        post: postUrl,
-    })
-    .then(_response => {
-        dispatch(submitCommentServerSuccess());
-        web3Context.commentsContract.methods.addComment(hash, postHash)
-        .send({
-            from: web3Context.account,
-            value: web3Context.web3.utils.toWei('0.001', 'ether')
-        })
-        .on('confirmation' , () => dispatch(submitCommentBcSuccess()))
-        .on('error', (error: Error) => dispatch(submitCommentBcFail(error)));
-    })
-    .catch(error => {
-        console.error(error);
-        dispatch(submitCommentServerFail(error));
-    })
-};
+export const submitComment = (web3Context: Web3Context, comment: CommentData, postHash: string) => ({
+    type: SUBMIT_COMMENT_START,
+    payload: { web3Context, comment, postHash }
+});
 
 const fetchCommentDetails = (commentId: number, apiUrl: string, type: string, dispatch: Dispatch) => {
     axios.get(apiUrl.replace('<pk>', String(commentId)))
@@ -127,8 +66,3 @@ export const fetchDownvotesForComment = (commentId: number) => (dispatch: Dispat
         dispatch,
     );
 };
-
-function hashComment(web3: Web3, comment: CommentData, author: string, now: string) {
-    const digest = author + now + comment.content;
-    return web3.utils.keccak256(digest);
-}

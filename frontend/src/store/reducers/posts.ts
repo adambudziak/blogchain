@@ -1,5 +1,4 @@
 import {
-    FETCH_POSTS,
     STORE_POST_START,
     STORE_POST_SERVER_SUCCESS,
     STORE_POST_SERVER_FAIL,
@@ -8,7 +7,7 @@ import {
     FETCH_COMMENTS_FOR_POST,
     FETCH_VOTES_FOR_POST,
     FETCH_UPVOTES_FOR_POST,
-    FETCH_DOWNVOTES_FOR_POST,
+    FETCH_DOWNVOTES_FOR_POST, FETCH_POSTS_SUCCESS, FETCH_POSTS_ERROR,
 } from '../actions/types';
 import { ApiPost } from "../actions/posts";
 import { AnyAction } from "redux";
@@ -22,6 +21,7 @@ export interface PostsState {
     postUpvotes: any,
     postDownvotes: any,
     postVotes: any,
+    fetchError: Error | null,
 }
 
 const initialState: PostsState = {
@@ -32,6 +32,7 @@ const initialState: PostsState = {
     postUpvotes: {},
     postDownvotes: {},
     postVotes: {},
+    fetchError: null,
 };
 
 const reducer = (state=initialState, action: AnyAction): PostsState => {
@@ -91,10 +92,16 @@ const reducer = (state=initialState, action: AnyAction): PostsState => {
                 ...state,
                 postDownvotes,
             };
-        case FETCH_POSTS:
+        case FETCH_POSTS_SUCCESS:
             return {
                 ...state,
-                items: action.payload
+                items: action.payload,
+                fetchError: null,
+            };
+        case FETCH_POSTS_ERROR:
+            return {
+                ...state,
+                fetchError: action.error,
             };
         default:
             return state;

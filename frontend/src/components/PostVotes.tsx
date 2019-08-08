@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { fetchUpvotesForPost, fetchDownvotesForPost } from '../store/actions/posts';
-import { Dispatch } from "redux";
 import { State } from "../store/reducers";
+import {fetchPostDownvotes, fetchPostUpvotes} from "../store/actions/posts";
 
 interface OwnProps {
     postId: number,
@@ -16,8 +15,8 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-    fetchUpvotesForPost: (postId: number) => void,
-    fetchDownvotesForPost: (postId: number) => void,
+    fetchPostUpvotes: (postId: number) => void,
+    fetchPostDownvotes: (postId: number) => void,
 }
 
 type Props = OwnProps & StateToProps & DispatchToProps;
@@ -30,11 +29,11 @@ enum VoteType {
 class PostVotesComponents extends React.Component<Props> {
 
     componentWillMount() {
-        this.props.fetchUpvotesForPost(this.props.postId);
-        this.props.fetchDownvotesForPost(this.props.postId);
+        this.props.fetchPostUpvotes(this.props.postId);
+        this.props.fetchPostDownvotes(this.props.postId);
         setInterval(_ => {
-            this.props.fetchUpvotesForPost(this.props.postId);
-            this.props.fetchDownvotesForPost(this.props.postId);
+            this.props.fetchPostUpvotes(this.props.postId);
+            this.props.fetchPostDownvotes(this.props.postId);
         }, 5000);
     }
 
@@ -74,9 +73,9 @@ const mapStateToProps = (state: State): StateToProps => {
     }
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => ({
-    fetchUpvotesForPost: (postId: number) => fetchUpvotesForPost(postId)(dispatch),
-    fetchDownvotesForPost: (postId: number) => fetchDownvotesForPost(postId)(dispatch),
-});
+const mapDispatchToProps = {
+    fetchPostUpvotes,
+    fetchPostDownvotes,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostVotesComponents);

@@ -1,5 +1,5 @@
-import { INIT_WEB3 } from '../actions/types';
-import { AnyAction } from "redux";
+import { INIT_WEB3_SUCCESS } from '../actions/types';
+import {AnyAction} from "redux";
 import Web3 from 'web3';
 import Contract from "web3/eth/contract";
 
@@ -22,9 +22,9 @@ const initialState: BcState = {
     web3Context: null
 };
 
-const reducer = (state=initialState, action: AnyAction) => {
+const reducer = (state=initialState, action: AnyAction): BcState => {
     switch (action.type) {
-        case INIT_WEB3:
+        case INIT_WEB3_SUCCESS:
             return {
                 ...state,
                 ...action,
