@@ -4,14 +4,14 @@ import CreateCommentForm from '../components/CommentForm';
 import PostComments from '../containers/PostComments';
 import PostVotes from '../components/PostVotes';
 
-import { connect } from 'react-redux';
-import { ApiPost, fetchPosts, PostData, storePost } from '../store/actions/posts';
-import { CommentData, submitComment } from '../store/actions/comments';
-import { PostVoteData, submitPostVote } from '../store/actions/votes';
+
+import {connect} from 'react-redux';
+import {ApiPost, fetchPosts, PostData, submitPost} from '../store/actions/posts';
+import {CommentData, submitComment} from '../store/actions/comments';
+import {PostVoteData, submitPostVote} from '../store/actions/votes';
 import { initWeb3 } from '../store/actions/bc';
-import { Dispatch } from "redux";
-import { Web3Context } from "../store/reducers/bc";
-import { State } from "../store/reducers";
+import {Web3Context} from "../store/reducers/bc";
+import {State} from "../store/reducers";
 
 interface StateToProps {
     web3Context: Web3Context | null,
@@ -23,7 +23,7 @@ interface StateToProps {
 interface DispatchToProps {
     initWeb3: () => void,
     fetchPosts: () => void,
-    storePost: (web3Context: Web3Context, post: PostData) => void,
+    submitPost: (web3Context: Web3Context, post: PostData) => void,
     submitComment: (web3Context: Web3Context, comment: any, postHash: string) => void,
     submitPostVote: (web3Context: Web3Context, vote: any, postHash: string) => void,
 }
@@ -38,11 +38,11 @@ class Posts extends React.Component<Props> {
         setInterval(this.props.fetchPosts, 5000);
     }
 
-    storePost = (post: PostData) => {
+    submitPost = (post: PostData) => {
         if (this.props.web3Context === null) {  // TODO find a better way
             return;
         }
-        this.props.storePost(this.props.web3Context, post);
+        this.props.submitPost(this.props.web3Context, post);
     };
 
     submitComment = (comment: CommentData) => {
@@ -78,7 +78,8 @@ class Posts extends React.Component<Props> {
                 <h2>Hello, {this.props.web3Context.account}</h2>
                 Accounts registered: {this.props.web3Context.accounts.length}
                 {/* TODO for some reason TSLint doesnt see that CreatePostForm uses onSubmit (TS2322)*/}
-                <CreatePostForm onSubmit={this.storePost} />
+                //@ts-ignore
+                <CreatePostForm onSubmit={this.submitPost} />
                 {this.props.submitPost.error ?
                     <div>Error: {String(this.props.submitPost.error)}</div>
                     : <div></div>
@@ -96,6 +97,7 @@ class Posts extends React.Component<Props> {
                             <p>{p.content}</p>
                             <PostComments postId={p.id} />
                             {/* TODO here the same as for CreatePostForm */}
+                            //@ts-ignore
                             <CreateCommentForm postId={p.id} onSubmit={this.submitComment} />
                         </div>
                     );
@@ -115,13 +117,12 @@ const mapStateToProps = (state: State): StateToProps => ({
     comments: state.comments.items,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => ({
-    fetchPosts: () => fetchPosts(dispatch),  // TODO how to make all these better?
-    initWeb3: () => initWeb3(dispatch),
-    storePost: (web3Context, post) => storePost(web3Context, post)(dispatch),
-    submitComment: (web3Context, comment, postHash) => submitComment(web3Context, comment, postHash)(dispatch),
-    submitPostVote: (web3Context, vote, postHash) => submitPostVote(web3Context, vote, postHash)(dispatch),
-});
-
+const mapDispatchToProps: DispatchToProps = {
+    fetchPosts,
+    initWeb3,
+    submitPost,
+    submitComment,
+    submitPostVote,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Posts);

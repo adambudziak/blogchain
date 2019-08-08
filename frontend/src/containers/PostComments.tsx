@@ -1,13 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { fetchCommentsForPost } from '../store/actions/posts';
-import { CommentVoteData, submitCommentVote } from '../store/actions/votes';
+import {fetchPostComments} from '../store/actions/posts';
+import {CommentVoteData, submitCommentVote} from '../store/actions/votes';
 import CommentVotes from '../components/CommentVotes';
-import { Dispatch } from "redux";
-import { ApiComment } from "../store/actions/comments";
-import { Web3Context } from "../store/reducers/bc";
-import { State } from "../store/reducers";
+import {ApiComment} from "../store/actions/comments";
+import {Web3Context} from "../store/reducers/bc";
+import {State} from "../store/reducers";
 
 interface StateToProps {
     web3Context: Web3Context | null,
@@ -15,7 +14,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-    fetchCommentsForPost: (postId: number) => void,
+    fetchPostComments: (postId: number) => void,
     submitCommentVote: (web3Context: any, vote: any, commentHash: string) => void,
 }
 
@@ -28,9 +27,9 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 class PostCommentsComponent extends React.Component<Props> {
 
     componentWillMount() {
-        this.props.fetchCommentsForPost(this.props.postId);
+        this.props.fetchPostComments(this.props.postId);
         setInterval(_ => {
-            this.props.fetchCommentsForPost(this.props.postId);
+            this.props.fetchPostComments(this.props.postId);
         }, 5000);
     }
 
@@ -86,9 +85,9 @@ const mapStateToProps = (state: State): StateToProps => {
     }
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => ({
-    fetchCommentsForPost: (postId) => fetchCommentsForPost(postId)(dispatch),
-    submitCommentVote: (web3Context, vote, commentHash) => submitCommentVote(web3Context, vote, commentHash)(dispatch),
-});
+const mapDispatchToProps: DispatchToProps = {
+    fetchPostComments,
+    submitCommentVote,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostCommentsComponent);

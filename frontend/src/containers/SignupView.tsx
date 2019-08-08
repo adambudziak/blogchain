@@ -2,10 +2,9 @@ import React from 'react';
 
 import { Form, Input, Icon, Button } from 'antd';
 import { RouteComponentProps, NavLink } from 'react-router-dom';
-import * as actions from '../store/actions/auth';
+import { authSignup} from "../store/actions/auth";
 import { connect } from 'react-redux';
 import { FormComponentProps } from "antd/lib/form";
-import { Dispatch } from "redux";
 import { State } from "../store/reducers";
 
 interface StateToProps {
@@ -14,7 +13,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  onAuth: (username: string, email: string, password1: string, password2: string) => void,
+  authSignup: (username: string, email: string, password1: string, password2: string) => void,
 }
 
 type Props = RouteComponentProps & StateToProps & DispatchToProps & FormComponentProps;
@@ -28,7 +27,7 @@ class RegistrationForm extends React.Component<Props> {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        this.props.onAuth(
+        this.props.authSignup(
           values.username,
           values.email,
           values.password,
@@ -126,12 +125,8 @@ const mapStateToProps = (state: State): StateToProps => {
   }
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => {
-  return {
-    onAuth: (username, email, password1, password2) =>
-        actions.authSignup(username, email, password1, password2)(dispatch)
-  }
+const mapDispatchToProps: DispatchToProps = {
+  authSignup
 };
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(WrappedRegistrationForm);

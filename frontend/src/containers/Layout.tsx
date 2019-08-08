@@ -58,4 +58,5 @@ const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => {
 };
 
 // TODO this also seems broken (TS2345) "Types of property propTypes are incompatible"
+// @ts-ignore
 export default withRouter(connect(null, mapDispatchToProps)(LayoutWrapper));
