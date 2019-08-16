@@ -2,8 +2,6 @@ import {
     FETCH_POSTS,
     STORE_POST_START,
     FETCH_COMMENTS_FOR_POST_START,
-    FETCH_UPVOTES_FOR_POST_START,
-    FETCH_DOWNVOTES_FOR_POST_START,
 } from './types';
 
 import { Web3Context } from "../reducers/bc";
@@ -20,6 +18,8 @@ export type ApiPost = {
     tags: string[],
     creation_datetime: string,
     data_hash: string,
+    upvotes: number,
+    downvotes: number,
 }
 
 export const fetchPosts = () => ({
@@ -28,16 +28,6 @@ export const fetchPosts = () => ({
 
 export const fetchPostComments = (postId: number) => ({
     type: FETCH_COMMENTS_FOR_POST_START,
-    payload: { postId },
-});
-
-export const fetchPostUpvotes = (postId: number) => ({
-    type: FETCH_UPVOTES_FOR_POST_START,
-    payload: { postId },
-});
-
-export const fetchPostDownvotes = (postId: number) => ({
-    type: FETCH_DOWNVOTES_FOR_POST_START,
     payload: { postId },
 });
 

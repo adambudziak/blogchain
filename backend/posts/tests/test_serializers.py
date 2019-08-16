@@ -43,7 +43,9 @@ class TestCommentSerializer(TestCase):
                             ('id', 'content', 'data_hash', 'verified')),
             'post': '/api/posts/1/',
             'url': '/api/comments/1/',
-            'creation_datetime': expected_date
+            'creation_datetime': expected_date,
+            'upvotes': 0,
+            'downvotes': 0,
         }
         self.assertEqual(serialized, expected_comment)
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {fetchPostComments} from '../store/actions/posts';
-import {CommentVoteData, submitCommentVote} from '../store/actions/votes';
+import { fetchPostComments } from '../store/actions/posts';
+import { CommentVoteData, submitCommentVote } from '../store/actions/votes';
 import CommentVotes from '../components/CommentVotes';
-import {ApiComment} from "../store/actions/comments";
-import {Web3Context} from "../store/reducers/bc";
-import {State} from "../store/reducers";
+import { ApiComment } from "../store/actions/comments";
+import { Web3Context } from "../store/reducers/bc";
+import { State } from "../store/reducers";
 
 interface StateToProps {
     web3Context: Web3Context | null,
@@ -64,7 +64,7 @@ class PostCommentsComponent extends React.Component<Props> {
                 {comments.map((c, i) => {
                 return (
                     <div key={i}>
-                        <CommentVotes commentId={c.id} submitVote={this.submitVote}/>
+                        <CommentVotes comment={c} submitVote={this.submitVote}/>
                         <p>{c.content}</p>
                         <p style={{fontStyle: "italic"}}>~ by {
                             c.author !== undefined ? c.author : 'Anonymous'

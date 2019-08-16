@@ -5,19 +5,18 @@ import PostComments from '../containers/PostComments';
 import PostVotes from '../components/PostVotes';
 
 
-import {connect} from 'react-redux';
-import {ApiPost, fetchPosts, PostData, submitPost} from '../store/actions/posts';
-import {CommentData, submitComment} from '../store/actions/comments';
-import {PostVoteData, submitPostVote} from '../store/actions/votes';
+import { connect } from 'react-redux';
+import { ApiPost, fetchPosts, PostData, submitPost } from '../store/actions/posts';
+import { CommentData, submitComment } from '../store/actions/comments';
+import { PostVoteData, submitPostVote } from '../store/actions/votes';
 import { initWeb3 } from '../store/actions/bc';
-import {Web3Context} from "../store/reducers/bc";
-import {State} from "../store/reducers";
+import { Web3Context } from "../store/reducers/bc";
+import { State } from "../store/reducers";
 
 interface StateToProps {
     web3Context: Web3Context | null,
     posts: ApiPost[],
     submitPost: {error: Error | null, loading: boolean},
-    comments: any[],
 }
 
 interface DispatchToProps {
@@ -92,7 +91,7 @@ class Posts extends React.Component<Props> {
                                 p.verified
                                     ? <span style={{color: "green"}}>Yes</span>
                                     : <span style={{color: "red"}}>No</span>
-                            }</span><span><PostVotes postId={p.id} submitVote={this.submitPostVote} /></span>
+                            }</span><span><PostVotes post={p} submitVote={this.submitPostVote} /></span>
                             </h3>
                             <p>{p.content}</p>
                             <PostComments postId={p.id} />
@@ -114,7 +113,6 @@ const mapStateToProps = (state: State): StateToProps => ({
         error: state.posts.submitError,
         loading: state.posts.submitLoading,
     },
-    comments: state.comments.items,
 });
 
 const mapDispatchToProps: DispatchToProps = {
