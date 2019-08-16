@@ -1,9 +1,9 @@
 import { takeLatest, takeEvery, call, put } from 'redux-saga/effects';
 import {
-    FETCH_COMMENTS_FOR_POST, FETCH_COMMENTS_FOR_POST_START, FETCH_DOWNVOTES_FOR_POST, FETCH_DOWNVOTES_FOR_POST_START,
+    FETCH_COMMENTS_FOR_POST, FETCH_COMMENTS_FOR_POST_START,
     FETCH_POSTS,
     FETCH_POSTS_ERROR,
-    FETCH_POSTS_SUCCESS, FETCH_UPVOTES_FOR_POST, FETCH_UPVOTES_FOR_POST_START,
+    FETCH_POSTS_SUCCESS,
     STORE_POST_BC_FAIL,
     STORE_POST_BC_SUCCESS,
     STORE_POST_SERVER_FAIL,
@@ -15,7 +15,7 @@ import axios from 'axios';
 import { Web3Context } from "../reducers/bc";
 import moment from "moment";
 import { getUser } from "../utility";
-import {fetchPostComments, fetchPostDownvotes, fetchPostUpvotes, PostData, submitPost} from "../actions/posts";
+import { fetchPostComments, PostData, submitPost } from "../actions/posts";
 import Web3 from "web3";
 
 export function* watchFetchPosts() {
@@ -77,28 +77,6 @@ export function* watchFetchPostComments() {
             const response = yield call(axios.get, API_URLS.POST_COMMENTS.replace('<pk>', String(payload.postId)));
             yield put({ type: FETCH_COMMENTS_FOR_POST, payload: response.data, postId: payload.postId })
         } catch (error) {
-            console.error(error);
-        }
-    });
-}
-
-export function* watchFetchPostUpvotes() {
-    yield takeEvery(FETCH_UPVOTES_FOR_POST_START, function*({ payload }: ReturnType<typeof fetchPostUpvotes>) {
-        try {
-            const response = yield call(axios.get, API_URLS.POST_UPVOTES.replace('<pk>', String(payload.postId)));
-            yield put({ type: FETCH_UPVOTES_FOR_POST, payload: response.data, postId: payload.postId })
-        }  catch (error) {
-            console.error(error);
-        }
-    });
-}
-
-export function* watchFetchPostDownvotes() {
-    yield takeEvery(FETCH_DOWNVOTES_FOR_POST_START, function*({ payload }: ReturnType<typeof fetchPostDownvotes>) {
-        try {
-            const response = yield call(axios.get, API_URLS.POST_DOWNVOTES.replace('<pk>', String(payload.postId)));
-            yield put({ type: FETCH_DOWNVOTES_FOR_POST, payload: response.data, postId: payload.postId })
-        }  catch (error) {
             console.error(error);
         }
     });

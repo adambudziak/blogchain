@@ -7,10 +7,10 @@ import {
     SUBMIT_COMMENT_SERVER_SUCCESS,
     SUBMIT_COMMENT_START
 } from "../actions/types";
-import {CommentData, submitComment} from "../actions/comments";
-import {Web3Context} from "../reducers/bc";
-import {getUser} from "../utility";
-import {API_URLS, createComment} from "../../api";
+import { CommentData, submitComment } from "../actions/comments";
+import { Web3Context } from "../reducers/bc";
+import { getUser } from "../utility";
+import { API_URLS, createComment } from "../../api";
 
 
 const bcAddComment = (web3Context: Web3Context, hash: string, postHash: string) =>

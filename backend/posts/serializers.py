@@ -48,11 +48,13 @@ class HashValidatorMixin():
 
 class PostSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
+    upvotes = serializers.SerializerMethodField()
+    downvotes = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = ('url', 'id', 'creation_datetime', 'author', 'verified',
-                  'tags', 'title', 'content', 'data_hash',)
+                  'tags', 'title', 'content', 'data_hash', 'upvotes', 'downvotes')
         read_only_fields = ('verified',)
 
     @staticmethod
@@ -64,14 +66,23 @@ class PostSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializer)
     def validate(self, data):
         return super(PostSerializer, self).validate(data)
 
+    def get_upvotes(self, instance):
+        return instance.votes.filter(is_upvote=True).count()
+
+    def get_downvotes(self, instance):
+        return instance.votes.filter(is_upvote=False).count()
+
 
 class CommentSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
+    upvotes = serializers.SerializerMethodField()
+    downvotes = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
         read_only_fields = ('verified',)
-        fields = ('url', 'id', 'author', 'creation_datetime', 'content', 'data_hash', 'post') + read_only_fields
+        fields = ('url', 'id', 'author', 'creation_datetime', 'content', 'data_hash', 'post',
+                  'upvotes', 'downvotes') + read_only_fields
 
     @staticmethod
     def compute_hash(author, datetime, data):
@@ -81,6 +92,12 @@ class CommentSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializ
 
     def validate(self, data):
         return super(CommentSerializer, self).validate(data)
+
+    def get_upvotes(self, instance):
+        return instance.votes.filter(is_upvote=True).count()
+
+    def get_downvotes(self, instance):
+        return instance.votes.filter(is_upvote=False).count()
 
 
 class BaseVoteSerializer(HashValidatorMixin):
