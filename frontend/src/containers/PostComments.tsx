@@ -7,6 +7,7 @@ import CommentVotes from '../components/CommentVotes';
 import { ApiComment } from "../store/actions/comments";
 import { Web3Context } from "../store/reducers/bc";
 import { State } from "../store/reducers";
+import Timeout = NodeJS.Timeout;
 
 interface StateToProps {
     web3Context: Web3Context | null,
@@ -26,11 +27,19 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 
 class PostCommentsComponent extends React.Component<Props> {
 
-    componentWillMount() {
+    intervalId: Timeout | null = null;
+
+    componentDidMount() {
         this.props.fetchPostComments(this.props.postId);
-        setInterval(_ => {
+        this.intervalId = setInterval(_ => {
             this.props.fetchPostComments(this.props.postId);
         }, 5000);
+    }
+
+    componentWillUnmount(): void {
+        if(this.intervalId !== null) {
+            clearInterval(this.intervalId);
+        }
     }
 
     getComments = () => {

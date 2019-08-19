@@ -12,6 +12,7 @@ import { PostVoteData, submitPostVote } from '../store/actions/votes';
 import { initWeb3 } from '../store/actions/bc';
 import { Web3Context } from "../store/reducers/bc";
 import { State } from "../store/reducers";
+import Timeout = NodeJS.Timeout;
 
 interface StateToProps {
     web3Context: Web3Context | null,
@@ -31,10 +32,18 @@ type Props = StateToProps & DispatchToProps;
 
 class Posts extends React.Component<Props> {
 
-    componentWillMount() {
+    intervalId: Timeout | null = null;
+
+    componentDidMount() {
         this.props.initWeb3();
         this.props.fetchPosts();
-        setInterval(this.props.fetchPosts, 5000);
+        this.intervalId = setInterval(this.props.fetchPosts, 5000);
+    }
+
+    componentWillUnmount(): void {
+        if(this.intervalId !== null) {
+            clearInterval(this.intervalId);
+        }
     }
 
     submitPost = (post: PostData) => {

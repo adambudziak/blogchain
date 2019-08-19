@@ -1,6 +1,5 @@
 import React from 'react';
 import { Form, Input, Button } from 'antd';
-import { connect } from 'react-redux';
 import { FormComponentProps } from "antd/lib/form";
 
 interface OwnProps {
@@ -48,4 +47,4 @@ class CreatePostForm extends React.Component<Props> {
 
 const WrappedPostForm = Form.create({ name: 'create_post' })(CreatePostForm);
 
-export default connect(null, null)(WrappedPostForm);
+export default WrappedPostForm;
