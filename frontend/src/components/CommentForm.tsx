@@ -1,7 +1,6 @@
 import React from 'react';
 import { Form, Input, Button } from 'antd';
 import { FormComponentProps } from 'antd/lib/form/Form';
-import { connect } from 'react-redux';
 import { CommentData } from "../store/actions/comments";
 
 interface OwnProps {
@@ -43,4 +42,4 @@ class CreateCommentForm extends React.Component<Props> {
 
 const WrappedCommentForm = Form.create({ name: 'create_comment' })(CreateCommentForm);
 
-export default connect(null, null)(WrappedCommentForm);
+export default WrappedCommentForm;
