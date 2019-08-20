@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import CreatePostForm from '../components/PostForm';
 import CreateCommentForm from '../components/CommentForm';
 import PostComments from '../containers/PostComments';
@@ -12,7 +12,7 @@ import { PostVoteData, submitPostVote } from '../store/actions/votes';
 import { initWeb3 } from '../store/actions/bc';
 import { Web3Context } from "../store/reducers/bc";
 import { State } from "../store/reducers";
-import Timeout = NodeJS.Timeout;
+import {withPolling} from "../polling";
 
 interface StateToProps {
     web3Context: Web3Context | null,
@@ -30,90 +30,65 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps;
 
-class Posts extends React.Component<Props> {
+const Posts = (props: Props) => {
+    useEffect(withPolling(props.fetchPosts), []);
 
-    intervalId: Timeout | null = null;
-
-    componentDidMount() {
-        this.props.initWeb3();
-        this.props.fetchPosts();
-        this.intervalId = setInterval(this.props.fetchPosts, 5000);
+    if (!props.web3Context) {
+        props.initWeb3();
+        return (<div>Connecting with blockchain...</div>)
     }
+    const web3Context = props.web3Context;
 
-    componentWillUnmount(): void {
-        if(this.intervalId !== null) {
-            clearInterval(this.intervalId);
-        }
-    }
-
-    submitPost = (post: PostData) => {
-        if (this.props.web3Context === null) {  // TODO find a better way
+    const submitComment = (comment: CommentData) => {
+        const post = props.posts.find(p => p.id === comment.postId);
+        if (!post) {
+            console.error('Comment.post is undefined?'); // TODO maybe an exception
             return;
         }
-        this.props.submitPost(this.props.web3Context, post);
+        props.submitComment(web3Context, comment, post.data_hash);
     };
 
-    submitComment = (comment: CommentData) => {
-        if (this.props.web3Context === null) {
-            return;
-        }
-        const post = this.props.posts.find(p => p.id === comment.postId);
-        if (post === undefined) {
-            console.error('Comment.post is undefined?');
-            return;
-        }
-        this.props.submitComment(this.props.web3Context, comment, post.data_hash);
-    };
-
-    submitPostVote = (vote: PostVoteData) => {
-        if (this.props.web3Context === null) {
-            return;
-        }
-        const post = this.props.posts.find(p => p.id === vote.postId);
-        if (post === undefined) {
+    const submitPostVote = (vote: PostVoteData) => {
+        const post = props.posts.find(p => p.id === vote.postId);
+        if (!post) {
             console.error('Vote.post is undefined?');
             return;
         }
-        this.props.submitPostVote(this.props.web3Context, vote, post.data_hash);
+        props.submitPostVote(web3Context, vote, post.data_hash);
     };
 
-    render() {
-        if (this.props.web3Context === null) {
-            return (<div>Connecting with blockchain...</div>);
-        }
-        return (
-            <div>
-                <h2>Hello, {this.props.web3Context.account}</h2>
-                Accounts registered: {this.props.web3Context.accounts.length}
-                {/* TODO for some reason TSLint doesnt see that CreatePostForm uses onSubmit (TS2322)*/}
-                //@ts-ignore
-                <CreatePostForm onSubmit={this.submitPost} />
-                {this.props.submitPost.error ?
-                    <div>Error: {String(this.props.submitPost.error)}</div>
-                    : <div></div>
-                }
-                {this.props.posts.map((p, i) => {
-                    return (
-                        <div key={i}>
-                            <hr/>
-                            <h3>{p.title} <span style={{fontStyle: "italic", fontWeight: "lighter"}}>verified? {
-                                p.verified
-                                    ? <span style={{color: "green"}}>Yes</span>
-                                    : <span style={{color: "red"}}>No</span>
-                            }</span><span><PostVotes post={p} submitVote={this.submitPostVote} /></span>
-                            </h3>
-                            <p>{p.content}</p>
-                            <PostComments postId={p.id} />
-                            {/* TODO here the same as for CreatePostForm */}
-                            //@ts-ignore
-                            <CreateCommentForm postId={p.id} onSubmit={this.submitComment} />
-                        </div>
-                    );
-                })}
-            </div>
-        )
-    }
-}
+    return (
+        <div>
+            <h2>Hello, {web3Context.account}</h2>
+            Accounts registered: {web3Context.accounts.length}
+            {/* TODO for some reason TSLint doesnt see that CreatePostForm uses onSubmit (TS2322)*/}
+            //@ts-ignore
+            <CreatePostForm onSubmit={(post) => props.submitPost(web3Context, post)} />
+            {props.submitPost.error ?
+                <div>Error: {String(props.submitPost.error)}</div>
+                : <div></div>
+            }
+            {props.posts.map((p, i) => {
+                return (
+                    <div key={i}>
+                        <hr/>
+                        <h3>{p.title} <span style={{fontStyle: "italic", fontWeight: "lighter"}}>verified? {
+                            p.verified
+                                ? <span style={{color: "green"}}>Yes</span>
+                                : <span style={{color: "red"}}>No</span>
+                        }</span><span><PostVotes post={p} submitVote={submitPostVote} /></span>
+                        </h3>
+                        <p>{p.content}</p>
+                        <PostComments postId={p.id} />
+                        {/* TODO here the same as for CreatePostForm */}
+                        //@ts-ignore
+                        <CreateCommentForm postId={p.id} onSubmit={submitComment} />
+                    </div>
+                );
+            })}
+        </div>
+    )
+};
 
 const mapStateToProps = (state: State): StateToProps => ({
     posts: state.posts.items,
