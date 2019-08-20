@@ -1,12 +1,13 @@
-import React, {useEffect} from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { connect } from 'react-redux';
-import BaseRouter from './routes';
 import 'antd/dist/antd.css';
-import LayoutWrapper from './containers/Layout';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-import { authCheckState } from "./store/actions/auth";
-import { State } from "./store/reducers";
+import BaseRouter from 'src/routes';
+
+import LayoutWrapper from 'containers/Layout';
+import { State } from "reducers/index";
+import { authCheckState } from "actions/auth";
 
 interface StateToProps {
   isAuthenticated: boolean,

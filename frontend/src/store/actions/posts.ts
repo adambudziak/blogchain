@@ -2,9 +2,9 @@ import {
     FETCH_POSTS,
     STORE_POST_START,
     FETCH_COMMENTS_FOR_POST_START,
-} from './types';
+} from 'actions/types';
 
-import { Web3Context } from "../reducers/bc";
+import { Web3Context } from "reducers/bc";
 
 // TODO where should we define types like these?
 export type PostData = {title: string, content: string}

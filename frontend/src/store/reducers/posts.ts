@@ -1,3 +1,7 @@
+import { AnyAction } from "redux";
+
+import { ApiComment } from "actions/comments";
+import { ApiPost } from "actions/posts";
 import {
     STORE_POST_START,
     STORE_POST_SERVER_SUCCESS,
@@ -7,10 +11,7 @@ import {
     FETCH_COMMENTS_FOR_POST,
     FETCH_POSTS_SUCCESS,
     FETCH_POSTS_ERROR,
-} from '../actions/types';
-import { ApiPost } from "../actions/posts";
-import { AnyAction } from "redux";
-import { ApiComment } from "../actions/comments";
+} from 'actions/types';
 
 export interface PostsState {
     items: ApiPost[],

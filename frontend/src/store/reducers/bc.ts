@@ -1,7 +1,8 @@
-import { INIT_WEB3_SUCCESS } from '../actions/types';
 import { AnyAction } from "redux";
 import Web3 from 'web3';
 import Contract from "web3/eth/contract";
+
+import { INIT_WEB3_SUCCESS } from 'actions/types';
 
 export interface Web3Context {
     web3: Web3,

@@ -1,5 +1,6 @@
 import React from 'react';
-import { ApiComment } from "../store/actions/comments";
+
+import { ApiComment } from "actions/comments";
 
 interface Props {
     comment: ApiComment,

@@ -1,11 +1,13 @@
 import { takeLatest, put, call } from 'redux-saga/effects';
-import { SUBMIT_COMMENT_VOTE, SUBMIT_POST_VOTE } from "../actions/types";
-import { submitCommentVote, submitPostVote, VoteData } from "../actions/votes";
-import { Web3Context } from "../reducers/bc";
-import { createCommentVote, createPostVote } from "../../api";
 import moment from "moment";
-import { getUser } from "../utility";
 import Web3 from "web3";
+
+import { createCommentVote, createPostVote } from "src/api";
+import { getUser } from "src/store/utility";
+
+import { SUBMIT_COMMENT_VOTE, SUBMIT_POST_VOTE } from "actions/types";
+import { submitCommentVote, submitPostVote, VoteData } from "actions/votes";
+import { Web3Context } from "reducers/bc";
 
 const bcAddVote = (web3Context: Web3Context, vote: VoteData, hash: string, targetHash: string) =>
     new Promise(resolve => {

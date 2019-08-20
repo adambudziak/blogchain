@@ -1,9 +1,9 @@
 import {
     SUBMIT_COMMENT_VOTE,
     SUBMIT_POST_VOTE,
-} from './types';
+} from 'actions/types';
 
-import { Web3Context } from "../reducers/bc";
+import { Web3Context } from "reducers/bc";
 
 export type CommentVoteData = {
     commentId: number,

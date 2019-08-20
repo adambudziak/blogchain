@@ -1,7 +1,8 @@
+import { AnyAction } from "redux";
+
 import {
     SUBMIT_VOTE,
-} from '../actions/types';
-import { AnyAction } from "redux";
+} from 'actions/types';
 
 const initialState = {
     submitLoading: false,

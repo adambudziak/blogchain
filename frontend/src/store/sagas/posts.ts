@@ -1,4 +1,12 @@
+import axios from 'axios';
+import moment from "moment";
 import { takeLatest, takeEvery, call, put } from 'redux-saga/effects';
+import Web3 from "web3";
+
+import { API_URLS, createPost } from "src/api";
+import { getUser } from "src/store/utility";
+
+import { fetchPostComments, PostData, submitPost } from "actions/posts";
 import {
     FETCH_COMMENTS_FOR_POST, FETCH_COMMENTS_FOR_POST_START,
     FETCH_POSTS,
@@ -9,14 +17,8 @@ import {
     STORE_POST_SERVER_FAIL,
     STORE_POST_SERVER_SUCCESS,
     STORE_POST_START,
-} from "../actions/types";
-import { API_URLS, createPost } from "../../api";
-import axios from 'axios';
-import { Web3Context } from "../reducers/bc";
-import moment from "moment";
-import { getUser } from "../utility";
-import { fetchPostComments, PostData, submitPost } from "../actions/posts";
-import Web3 from "web3";
+} from "actions/types";
+import { Web3Context } from "reducers/bc";
 
 export function* watchFetchPosts() {
     yield takeLatest(FETCH_POSTS, function* () {

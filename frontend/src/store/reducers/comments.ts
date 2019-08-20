@@ -4,7 +4,7 @@ import {
     SUBMIT_COMMENT_SERVER_FAIL,
     SUBMIT_COMMENT_SERVER_SUCCESS,
     SUBMIT_COMMENT_START,
-} from '../actions/types';
+} from 'actions/types';
 import { AnyAction } from "redux";
 
 export interface CommentsState {
