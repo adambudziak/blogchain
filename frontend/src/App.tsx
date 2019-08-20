@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { connect } from 'react-redux';
 import BaseRouter from './routes';
@@ -18,24 +18,19 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps;
 
-class App extends React.Component<Props> {
+const App = (props: Props) => {
+  useEffect(props.authCheckState, []);
 
-  componentDidMount() {
-    this.props.authCheckState();
-  }
-
-  render() {
-    return (
+  return (
       <div>
         <Router>
-          <LayoutWrapper {...this.props}>
+          <LayoutWrapper {...props}>
             <BaseRouter />
           </LayoutWrapper>
         </Router>
       </div>
-    );
-  }
-}
+  );
+};
 
 const mapStateToProps = (state: State): StateToProps => ({
     isAuthenticated: state.auth.token !== null
