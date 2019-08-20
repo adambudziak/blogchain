@@ -1,5 +1,6 @@
 import React from 'react';
-import { ApiPost } from "../store/actions/posts";
+
+import { ApiPost } from "actions/posts";
 
 interface Props {
     post: ApiPost,

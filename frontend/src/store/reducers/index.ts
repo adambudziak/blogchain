@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux';
-import postReducer, {PostsState} from './posts';
-import authReducer, {AuthState} from './auth';
-import commentReducer, {CommentsState} from './comments';
-import bcReducer, {BcState} from './bc';
-import votesReducer from './votes';
+
+import authReducer, {AuthState} from 'reducers/auth';
+import bcReducer, {BcState} from 'reducers/bc';
+import commentReducer, {CommentsState} from 'reducers/comments';
+import postReducer, {PostsState} from 'reducers/posts';
+import votesReducer from 'reducers/votes';
 
 export interface State {
     auth: AuthState,

@@ -1,18 +1,18 @@
-import React, {useEffect} from 'react';
-import CreatePostForm from '../components/PostForm';
-import CreateCommentForm from '../components/CommentForm';
-import PostComments from '../containers/PostComments';
-import PostVotes from '../components/PostVotes';
-
-
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { ApiPost, fetchPosts, PostData, submitPost } from '../store/actions/posts';
-import { CommentData, submitComment } from '../store/actions/comments';
-import { PostVoteData, submitPostVote } from '../store/actions/votes';
-import { initWeb3 } from '../store/actions/bc';
-import { Web3Context } from "../store/reducers/bc";
-import { State } from "../store/reducers";
-import {withPolling} from "../polling";
+
+import { withPolling } from "src/polling";
+
+import { ApiPost, fetchPosts, PostData, submitPost } from 'actions/posts';
+import { CommentData, submitComment } from 'actions/comments';
+import { PostVoteData, submitPostVote } from 'actions/votes';
+import { initWeb3 } from 'actions/bc';
+import CreatePostForm from 'components/PostForm';
+import CreateCommentForm from 'components/CommentForm';
+import PostVotes from 'components/PostVotes';
+import PostComments from 'containers/PostComments';
+import { Web3Context } from "reducers/bc";
+import { State } from "reducers/index";
 
 interface StateToProps {
     web3Context: Web3Context | null,

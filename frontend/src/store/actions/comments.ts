@@ -1,8 +1,8 @@
 import {
     SUBMIT_COMMENT_START,
-} from './types';
+} from 'actions/types';
 
-import { Web3Context } from "../reducers/bc";
+import { Web3Context } from "reducers/bc";
 
 export type CommentData = {postId: number, content: string}
 export type ApiComment = {

@@ -1,6 +1,6 @@
-import React from 'react';
 import { Form, Input, Button } from 'antd';
 import { FormComponentProps } from "antd/lib/form";
+import React from 'react';
 
 interface OwnProps {
     onSubmit: (post: {title: string, content: string}) => void,

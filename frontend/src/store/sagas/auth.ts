@@ -2,7 +2,7 @@ import axios from 'axios';
 import moment from "moment";
 import { takeLatest, call, put } from 'redux-saga/effects';
 
-import {authLogin, authSignup} from "../actions/auth";
+import { authLogin, authSignup } from "actions/auth";
 import {
     AUTH_CHECK_STATE,
     AUTH_FAIL,
@@ -10,8 +10,8 @@ import {
     AUTH_START_LOGIN,
     AUTH_START_SIGNUP,
     AUTH_SUCCESS
-} from "../actions/types";
-import {delay} from "./index";
+} from "actions/types";
+import { delay } from "sagas/index";
 
 const expirationTime = moment.duration(14, 'days').asMilliseconds();
 
