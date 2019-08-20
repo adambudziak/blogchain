@@ -1,16 +1,19 @@
 import Web3 from "web3";
 import moment from 'moment';
 import { takeLatest, call, put } from 'redux-saga/effects';
+
+import { getUser } from "src/store/utility";
+import { API_URLS, createComment } from "src/api";
+
+import { CommentData, submitComment } from "actions/comments";
 import {
-    STORE_POST_SERVER_FAIL, SUBMIT_COMMENT_BC_FAIL,
+    STORE_POST_SERVER_FAIL,
+    SUBMIT_COMMENT_BC_FAIL,
     SUBMIT_COMMENT_BC_SUCCESS,
     SUBMIT_COMMENT_SERVER_SUCCESS,
     SUBMIT_COMMENT_START
-} from "../actions/types";
-import { CommentData, submitComment } from "../actions/comments";
-import { Web3Context } from "../reducers/bc";
-import { getUser } from "../utility";
-import { API_URLS, createComment } from "../../api";
+} from "actions/types";
+import { Web3Context } from "reducers/bc";
 
 
 const bcAddComment = (web3Context: Web3Context, hash: string, postHash: string) =>

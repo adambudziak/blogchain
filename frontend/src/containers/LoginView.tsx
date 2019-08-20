@@ -1,10 +1,11 @@
-import React from 'react';
 import { Form, Spin, Icon, Input, Button } from 'antd';
+import { FormComponentProps } from "antd/lib/form";
+import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
-import { authLogin} from "../store/actions/auth";
-import { FormComponentProps } from "antd/lib/form";
-import { State } from "../store/reducers";
+
+import { authLogin } from "actions/auth";
+import { State } from "reducers/index";
 
 const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 

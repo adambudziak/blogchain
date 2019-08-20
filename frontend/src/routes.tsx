@@ -1,9 +1,9 @@
 import React from "react";
 import { Route } from "react-router-dom";
 
-import Posts from "./containers/PostsView";
-import Login from "./containers/LoginView";
-import Signup from "./containers/SignupView";
+import Login from "containers/LoginView";
+import Posts from "containers/PostsView";
+import Signup from "containers/SignupView";
 
 const BaseRouter = () => (
   <div>

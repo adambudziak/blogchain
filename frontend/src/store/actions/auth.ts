@@ -3,7 +3,7 @@ import {
     AUTH_LOGOUT,
     AUTH_START_LOGIN,
     AUTH_START_SIGNUP
-} from "./types";
+} from "actions/types";
 
 export const logout = () => ({
     type: AUTH_LOGOUT,
@@ -26,3 +26,4 @@ export const authSignup = (username: string, email: string, password1: string, p
 export const authCheckState = () => ({
     type: AUTH_CHECK_STATE,
 });
+

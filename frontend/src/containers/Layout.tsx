@@ -1,9 +1,10 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
-import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as actions from '../store/actions/auth';
+import { Link, withRouter } from 'react-router-dom';
 import { Dispatch } from "redux";
+
+import * as actions from 'actions/auth';
 
 const { Header, Content, Footer } = Layout;
 

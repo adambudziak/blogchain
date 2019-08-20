@@ -1,7 +1,8 @@
+import axios from 'axios';
 import { put, takeLatest, call } from 'redux-saga/effects';
 import Web3 from 'web3';
-import axios from 'axios';
-import { INIT_WEB3_SUCCESS } from "../actions/types";
+
+import { INIT_WEB3_SUCCESS } from "actions/types";
 
 const contractNames = [
     'Posts',

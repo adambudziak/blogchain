@@ -1,11 +1,11 @@
-import React from 'react';
-
 import { Form, Input, Icon, Button } from 'antd';
-import { RouteComponentProps, NavLink } from 'react-router-dom';
-import { authSignup} from "../store/actions/auth";
-import { connect } from 'react-redux';
 import { FormComponentProps } from "antd/lib/form";
-import { State } from "../store/reducers";
+import React from 'react';
+import { connect } from 'react-redux';
+import { RouteComponentProps, NavLink } from 'react-router-dom';
+
+import { authSignup } from "actions/auth";
+import { State } from "reducers/index";
 
 interface StateToProps {
   loading: boolean,

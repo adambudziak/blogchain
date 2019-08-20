@@ -1,13 +1,14 @@
 import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
 
-import { fetchPostComments } from '../store/actions/posts';
-import { CommentVoteData, submitCommentVote } from '../store/actions/votes';
-import CommentVotes from '../components/CommentVotes';
-import { ApiComment } from "../store/actions/comments";
-import { Web3Context } from "../store/reducers/bc";
-import { State } from "../store/reducers";
-import {withPolling} from "../polling";
+import { withPolling } from "src/polling";
+
+import { ApiComment } from "actions/comments";
+import { fetchPostComments } from 'actions/posts';
+import { CommentVoteData, submitCommentVote } from 'actions/votes';
+import CommentVotes from 'components/CommentVotes';
+import { Web3Context } from "reducers/bc";
+import { State } from "reducers/index";
 
 interface StateToProps {
     web3Context: Web3Context | null,

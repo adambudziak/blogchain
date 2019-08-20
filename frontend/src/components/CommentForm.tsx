@@ -1,7 +1,9 @@
+import { Input } from "antd";
+import Form, { FormComponentProps } from "antd/lib/form";
+import Button from "antd/lib/button";
 import React from 'react';
-import { Form, Input, Button } from 'antd';
-import { FormComponentProps } from 'antd/lib/form/Form';
-import { CommentData } from "../store/actions/comments";
+
+import { CommentData } from "actions/comments";
 
 interface OwnProps {
   postId: number,
