@@ -7,6 +7,8 @@ from rest_framework.reverse import reverse
 
 from rest_framework import viewsets, mixins
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from posts.models import (
     Post,
     Comment,
@@ -39,6 +41,7 @@ class CreateListRetrieveViewSet(mixins.CreateModelMixin,
     To use it, override the class and set the `.queryset` and
     `.serializer_class` attributes.
     """
+    filter_backends = [DjangoFilterBackend]
 
     def perform_create(self, serializer):
         author = self.request.user
@@ -53,43 +56,25 @@ class CreateListRetrieveViewSet(mixins.CreateModelMixin,
 class PostViewSet(CreateListRetrieveViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-
-    @action(detail=True, methods=['GET'])
-    def comments(self, request, pk=None):
-        post = get_object_or_404(Post, pk=pk)
-        comments = post.comments.all()
-        serializer = CommentSerializer(comments, many=True, context={
-            'request': request
-        })
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['GET'])
-    def verified_comments(self, request, pk=None):
-        """
-        Returns a list of verified comments of the post.
-        """
-        post = get_object_or_404(Post, pk=pk)
-        comments = post.comments.filter(verified=True)
-        serializer = CommentSerializer(comments, many=True, context={
-            'request': request
-        })
-        return Response(serializer.data)
-
-    @action(detail=False, methods=['GET'])
-    def verified(self, request):
-        queryset = Post.objects.filter(verified=True)
-        serializer = self.serializer_class(queryset, many=True, context={
-            'request': request
-        })
-
-        return Response(serializer.data)
+    filterset_fields = ['verified', 'author']
 
 
 class CommentViewSet(CreateListRetrieveViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    filterset_fields = ['verified', 'author']
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+@api_view(['GET'])
+def post_comments_view(request, post_pk):
+    all_comments = Comment.objects.filter(post__pk=post_pk)
+    queryset = DjangoFilterBackend().filter_queryset(request, all_comments, CommentViewSet)
+    serializer = CommentViewSet.serializer_class(queryset, many=True, context={
+        'request': request
+    })
+    return Response(serializer.data)
