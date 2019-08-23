@@ -1,0 +1,23 @@
+version: '3'
+services:
+  backend:
+    build: backend
+    container_name: backend_integration
+    env_file:
+      - .envs/.local/.backend
+#    entrypoint: "./tests/start_integration.sh"
+    entrypoint: sleep 365d
+    expose:
+      - "8000"
+    links:
+      - db
+    volumes:
+      - ./backend:/app:ro
+
+  db:
+    image: postgres:12
+    container_name: db_integration
+    env_file:
+      - .envs/.local/.postgres
+    expose:
+      - "5432"
