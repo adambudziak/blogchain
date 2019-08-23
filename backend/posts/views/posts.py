@@ -71,7 +71,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 @api_view(['GET'])
-def post_comments_view(request, post_pk):
+def post_comments(request, post_pk):
     all_comments = Comment.objects.filter(post__pk=post_pk)
     queryset = DjangoFilterBackend().filter_queryset(request, all_comments, CommentViewSet)
     serializer = CommentViewSet.serializer_class(queryset, many=True, context={

@@ -24,7 +24,7 @@ def make_post_factory(title, content):
     """
     def inner(author=None, timestamp: datetime=None):
         timestamp = timestamp or datetime.now(pytz.UTC)
-        author_name = author or 'anonymous'
+        author_name = author.username or 'anonymous'
         post_hash = compute_post_hash(author_name, timestamp, title, content)
         return Post.objects.create(
             author=author,
@@ -47,7 +47,7 @@ def make_comment_factory(post, content):
     """
     def inner(author=None, timestamp: datetime=None):
         timestamp = timestamp or datetime.now(pytz.UTC)
-        author_name = author or 'anonymous'
+        author_name = author.username or 'anonymous'
         comment_hash = compute_comment_hash(author_name, timestamp, content)
         return Comment.objects.create(
             author=author,
