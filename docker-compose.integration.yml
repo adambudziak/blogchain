@@ -5,14 +5,13 @@ services:
     container_name: backend_integration
     env_file:
       - .envs/.local/.backend
-#    entrypoint: "./tests/start_integration.sh"
-    entrypoint: sleep 365d
     expose:
       - "8000"
     links:
       - db
     volumes:
       - ./backend:/app:ro
+    entrypoint: "./tests/start_integration.sh"
 
   db:
     image: postgres:12
@@ -21,3 +20,15 @@ services:
       - .envs/.local/.postgres
     expose:
       - "5432"
+
+  tavern:
+    build:
+      dockerfile: tavern/Dockerfile
+      context: .
+    container_name: tavern_integration
+    links:
+      - backend
+    entrypoint: sleep 365d
+    volumes:
+      - ./backend:/backend
+      - ./tavern:/app

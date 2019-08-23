@@ -1,33 +1,16 @@
-import requests
 import json
+import logging
 from collections import namedtuple
 from typing import Iterable
-from datetime import datetime
-import logging
 
-from web3 import Web3
+import requests
 from rest_framework import status
+from web3 import Web3
 
-from .models import Post, Comment
-
+from posts.models import Post, Comment
 
 CONTRACT_ABI_URL = 'http://nginx:8000/assets/abi/{contract_name}.json'
 CONTRACT_ADDRESS_STORE_URL = 'http://nginx:8000/assets/contracts.json'
-
-
-def compute_post_hash(username, date: datetime, title, content):
-    date = date.replace(tzinfo=None).isoformat()[:-3]
-    return Web3.sha3(text=(username + date + title + content)).hex()
-
-
-def compute_comment_hash(username, date: datetime, content):
-    date = date.replace(tzinfo=None).isoformat()[:-3]
-    return Web3.sha3(text=(username + date + content)).hex()
-
-
-def compute_vote_hash(username, date: datetime, is_upvote):
-    date = date.replace(tzinfo=None).isoformat()[:-3]
-    return Web3.sha3(text=(username + date + str(is_upvote.real))).hex()
 
 
 def default_web3():
@@ -47,7 +30,7 @@ def get_contract_abi(contract_name):
                       % (contract_name, response.status_code, response.data))
         return
     return json.loads(response.content)['abi']
-    
+
 
 def get_contract_address(contract_name: str):
     """

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Post, Tag, Comment, PostVote, CommentVote
-from .bc import compute_post_hash, compute_comment_hash, compute_vote_hash
+from .bc.hash import compute_post_hash, compute_comment_hash, compute_vote_hash
 
 
 class HashValidatorMixin():
