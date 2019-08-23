@@ -1,0 +1,131 @@
+test_name: Test posts API (get, create)
+
+stages:
+  - name: Check if we can get all the posts
+
+    request:
+      url: http://backend:8000/api/posts/
+      method: GET
+
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: functions.utils:save_count
+
+  - name: create post
+
+    request:
+      url: http://backend:8000/api/posts/
+      method: POST
+      json:
+        creation_datetime: "2019-08-23T08:09:29.381Z"
+        title: That's my new post
+        content: I hope you like it!
+        data_hash: "0x7403774f5dafc26425813f3a10a888c35a0e5e3a15bde5e5a48d1becaa53d9f2"
+
+    response:
+      status_code: 201
+      body: {}
+
+  - name: check whether the new post is in the database
+
+    request:
+      url: http://backend:8000/api/posts/{next_count}/
+      method: GET
+
+    response:
+      status_code: 200
+      body:
+        id: !int "{next_count:d}"
+        title: That's my new post
+        verified: False
+        upvotes: 0
+        downvotes: 0
+        tags: []
+
+---
+
+test_name: Test invalid requests for creating a post
+
+stages:
+  - name: with missing timestamp
+
+    request:
+      url: http://backend:8000/api/posts/
+      method: POST
+      json:
+        title: Post with a missing creation timestamp
+        content: with a content
+        # data_hash computed assuming empty string for a timestamp
+        data_hash: "0x3ab00c4b896afe167a29a8b4ebb732321a3966b9ef409dc73172c323503c0c6d"
+
+    response:
+      status_code: 400
+      body:
+        creation_datetime: [!anystr This field is required]
+
+  - name: with an invalid hash
+
+    request:
+      url: http://backend:8000/api/posts/
+      method: POST
+      json:
+        creation_datetime: "2019-08-23T08:09:29.381Z"
+        title: That's my new post
+        content: I hope you like it!
+        data_hash: "0x8403774f5dafc26425813f3a10a888c35a0e5e3a15bde5e5a48d1becaa53d9f2"
+
+    response:
+      status_code: 400
+      body:
+        non_field_errors: [!anystr The data-hash is invalid.]
+
+---
+
+test_name: test user attempt to create a verified post
+
+stages:
+  - name: get the posts count
+
+    request:
+      url: http://backend:8000/api/posts/
+      method: GET
+
+    response:
+      status_code: 200
+      save:
+        $ext:
+          function: functions.utils:save_count
+
+  - name: try to create a verified post
+
+    request:
+      url: http://backend:8000/api/posts/
+      method: POST
+      json:
+        creation_datetime: "2019-08-23T08:09:29.381Z"
+        title: That's my new post
+        content: I hope you like it!
+        data_hash: "0x7403774f5dafc26425813f3a10a888c35a0e5e3a15bde5e5a48d1becaa53d9f2"
+        verified: True
+
+    response:
+      status_code: 201
+      body: {}
+
+  - name: assert the new post is actually not verified (user's input is ignored)
+
+    request:
+      url: http://backend:8000/api/posts/{next_count}/
+      method: GET
+
+    response:
+      status_code: 200
+      body:
+        id: !int "{next_count:d}"
+        title: That's my new post
+        verified: False
+        upvotes: 0
+        downvotes: 0
+        tags: []
