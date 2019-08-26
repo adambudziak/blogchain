@@ -9,9 +9,6 @@ stages:
 
     response:
       status_code: 200
-      save:
-        $ext:
-          function: functions.utils:save_count
 
   - name: create post
 
@@ -26,18 +23,22 @@ stages:
 
     response:
       status_code: 201
-      body: {}
+      body:
+        id: !anyint
+      save:
+        body:
+          created_post_id: id
 
   - name: check whether the new post is in the database
 
     request:
-      url: http://backend:8000/api/posts/{next_count}/
+      url: http://backend:8000/api/posts/{created_post_id}/
       method: GET
 
     response:
       status_code: 200
       body:
-        id: !int "{next_count:d}"
+        id: !int "{created_post_id:d}"
         title: That's my new post
         verified: False
         upvotes: 0
@@ -79,25 +80,13 @@ stages:
     response:
       status_code: 400
       body:
-        non_field_errors: [!anystr The data-hash is invalid.]
+        non_field_errors: [!!str The data-hash is invalid.]
 
 ---
 
 test_name: test user attempt to create a verified post
 
 stages:
-  - name: get the posts count
-
-    request:
-      url: http://backend:8000/api/posts/
-      method: GET
-
-    response:
-      status_code: 200
-      save:
-        $ext:
-          function: functions.utils:save_count
-
   - name: try to create a verified post
 
     request:
@@ -112,20 +101,52 @@ stages:
 
     response:
       status_code: 201
-      body: {}
+      save:
+        body:
+          created_post_id: id
+
 
   - name: assert the new post is actually not verified (user's input is ignored)
 
     request:
-      url: http://backend:8000/api/posts/{next_count}/
+      url: http://backend:8000/api/posts/{created_post_id:d}/
       method: GET
 
     response:
       status_code: 200
       body:
-        id: !int "{next_count:d}"
+        id: !int "{created_post_id:d}"
         title: That's my new post
         verified: False
         upvotes: 0
         downvotes: 0
         tags: []
+
+
+---
+
+test_name: test verified posts filter
+
+stages:
+  - name: fetch all verified posts
+
+    request:
+      url: http://backend:8000/api/posts/?verified=true
+      method: GET
+
+    response:
+      status_code: 200
+      body:
+        $ext:
+          function: functions.utils:assert_all_verified
+
+  - name: assert bad request on an invalid value for "verified"
+
+    request:
+      url: http://backend:8000/api/posts/?verified=maybe
+      method: GET
+
+    response:
+      status_code: 400
+      body:
+        verified: [!anystr Enter a valid boolean value.]

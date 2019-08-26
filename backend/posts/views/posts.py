@@ -1,7 +1,6 @@
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User, AnonymousUser
 
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
@@ -20,6 +19,8 @@ from posts.serializers import (
 )
 
 import logging
+
+from posts.filters import BcObjectsFilter
 
 
 @api_view(['GET'])
@@ -56,7 +57,7 @@ class CreateListRetrieveViewSet(mixins.CreateModelMixin,
 class PostViewSet(CreateListRetrieveViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    filterset_fields = ['verified', 'author']
+    filterset_class = BcObjectsFilter
 
 
 class CommentViewSet(CreateListRetrieveViewSet):
