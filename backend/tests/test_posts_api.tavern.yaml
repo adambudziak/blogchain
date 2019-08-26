@@ -137,8 +137,21 @@ stages:
     response:
       status_code: 200
       body:
+        count: 5
         $ext:
           function: functions.utils:assert_all_verified
+
+  - name: fetch all non-verified posts
+
+    request:
+      url: http://backend:8000/api/posts/?verified=false
+      method: GET
+
+    response:
+      status_code: 200
+      body:
+        $ext:
+          function: functions.utils:assert_all_not_verified
 
   - name: assert bad request on an invalid value for "verified"
 

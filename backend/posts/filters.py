@@ -36,24 +36,9 @@ class StrictBooleanField(forms.Field):
     """
     widget = StrictBooleanWidget
 
-    def to_python(self, value):
-        if value in (True, 'True', 'true', '1'):
-            return True
-        if value in (False, 'False', 'false', '0'):
-            return False
-        if value is not None:
-            return 'error'
-
     def validate(self, value):
         if value == 'error':
             raise ValidationError(message='Enter a valid boolean value')
-
-    def has_changed(self, initial, data):
-        if self.disabled:
-            return False
-        # Sometimes data or initial may be a string equivalent of a boolean
-        # so we should run it through to_python first to get a boolean value
-        return self.to_python(initial) != self.to_python(data)
 
 
 class StrictBooleanFilter(filters.Filter):

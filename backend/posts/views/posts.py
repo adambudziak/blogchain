@@ -7,6 +7,7 @@ from rest_framework.reverse import reverse
 from rest_framework import viewsets, mixins
 
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.views import APIView
 
 from posts.models import (
     Post,
@@ -63,7 +64,7 @@ class PostViewSet(CreateListRetrieveViewSet):
 class CommentViewSet(CreateListRetrieveViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    filterset_fields = ['verified', 'author']
+    filterset_class = BcObjectsFilter
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -71,11 +72,14 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
 
 
-@api_view(['GET'])
-def post_comments(request, post_pk):
-    all_comments = Comment.objects.filter(post__pk=post_pk)
-    queryset = DjangoFilterBackend().filter_queryset(request, all_comments, CommentViewSet)
-    serializer = CommentViewSet.serializer_class(queryset, many=True, context={
-        'request': request
-    })
-    return Response(serializer.data)
+class PostCommentsView(APIView):
+    serializer_class = CommentSerializer
+    filterset_class = BcObjectsFilter
+
+    def get(self, request, post_pk):
+        all_comments = Comment.objects.filter(post__pk=post_pk)
+        queryset = DjangoFilterBackend().filter_queryset(request, all_comments, self)
+        serializer = self.serializer_class(queryset, many=True, context={
+            'request': request
+        })
+        return Response(serializer.data)

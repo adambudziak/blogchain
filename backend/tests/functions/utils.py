@@ -8,6 +8,13 @@ def save_count(response):
     })
 
 
+def assert_all_not_verified(response):
+    response_json = response.json()
+    assert response_json['count'] > 0, 'There are no objects in the response.'
+    objects = response_json['results']
+    assert not any(obj['verified'] for obj in objects), 'Some objects are verified'
+
+
 def assert_all_verified(response):
     response_json = response.json()
     assert response_json['count'] > 0, 'There are no objects in the response.'
