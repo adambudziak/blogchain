@@ -1,56 +1,60 @@
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from posts.models import PostVote, CommentVote
+from posts.models import Post, Comment
 from posts.serializers import PostVoteSerializer, CommentVoteSerializer
 
 
-def _get_votes(request, queryset, serializer_type):
-    serializer = serializer_type(queryset, many=True, context={
-        'request': request
-    })
-    return Response(serializer.data)
+class VotesViewMixin:
 
-
-def _create_vote(request, serializer_type):
-    # TODO temporary until find out how we want to design votes for
-    #      anonymous users
-    if not isinstance(request.user, User):
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-    serializer = serializer_type(data=request.data, context={
-        'request': request,
-    })
-
-    if serializer.is_valid():
-        serializer.save(author=request.user)
-        return Response(status=status.HTTP_201_CREATED)
-
-    return Response(serializer.errors,
-                    status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET', 'POST'])
-def post_votes(request, post_pk, vote_type=None):
-    if request.method == 'GET':
-        queryset = PostVote.objects.filter(post__pk=post_pk)
+    def get_votes(self, request, instance, vote_type=None):
+        queryset = instance.votes
         if vote_type is not None:
             queryset = queryset.filter(is_upvote=(vote_type == 'up'))
-        return _get_votes(request, queryset, PostVoteSerializer)
+        serializer = self.serializer_class(queryset, many=True, context={
+            'request': request
+        })
+        return Response(serializer.data)
 
-    elif request.method == 'POST':
-        return _create_vote(request, PostVoteSerializer)
+    def create_vote(self, request):
+        # TODO temporary until find out how we want to design votes for
+        #      anonymous users
+        if not isinstance(request.user, User):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = self.serializer_class(data=request.data, context={
+            'request': request,
+        })
+
+        if serializer.is_valid():
+            serializer.save(author=request.user)
+            return Response(status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors,
+                        status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'POST'])
-def comment_votes(request, comment_pk, vote_type=None):
-    if request.method == 'GET':
-        queryset = CommentVote.objects.filter(comment__pk=comment_pk)
-        if vote_type is not None:
-            queryset = queryset.filter(is_upvote=(vote_type == 'up'))
-        return _get_votes(request, queryset, CommentVoteSerializer)
+class PostVotesView(VotesViewMixin, APIView):
+    serializer_class = PostVoteSerializer
 
-    elif request.method == 'POST':
-        return _create_vote(request, CommentVoteSerializer)
+    def get(self, request, post_pk, vote_type=None):
+        instance = get_object_or_404(Post, pk=post_pk)
+        return super().get_votes(request, instance, vote_type)
+
+    def post(self, request, post_pk, vote_type=None):
+        return super().create_vote(request)
+
+
+class CommentVotesView(VotesViewMixin, APIView):
+    serializer_class = CommentVoteSerializer
+
+    def get(self, request, comment_pk, vote_type=None):
+        instance = get_object_or_404(Comment, pk=comment_pk)
+        return super().get_votes(request, instance, vote_type)
+
+    def post(self, request, comment_pk, vote_type=None):
+        return super().create_vote(request)

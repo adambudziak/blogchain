@@ -4,7 +4,7 @@ from posts.models import (
     Post,
     Comment,
 )
-from posts.bc import (
+from posts.bc.contracts import (
     PostsContract,
     CommentsContract,
 )

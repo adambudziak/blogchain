@@ -5,7 +5,7 @@ from django.test import TestCase
 from unittest.mock import MagicMock, patch
 from web3 import Web3
 
-from posts.bc import PostsContract, CommentsContract
+from posts.bc.contracts import PostsContract, CommentsContract
 from posts.tests.utils import make_post_factory, make_comment_factory
 from taskapp.tasks import verify_posts, verify_comments
 

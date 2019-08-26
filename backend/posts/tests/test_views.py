@@ -7,14 +7,14 @@ from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from .utils import make_post_factory, make_comment_factory, model_to_dict
-from ..bc import (
+from ..bc.hash import (
     compute_comment_hash,
     compute_post_hash,
     compute_vote_hash
 )
 from ..models import Post, Comment, PostVote, CommentVote
 from ..views.posts import PostViewSet, CommentViewSet
-from ..views.votes import post_votes, comment_votes
+from ..views.votes import PostVotesView, CommentVotesView
 
 post_factory = make_post_factory('Post title', 'Post content')
 
@@ -161,7 +161,7 @@ class TestPostVoteViews(TestCase):
         }
 
     def _assert_post_response_status(self, request, status_):
-        response = post_votes(request, post_pk=1, vote_type='up')
+        response = PostVotesView.as_view()(request, post_pk=1, vote_type='up')
         self.assertEqual(response.status_code, status_)
 
     def test_create_vote(self):
@@ -226,7 +226,7 @@ class TestCommentVoteViews(TestCase):
         }
 
     def _assert_post_response_status(self, request, status_):
-        response = comment_votes(request, comment_pk=1, vote_type='up')
+        response = CommentVotesView.as_view()(request, comment_pk=1, vote_type='up')
         self.assertEqual(response.status_code, status_)
 
     def test_create_vote(self):

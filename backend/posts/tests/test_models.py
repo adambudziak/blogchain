@@ -5,8 +5,8 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 
-from ..models import PostVote, Post
-from ..bc import compute_post_hash, compute_vote_hash
+from ..models import PostVote
+from ..bc.hash  import compute_vote_hash
 
 from .utils import make_post_factory
 

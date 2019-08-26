@@ -4,7 +4,7 @@ services:
     build: backend
     env_file:
       - .envs/.local/.backend
-    entrypoint: ["pytest", "--ds=blogchain.settings.test"]
+    entrypoint: ["pytest", "--ds=blogchain.settings.test", "--ignore=tests"]
     volumes:
      - ./backend:/app
 

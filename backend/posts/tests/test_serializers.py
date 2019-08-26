@@ -1,15 +1,12 @@
-import os
-import logging
-import base64
 import pytz
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.test import TestCase
 from django.contrib.auth.models import User
 
-from ..bc import compute_comment_hash, compute_post_hash, compute_vote_hash
-from ..serializers import PostSerializer, CommentSerializer, PostVoteSerializer
-from ..models import Post, Comment, PostVote
+from ..bc.hash import compute_comment_hash, compute_vote_hash
+from ..serializers import CommentSerializer, PostVoteSerializer
+from ..models import Comment, PostVote
 
 from .utils import make_post_factory, model_to_dict
 
