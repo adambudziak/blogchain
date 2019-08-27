@@ -163,3 +163,24 @@ stages:
       status_code: 400
       body:
         verified: [!anystr Enter a valid boolean value.]
+
+---
+
+test_name: test author filter
+
+stages:
+  - name: fetch all posts by "admin"
+
+    request:
+      url: http://backend:8000/api/posts/?author=admin
+      method: GET
+
+    response:
+      status_code: 200
+      body:
+        $ext:
+          function: functions.utils:assert_all_by
+          extra_args:
+            - "admin"
+
+  # TODO fetching anonymous posts doesn't work yet (the API always compares usernames)

@@ -7,9 +7,6 @@ class StrictBooleanWidget(widgets.BooleanWidget):
     """
     Widget with functionality similar to BooleanWidget provided with django_filters
     but that allows to handle invalid values instead of just ignoring them.
-
-    It's compatible with BooleanWidget, meaning that when it's passed to
-    BooleanFilter from django_filters, the behavior doesn't change.
     """
 
     def value_from_datadict(self, data, files, name):
@@ -47,4 +44,4 @@ class StrictBooleanFilter(filters.Filter):
 
 class BcObjectsFilter(rest_filters.FilterSet):
     verified = StrictBooleanFilter(field_name='verified')
-    author = rest_filters.NumberFilter(field_name='author')
+    author = rest_filters.CharFilter(field_name='author__username')
