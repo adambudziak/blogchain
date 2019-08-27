@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, AnonymousUser
+from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -77,8 +78,8 @@ class PostCommentsView(APIView):
     filterset_class = BcObjectsFilter
 
     def get(self, request, post_pk):
-        all_comments = Comment.objects.filter(post__pk=post_pk)
-        queryset = DjangoFilterBackend().filter_queryset(request, all_comments, self)
+        instance = get_object_or_404(Post, pk=post_pk)
+        queryset = DjangoFilterBackend().filter_queryset(request, instance.comments, self)
         serializer = self.serializer_class(queryset, many=True, context={
             'request': request
         })
