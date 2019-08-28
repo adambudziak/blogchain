@@ -8,10 +8,17 @@ services:
     volumes:
      - ./backend:/app
 
+  ganache:
+    image: trufflesuite/ganache-cli:latest
+    expose:
+      - 8545
+
   truffle_test:
     build:
       context: .
       dockerfile: bc/Dockerfile
     entrypoint: ["truffle", "test"]
+    links:
+      - ganache
     volumes:
       - ./bc:/app:ro
