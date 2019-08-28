@@ -170,3 +170,5 @@ CELERYD_TASK_TIME_LIMIT = 5 * 60
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-soft-time-limit
 # TODO: set to whatever value is adequate in your circumstances
 CELERYD_TASK_SOFT_TIME_LIMIT = 60
+
+APPEND_SLASH = False

@@ -18,7 +18,7 @@ def with_response_objects(fn):
 
 @with_response_objects
 def assert_all_not_verified(objects):
-    assert not any(obj['verified'] for obj in objects), 'Some objects are verified'
+    assert not any(obj['verified'] for obj in objects), 'Some objects are verified.'
 
 
 @with_response_objects
@@ -28,5 +28,15 @@ def assert_all_verified(objects):
 
 @with_response_objects
 def assert_all_by(objects, author):
-    assert all(obj['author'] == author for obj in objects), "The author doesn't match for some of the objects"
+    assert all(obj['author'] == author for obj in objects), "The author doesn't match for some of the objects."
 
+
+def list_assert_all_verified(response):
+    assert all(obj['verified'] for obj in response.json()), 'Not all objects are verified.'
+
+
+def list_assert_all_not_verified(response):
+    assert all(not obj['verified'] for obj in response.json()), 'Some objects are verified'
+
+def assert_empty_list(response):
+    assert not len(response.json()), "The response list is not empty."

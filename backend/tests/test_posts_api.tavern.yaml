@@ -153,17 +153,6 @@ stages:
         $ext:
           function: functions.utils:assert_all_not_verified
 
-  - name: assert bad request on an invalid value for "verified"
-
-    request:
-      url: http://backend:8000/api/posts/?verified=maybe
-      method: GET
-
-    response:
-      status_code: 400
-      body:
-        verified: [!anystr Enter a valid boolean value.]
-
 ---
 
 test_name: test author filter
