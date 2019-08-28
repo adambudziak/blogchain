@@ -119,6 +119,7 @@ class PostVoteSerializer(BaseVoteSerializer, serializers.ModelSerializer):
         fields = BaseVoteSerializer.base_fields + ('post',)
 
     def validate(self, data):
+        data['author'] = self.context['request'].user
         if PostVote.objects.filter(author=self.context['request'].user, post=data['post']).exists():
             raise serializers.ValidationError('You have already voted on this post.')
 
@@ -133,6 +134,7 @@ class CommentVoteSerializer(BaseVoteSerializer, serializers.ModelSerializer):
         fields = BaseVoteSerializer.base_fields + ('comment',)
 
     def validate(self, data):
+        data['author'] = self.context['request'].user
         if CommentVote.objects.filter(author=self.context['request'].user, comment=data['comment']).exists():
             raise serializers.ValidationError('You have already voted on this comment.')
 

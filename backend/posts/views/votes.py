@@ -24,7 +24,7 @@ class VotesViewMixin:
         return Response(serializer.data)
 
 
-class PostVotesView(VotesViewMixin, CreateAPIView, GenericAPIView):
+class PostVotesView(VotesViewMixin, CreateAPIView):
     serializer_class = PostVoteSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
