@@ -6,7 +6,6 @@ RUN pip install tavern[pytest]
 COPY ./backend /backend
 COPY ./tavern /app
 
-# in the future we might want test different apis, but for now we'll just run tests for the backend
-WORKDIR /backend/tests
+WORKDIR /backend
 ENTRYPOINT /app/run_tavern.sh
 

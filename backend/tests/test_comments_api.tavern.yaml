@@ -1,4 +1,4 @@
-test_name: Test comments-part of the posts API
+test_name: Test comments part of the posts API
 
 stages:
   - name: create a post for the comments

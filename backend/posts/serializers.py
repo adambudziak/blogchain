@@ -4,7 +4,7 @@ from .models import Post, Tag, Comment, PostVote, CommentVote
 from .bc.hash import compute_post_hash, compute_comment_hash, compute_vote_hash
 
 
-class HashValidatorMixin():
+class HashValidatorMixin:
     """
     Mixin implementing the `validate` method that verifies the
     `data_hash` passed in the request.
