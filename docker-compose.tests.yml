@@ -5,8 +5,6 @@ services:
     env_file:
       - .envs/.local/.backend
     entrypoint: ["pytest", "--ds=blogchain.settings.test", "--ignore=tests"]
-    volumes:
-     - ./backend:/app
 
   ganache:
     image: trufflesuite/ganache-cli:latest
