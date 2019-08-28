@@ -9,9 +9,7 @@ services:
       - "8000"
     links:
       - db
-    volumes:
-      - ./backend:/app:ro
-    entrypoint: "./tests/start_integration.sh"
+    entrypoint: "/app/tests/start_integration.sh"
 
   db:
     image: postgres:12
@@ -28,7 +26,3 @@ services:
     container_name: tavern_integration
     links:
       - backend
-    entrypoint: sleep 365d
-    volumes:
-      - ./backend:/backend
-      - ./tavern:/app
