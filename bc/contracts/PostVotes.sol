@@ -3,23 +3,22 @@ pragma solidity >=0.5.8 < 0.6.0;
 import "./Posts.sol";
 import "./Ownable.sol";
 
-contract Comments is Ownable {
-    uint public addCommentFee = 0.002 ether;
-    uint public postAuthorBonus = 0.002 ether;
+contract PostVotes is Ownable {
+    uint public voteFee = 0.001 ether;
+    uint public postAuthorBonus = 0.001 ether;
 
-    event CommentAdded(bytes32 indexed hash, bytes32 indexed postHash, address indexed author);
+    event VoteAdded(bytes32 indexed hash, bytes32 indexed postHash, address indexed author);
     event PostsAddressChanged(address indexed oldAddress, address indexed newAddress);
 
-    address private postsAddress = address(0);
+    address private postsAddress;
     Posts private posts;
 
-    struct Comment {
-        address author;
-        bytes32 postHash;
+    struct Vote {
+        bytes32 hash;
     }
 
-    bytes32[] public comments;
-    mapping (bytes32 => Comment) public hashToComment;
+    Vote[] public votes;
+    mapping (bytes32 => address) public voteToAuthor;
 
     mapping (address => uint) public balances;
 
@@ -28,26 +27,26 @@ contract Comments is Ownable {
         posts = Posts(postsAddress);
     }
 
-    function getCommentCount() external view returns(uint) {
-        return comments.length;
+    function getVoteCount() external view returns(uint) {
+        return votes.length;
     }
 
-    function getTotalFee() external view returns(uint) {
-        return addCommentFee + postAuthorBonus;
+    function getTotalFee() public view returns(uint) {
+        return voteFee + postAuthorBonus;
     }
 
-    function addComment(bytes32 _hash, bytes32 _postHash) external payable {
-        require(msg.value == addCommentFee + postAuthorBonus,
-            "Not enough funds to add a comment!");
+    function addVote(bytes32 _hash, bytes32 _postHash) external payable {
+        require(msg.value == getTotalFee(),
+                "Not enough funds to add a vote!");
 
         address postAuthor = posts.postToAuthor(_postHash);
         require(balances[postAuthor] + postAuthorBonus > balances[postAuthor]);
 
-        emit CommentAdded(_hash, _postHash, msg.sender);
-        comments.push(_hash);
-        hashToComment[_hash] = Comment(msg.sender, _postHash);
+        emit VoteAdded(_hash, _postHash, msg.sender);
+        votes.push(Vote(_hash));
+        voteToAuthor[_hash] = msg.sender;
         balances[postAuthor] += postAuthorBonus;
-        balances[owner()] += addCommentFee;
+        balances[owner()] += voteFee;
     }
 
     function setPostsAddress(address _newPostsAddress) external onlyOwner {
