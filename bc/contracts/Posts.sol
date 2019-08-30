@@ -1,27 +1,32 @@
-pragma solidity >=0.4.21 < 0.6.0;
+pragma solidity >=0.5.8 < 0.6.0;
 
 import "./Ownable.sol";
 
 contract Posts is Ownable {
-    uint addPostFee = 0.005 ether;
+    uint public addPostFee = 0.005 ether;
 
     struct Post {
-        string date; // TODO the date is probably useless
-        bytes32 contentHash;
+        bytes32 hash;
     }
+
+    event PostAdded(bytes32 indexed hash, address indexed author);
 
     Post[] public posts;
+    mapping (bytes32 => address) public postToAuthor;
 
-    function addPost(string calldata _date, bytes32 _contentHash) external payable {
+    function addPost(bytes32 _hash) external payable {
         require(msg.value == addPostFee, "Not enough funds to add a post!");
-        posts.push(Post(_date, _contentHash));
+        emit PostAdded(_hash, msg.sender);
+        posts.push(Post(_hash));
+        postToAuthor[_hash] = msg.sender;
     }
 
-    function getPostsCount() public view returns (uint) {
+    function getPostCount() public view returns(uint) {
         return posts.length;
     }
 
     function withdraw() external onlyOwner {
         msg.sender.transfer(address(this).balance);
     }
+
 }
