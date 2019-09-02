@@ -51,7 +51,7 @@ def get_contract_address(contract_name: str):
 class PostsContract:
     name = 'Posts'
 
-    _Post = namedtuple('Post', 'datetime, data_hash')
+    _Post = namedtuple('Post', 'hash')
     """
     A namedtuple used to give names to the fields of the Posts
     stored on the blockchain.
@@ -82,10 +82,10 @@ class PostsContract:
         return cls(web3.eth.contract(abi=abi, address=address))
 
     def posts_count(self):
-        return self.contract.functions.getPostsCount().call()
+        return self.contract.functions.getPostCount().call()
 
     def get_post(self, index):
-        return self.contract.functions.posts(index).call()
+        return PostsContract._Post(self.contract.functions.posts(index).call())
 
     def iter_posts(self):
         """
@@ -97,7 +97,7 @@ class PostsContract:
         :return: an iterator over all Posts in the contract.
         """
         for i in reversed(range(self.posts_count())):
-            yield PostsContract._Post(*self.get_post(i))
+            yield self.get_post(i)
 
     def verify_posts(self, posts: Iterable[Post]):
         """
@@ -107,7 +107,7 @@ class PostsContract:
         Posts which have been successfully verified are updated
         in the database one-by-one.
         TODO check if it's possible to update them all at once,
-        TODO and maybe delegate this back to the celery task.
+             and maybe delegate this back to the celery task.
 
         :param posts: an iterable of posts to verify.
         :return: The number of positively verified posts.
@@ -115,7 +115,7 @@ class PostsContract:
         verified = 0
         for stored_post in self.iter_posts():
             for post in posts:
-                if Web3.toHex(stored_post.data_hash) == post.data_hash:
+                if Web3.toHex(stored_post.hash) == post.data_hash:
                     post.verified = True
                     post.save()
                     verified += 1
@@ -125,7 +125,7 @@ class PostsContract:
 class CommentsContract:
     name = 'Comments'
 
-    _Comment = namedtuple('Comment', 'data_hash, post_hash')
+    _Comment = namedtuple('Comment', 'author, hash, post_hash')
     """
     A namedtuple used to give names to the fields of the Comments
     stored on the blockchain.
@@ -157,11 +157,17 @@ class CommentsContract:
         abi = get_contract_abi(cls.name)
         return cls(web3.eth.contract(abi=abi, address=address))
 
+    def _get_comment(self, index):
+        comment_hash = Web3.toHex(self.contract.functions.comments(index).call())
+        author, post_hash = self.contract.functions.hashToComment(comment_hash).call()
+        post_hash = Web3.toHex(post_hash)
+        return CommentsContract._Comment(author, comment_hash, post_hash)
+
     def comments_count(self):
         return self.contract.functions.getCommentCount().call()
 
     def get_comment(self, index):
-        return self.contract.functions.comments(index).call()
+        return self._get_comment(index)
 
     def iter_comments(self):
         """
@@ -173,7 +179,7 @@ class CommentsContract:
         :return: an iterator over all Posts in the contract.
         """
         for i in reversed(range(self.comments_count())):
-            yield CommentsContract._Comment(*map(Web3.toHex, self.get_comment(i)))
+            yield self._get_comment(i)
 
     def verify_comments(self, comments: Iterable[Comment]):
         """
@@ -188,8 +194,18 @@ class CommentsContract:
         verified = 0
         for stored_comment in self.iter_comments():
             for comment in comments:
-                parsed_comment = CommentsContract._Comment(comment.data_hash,
+                parsed_comment = CommentsContract._Comment(comment.author.username,
+                                                           comment.data_hash,
                                                            comment.post.data_hash)
+                stored_comment.author = comment.author.username
+                # TODO the hack above is to make the verification work for now.
+                #      At the moment, there is no relation between the address
+                #      of an author in the blockchain and his username in the
+                #      database.
+                #      For now, we only want to compare the hash of the comment
+                #      and the hash of the post it belongs to.
+                #      This hack allows users to make a verifying transaction for a
+                #      comment of another user (not sure if it's a bug or a feature)
                 if stored_comment == parsed_comment:
                     comment.verified = True
                     comment.save()

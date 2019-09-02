@@ -20,7 +20,7 @@ interface DispatchToProps {
 type Props = StateToProps & DispatchToProps;
 
 const App = (props: Props) => {
-  useEffect(props.authCheckState, []);
+  useEffect(() => props.authCheckState, [props.authCheckState]);
 
   return (
       <div>
