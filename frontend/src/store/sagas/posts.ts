@@ -31,9 +31,9 @@ export function* watchFetchPosts() {
     });
 }
 
-const bcAddPost = (web3Context: Web3Context, now: string, hash: string) =>
+const bcAddPost = (web3Context: Web3Context, hash: string) =>
     new Promise(resolve => {
-        web3Context.postsContract.methods.addPost(now, hash)
+        web3Context.postsContract.methods.addPost(hash)
             .send({
                 from: web3Context.account,
                 value: web3Context.web3.utils.toWei('0.005', 'ether')
@@ -59,7 +59,7 @@ export function* watchSubmitPost() {
             return;
         }
         yield put({type: STORE_POST_SERVER_SUCCESS});
-        const { success, error } = yield call(bcAddPost, payload.web3Context, now, hash);
+        const { success, error } = yield call(bcAddPost, payload.web3Context, hash);
         if (success) {
             yield put({ type: STORE_POST_BC_SUCCESS});
         } else if (error) {

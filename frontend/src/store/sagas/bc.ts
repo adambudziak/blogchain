@@ -7,8 +7,8 @@ import { INIT_WEB3_SUCCESS } from "actions/types";
 const contractNames = [
     'Posts',
     'Comments',
-    'Upvotes',
-    'Downvotes',
+    'PostVotes',
+    'CommentVotes',
 ];
 
 async function collectAbis() {
@@ -44,8 +44,8 @@ function* initWeb3Context() {
                 addresses,
                 postsContract: contracts['Posts'],
                 commentsContract: contracts['Comments'],
-                upvotesContract: contracts['Upvotes'],
-                downvotesContract: contracts['Downvotes'],
+                postVotesContract: contracts['PostVotes'],
+                commentVotesContract: contracts['CommentVotes'],
             }
         })
     } catch (error) {

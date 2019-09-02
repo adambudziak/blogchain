@@ -26,7 +26,7 @@ def mock_contract_function(callback):
     :param callback: Function to be called when Inner().call() is called
     :return: The Inner class that mocks the function.
     """
-    class Inner():
+    class Inner:
         def __init__(self, *args):
             self.args = args
 
