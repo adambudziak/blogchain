@@ -11,12 +11,11 @@ import { Web3Context } from "reducers/bc";
 
 const bcAddVote = (web3Context: Web3Context, vote: VoteData, hash: string, targetHash: string) =>
     new Promise(resolve => {
-        const contract = vote.isUpvote ? web3Context.upvotesContract : web3Context.downvotesContract;
-        const voteMethod = 'postId' in vote ? contract.methods.voteForPost : contract.methods.voteForComment;
-        voteMethod(hash, targetHash)
+        const contract = 'postId' in vote ? web3Context.postVotesContract : web3Context.commentVotesContract;
+        contract.methods.addVote(hash, targetHash)
             .send({
                 from: web3Context.account,
-                value: web3Context.web3.utils.toWei('0.001', 'ether'),
+                value: web3Context.web3.utils.toWei('0.002', 'ether'),
             })
             .on('confirmation', () => resolve({ success: true }))
             .on('error', (error: Error) => resolve({ error }))
