@@ -11,8 +11,8 @@ export interface Web3Context {
     addresses: any,
     postsContract: Contract,
     commentsContract: Contract,
-    upvotesContract: Contract,
-    downvotesContract: Contract,
+    postVotesContract: Contract,
+    commentVotesContract: Contract,
 }
 
 export interface BcState {
