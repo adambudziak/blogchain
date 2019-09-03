@@ -30,6 +30,7 @@ export interface CommentVote extends Vote {
 
 export const API_URLS = {
     POSTS: 'http://localhost:8000/api/posts/',
+    POST_DETAILS: 'http://localhost:8000/api/posts/<pk>/',
     POST_COMMENTS: 'http://localhost:8000/api/posts/<pk>/comments/',
     POST_VOTES: 'http://localhost:8000/api/posts/<pk>/votes/',
     POST_UPVOTES: 'http://localhost:8000/api/posts/<pk>/upvotes/',

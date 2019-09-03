@@ -1,7 +1,11 @@
-FROM node:8.16.0-jessie
+FROM node:12.9-slim
 
-COPY . /app
+RUN apt-get update && apt-get install -yy git python make g++
+
+COPY --chown=node . /app
 WORKDIR /app
+
+USER node
 
 RUN npm install
 
