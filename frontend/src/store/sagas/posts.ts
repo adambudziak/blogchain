@@ -6,9 +6,13 @@ import Web3 from "web3";
 import { API_URLS, createPost } from "src/api";
 import { getUser } from "src/store/utility";
 
-import { fetchPostComments, PostData, submitPost } from "actions/posts";
+import {fetchPostComments, fetchPostDetails, PostData, submitPost} from "actions/posts";
 import {
-    FETCH_COMMENTS_FOR_POST, FETCH_COMMENTS_FOR_POST_START,
+    FETCH_COMMENTS_FOR_POST,
+    FETCH_COMMENTS_FOR_POST_START,
+    FETCH_POST_DETAILS,
+    FETCH_POST_DETAILS_ERROR,
+    FETCH_POST_DETAILS_SUCCESS,
     FETCH_POSTS,
     FETCH_POSTS_ERROR,
     FETCH_POSTS_SUCCESS,
@@ -80,6 +84,17 @@ export function* watchFetchPostComments() {
             yield put({ type: FETCH_COMMENTS_FOR_POST, payload: response.data, postId: payload.postId })
         } catch (error) {
             console.error(error);
+        }
+    });
+}
+
+export function* watchFetchPostDetails() {
+    yield takeEvery(FETCH_POST_DETAILS, function*({ payload }: ReturnType<typeof fetchPostDetails>) {
+        try {
+            const response = yield call(axios.get, API_URLS.POST_DETAILS.replace('<pk>', String(payload.postId)));
+            yield put({ type: FETCH_POST_DETAILS_SUCCESS, payload: response.data, postId: payload.postId });
+        } catch (error) {
+            yield put({ type: FETCH_POST_DETAILS_ERROR, error });
         }
     });
 }

@@ -2,9 +2,8 @@ import React from 'react';
 import { Layout, Menu } from 'antd';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-import { Dispatch } from "redux";
 
-import * as actions from 'actions/auth';
+import { logout } from 'actions/auth';
 
 const { Header, Content, Footer } = Layout;
 
@@ -52,11 +51,10 @@ class LayoutWrapper extends React.Component<Props> {
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchToProps => {
-  return {
-    logout: () => dispatch(actions.logout())
-  }
+const mapDispatchToProps = {
+    logout,
 };
+
 
 // TODO this also seems broken (TS2345) "Types of property propTypes are incompatible"
 // @ts-ignore
