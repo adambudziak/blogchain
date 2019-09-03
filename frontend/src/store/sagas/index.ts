@@ -4,7 +4,7 @@ import { watchAuthCheckState, watchLogin, watchLogout, watchSignup } from "sagas
 import { watchInitWeb3 } from 'sagas/bc';
 import { watchSubmitComment } from "sagas/comments";
 import {
-    watchFetchPostComments,
+    watchFetchPostComments, watchFetchPostDetails,
     watchFetchPosts,
     watchSubmitPost
 
@@ -23,6 +23,7 @@ export default function* root() {
         watchFetchPosts(),
         watchSubmitPost(),
         watchFetchPostComments(),
+        watchFetchPostDetails(),
         watchSubmitComment(),
         watchSubmitPostVote(),
         watchSubmitCommentVote(),

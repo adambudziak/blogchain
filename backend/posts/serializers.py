@@ -1,3 +1,4 @@
+from action_serializer import ModelActionSerializer
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Post, Tag, Comment, PostVote, CommentVote
@@ -46,16 +47,32 @@ class HashValidatorMixin:
         return data
 
 
-class PostSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializer):
+class HyperlinkedModelActionSerializer(serializers.HyperlinkedModelSerializer,
+                                       ModelActionSerializer):
+    """
+
+    """
+
+
+class PostSerializer(HashValidatorMixin, HyperlinkedModelActionSerializer):
     author = serializers.ReadOnlyField(source='author.username')
     upvotes = serializers.SerializerMethodField()
     downvotes = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
+    content_preview = serializers.SerializerMethodField()
 
     class Meta:
+        _common_fields = ('url', 'id', 'creation_datetime', 'author', 'verified',
+                          'tags', 'title', 'data_hash', 'upvotes', 'downvotes', 'comments')
+
         model = Post
-        fields = ('url', 'id', 'creation_datetime', 'author', 'verified',
-                  'tags', 'title', 'content', 'data_hash', 'upvotes', 'downvotes')
+        fields = _common_fields + ('content', 'content_preview')
         read_only_fields = ('verified',)
+        action_fields = {
+            'list': {
+                'fields': _common_fields + ('content_preview',)
+            }
+        }
 
     @staticmethod
     def compute_hash(author, datetime, data):
@@ -71,6 +88,12 @@ class PostSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializer)
 
     def get_downvotes(self, instance):
         return instance.votes.filter(is_upvote=False).count()
+
+    def get_comments(self, instance):
+        return instance.comments.all().count()
+
+    def get_content_preview(self, instance):
+        return instance.content[:80] + ' ...'
 
 
 class CommentSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializer):

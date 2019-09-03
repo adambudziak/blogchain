@@ -45,6 +45,6 @@ class CreatePostForm extends React.Component<Props> {
   }
 }
 
-const WrappedPostForm = Form.create({ name: 'create_post' })(CreatePostForm);
+const WrappedPostForm = Form.create<Props>({ name: 'create_post' })(CreatePostForm);
 
 export default WrappedPostForm;

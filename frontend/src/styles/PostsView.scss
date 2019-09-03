@@ -1,0 +1,17 @@
+.post-list-item {
+  padding: 2em;
+  border-bottom: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: gray;
+}
+
+.post-list-item:hover {
+  background-color: lightgray;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.post-content {
+  color: gray;
+  font-weight: lighter;
+}
