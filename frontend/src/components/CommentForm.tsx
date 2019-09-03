@@ -42,6 +42,6 @@ class CreateCommentForm extends React.Component<Props> {
   }
 }
 
-const WrappedCommentForm = Form.create({ name: 'create_comment' })(CreateCommentForm);
+const WrappedCommentForm = Form.create<Props>({ name: 'create_comment' })(CreateCommentForm);
 
 export default WrappedCommentForm;

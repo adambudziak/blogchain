@@ -2,15 +2,17 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import Login from "containers/LoginView";
-import Posts from "containers/PostsView";
+import PostsList from "containers/PostsList";
 import Signup from "containers/SignupView";
+import PostDetail from "containers/PostDetail";
 
 const BaseRouter = () => (
-  <div>
-    <Route exact path="/" component={Posts} />{" "}
-    <Route exact path="/login" component={Login} />{" "}
-    <Route exact path="/signup" component={Signup} />{" "}
-  </div>
+    <div>
+        <Route exact path="/" component={PostsList}/>{" "}
+        <Route path="/post/:postId" component={PostDetail}/>{" "}
+        <Route exact path="/login" component={Login} />{" "}
+        <Route exact path="/signup" component={Signup} />{" "}
+    </div>
 );
 
 export default BaseRouter;
