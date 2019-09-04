@@ -14,6 +14,9 @@ marks:
   - parametrize:
       key: url
       vals:
+        - http://backend:8000/api/posts/
+        - http://backend:8000/api/comments/
+        - http://backend:8000/api/posts/1/comments/
         - http://backend:8000/api/posts/1/votes/
         - http://backend:8000/api/comments/1/votes/
 
@@ -28,9 +31,8 @@ stages:
 
     response:
       status_code: 200
-      body:
-        $ext:
-          function: functions.utils:list_assert_all_verified
+      verify_response_with:
+        function: functions.utils:assert_all_verified
 
   - name: assert valid "false" inputs work
 
@@ -40,9 +42,8 @@ stages:
 
     response:
       status_code: 200
-      body:
-        $ext:
-          function: functions.utils:list_assert_all_not_verified
+      verify_response_with:
+        function: functions.utils:assert_all_not_verified
 
 ---
 
@@ -62,6 +63,9 @@ marks:
   - parametrize:
       key: url
       vals:
+        - http://backend:8000/api/posts/
+        - http://backend:8000/api/comments/
+        - http://backend:8000/api/posts/1/comments/
         - http://backend:8000/api/posts/1/votes/
         - http://backend:8000/api/comments/1/votes/
 

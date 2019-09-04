@@ -124,7 +124,7 @@ class CommentSerializer(HashValidatorMixin, serializers.HyperlinkedModelSerializ
 
 
 class BaseVoteSerializer(HashValidatorMixin):
-    base_fields = ('id', 'author', 'creation_datetime', 'data_hash', 'is_upvote')
+    base_fields = ('id', 'author', 'creation_datetime', 'data_hash', 'is_upvote', 'verified')
 
     @staticmethod
     def compute_hash(author, datetime, data):
@@ -140,6 +140,7 @@ class PostVoteSerializer(BaseVoteSerializer, serializers.ModelSerializer):
     class Meta:
         model = PostVote
         fields = BaseVoteSerializer.base_fields + ('post',)
+        read_only_fields = ('verified',)
 
     def validate(self, data):
         data['author'] = self.context['request'].user
@@ -155,6 +156,7 @@ class CommentVoteSerializer(BaseVoteSerializer, serializers.ModelSerializer):
     class Meta:
         model = CommentVote
         fields = BaseVoteSerializer.base_fields + ('comment',)
+        read_only_fields = ('verified',)
 
     def validate(self, data):
         data['author'] = self.context['request'].user
