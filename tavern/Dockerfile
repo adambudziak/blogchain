@@ -2,7 +2,7 @@ FROM python:3.7-slim-buster
 
 RUN apt-get update && apt-get install -yy curl
 
-RUN pip install tavern[pytest]
+RUN pip install tavern[pytest]==0.30.0
 COPY ./backend /backend
 COPY ./tavern /app
 
