@@ -1,5 +1,5 @@
 import {State} from "reducers/index";
-import {ApiPost, fetchPostComments, fetchPostDetails, PostDetail} from "actions/posts";
+import {fetchPostComments, fetchPostDetails, PostDetail} from "actions/posts";
 import {connect} from "react-redux";
 import React, {useEffect} from "react";
 import {Icon, List} from "antd";

@@ -6,13 +6,15 @@ services:
       - .envs/.local/.postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
-    expose:
-      - "5432"
+    ports:
+      - "5432:5432"
 
   backend: &backend
     build: backend
     expose:
       - "8000"
+    ports:
+      - "8081:8000"
     env_file:
       - .envs/.local/.backend
     links:
