@@ -1,9 +1,10 @@
 import { Form, Input, Button } from 'antd';
 import { FormComponentProps } from "antd/lib/form";
 import React from 'react';
+import {PostData} from "actions/posts";
 
 interface OwnProps {
-    onSubmit: (post: {title: string, content: string}) => void,
+    onSubmit: (post: PostData) => void,
 }
 
 type Props = OwnProps & FormComponentProps;
