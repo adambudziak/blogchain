@@ -2,7 +2,7 @@ import axios from 'axios';
 import { put, takeLatest, call } from 'redux-saga/effects';
 import Web3 from 'web3';
 
-import { INIT_WEB3_SUCCESS } from "actions/types";
+import {INIT_WEB3, INIT_WEB3_SUCCESS} from "actions/types";
 
 const contractNames = [
     'Posts',
@@ -54,5 +54,5 @@ function* initWeb3Context() {
 }
 
 export function* watchInitWeb3() {
-    yield takeLatest('INIT_WEB3', initWeb3Context);
+    yield takeLatest(INIT_WEB3, initWeb3Context);
 }
