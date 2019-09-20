@@ -137,7 +137,7 @@ const PostDetailComponent = (props: Props) => {
 
     const verifiedLabel = props.post.result.verified ?
        <span style={{ color: "green" }}>verified</span>
-     : <span style={{color: "red" }}>not verified"</span>;
+     : <span style={{color: "red" }}>not verified</span>;
 
     return (
         <div>
