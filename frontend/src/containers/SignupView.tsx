@@ -18,6 +18,8 @@ interface DispatchToProps {
 
 type Props = RouteComponentProps & StateToProps & DispatchToProps & FormComponentProps;
 
+
+
 class RegistrationForm extends React.Component<Props> {
   state = {
     confirmDirty: false,

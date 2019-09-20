@@ -4,13 +4,14 @@ import authReducer, {AuthState} from 'reducers/auth';
 import bcReducer, {BcState} from 'reducers/bc';
 import commentReducer, {CommentsState} from 'reducers/comments';
 import postReducer, {PostsState} from 'reducers/posts';
-import votesReducer from 'reducers/votes';
+import votesReducer, {VotesState} from 'reducers/votes';
 
 export interface State {
     auth: AuthState,
     bc: BcState,
     posts: PostsState,
     comments: CommentsState,
+    votes: VotesState,
 }
 
 export default combineReducers({

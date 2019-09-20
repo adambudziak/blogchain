@@ -4,10 +4,14 @@ import {
     SUBMIT_VOTE,
 } from 'actions/types';
 
+export interface VotesState {
+    submitLoading: boolean,
+    submitError: Error | null,
+}
+
 const initialState = {
     submitLoading: false,
     submitError: null,
-    items: [],
 };
 
 const reducer = (state=initialState, action: AnyAction) => {
