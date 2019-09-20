@@ -14,87 +14,88 @@ interface DispatchToProps {
 }
 
 interface StateToProps {
-  loading: boolean,
-  error: Error,
+    loading: boolean,
+    error: Error,
 }
 
 type Props = RouteComponentProps & DispatchToProps & StateToProps & FormComponentProps;
 
-class NormalLoginForm extends React.Component<Props> {
-  handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        this.props.authLogin(values.username, values.password);
-      }
-    });
-    this.props.history.push('/');
-  };
-
-  render() {
+const LoginForm = (props: Props) => {
+   const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const state = props.location.state;
+        const next = (state !== undefined && state.next !== undefined) ? state.next : '/';
+        props.form.validateFields((err, values) => {
+            if (!err) {
+                props.authLogin(values.username, values.password);
+            }
+        });
+        props.history.push(next);
+    };
     let errorMessage = null;
-    if (this.props.error) {
-      errorMessage = (
-        <p>{this.props.error.message}</p>
-      );
+    if (props.error) {
+        errorMessage = (
+            <p>{props.error.message}</p>
+        );
     }
+    const { getFieldDecorator } = props.form;
 
-    const { getFieldDecorator } = this.props.form;
     return (
-      <div>
-        {errorMessage}
-        {
-          this.props.loading ?
-          <Spin indicator={antIcon} />
-          :
-          <Form onSubmit={this.handleSubmit} className="login-form">
+        <div>
+            <h2>Login</h2>
+            {errorMessage}
+            {
+                props.loading ?
+                    <Spin indicator={antIcon} />
+                    :
+                    <Form onSubmit={handleSubmit} className="login-form">
 
-            <Form.Item>
-            {getFieldDecorator('username', {
-              rules: [{ required: true, message: 'Please input your username!' }],
-            })(
-              <Input
-              prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-              placeholder="Username"
-              />,
-            )}
-            </Form.Item>
+                        <Form.Item>
+                            {getFieldDecorator('username', {
+                                rules: [{ required: true, message: 'Please input your username!' }],
+                            })(
+                                <Input
+                                    prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                                    placeholder="Username"
+                                />,
+                            )}
+                        </Form.Item>
 
-            <Form.Item>
-            {getFieldDecorator('password', {
-              rules: [{ required: true, message: 'Please input your Password!' }],
-            })(
-              <Input
-              prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-              type="password"
-              placeholder="Password"
-              />,
-            )}
-            </Form.Item>
+                        <Form.Item>
+                            {getFieldDecorator('password', {
+                                rules: [{ required: true, message: 'Please input your Password!' }],
+                            })(
+                                <Input
+                                    prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                                    type="password"
+                                    placeholder="Password"
+                                />,
+                            )}
+                        </Form.Item>
 
-            <Form.Item>
-              <Button type="primary" htmlType="submit" style={{marginRight: '10px'}} >
-                Login
-              </Button>
-              Or
-              <NavLink
-              style={{marginRight: '10px'}} to='/signup'
-              > signup
-              </NavLink>
-            </Form.Item>
-          </Form>
-        }
-      </div>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit" style={{marginRight: '10px'}} >
+                                Login
+                            </Button>
+                            Or
+                            <NavLink
+                                style={{marginRight: '10px'}} to='/signup'
+                            > signup
+                            </NavLink>
+                        </Form.Item>
+                    </Form>
+            }
+        </div>
     );
-  }
-}
+};
 
-const WrappedNormalLoginForm = Form.create({ name: 'normal_login' })(NormalLoginForm);
+
+const WrappedLoginForm = Form.create({ name: 'normal_login' })(LoginForm);
 
 const mapStateToProps = (state: State) => state.auth;
 
 const mapDispatchToProps: DispatchToProps = {
-  authLogin,
+    authLogin,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(WrappedNormalLoginForm);
+export default connect(mapStateToProps, mapDispatchToProps)(WrappedLoginForm);
