@@ -3,13 +3,14 @@ import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {ApiPost, fetchPosts} from "actions/posts";
 import {State} from "reducers/index";
-import {RouteComponentProps} from 'react-router-dom';
+import {Link, RouteComponentProps} from 'react-router-dom';
 import {List, Avatar, Icon, Button} from 'antd';
 
 import 'src/styles/PostsView.scss';
 
 interface StateToProps {
     posts: ApiPost[],
+    isAuthenticated: boolean,
 }
 
 interface DispatchToProps {
@@ -28,7 +29,7 @@ const IconText = ({type, text, propStyle}: {type: string, text: string, propStyl
 const PostsList = (props: Props) => {
     useEffect(withPolling(props.fetchPosts), [props.fetchPosts]);
 
-    const cutContent = (contentPreview: string): any => {
+    const wrapContentPreview = (contentPreview: string): any => {
         return (<p className="post-content">{contentPreview}<br/>{'(Click to see more)'}</p>);
     };
 
@@ -36,15 +37,18 @@ const PostsList = (props: Props) => {
         return props.history.push(`post/${postIdx}/`);
     };
 
-    const openCreatePost = () => {
-        return props.history.push(`posts/new/`);
-    };
-
     return (
         <div>
-            <Button onClick={openCreatePost}>
-                Add your post
-            </Button>
+            {props.isAuthenticated ?
+                <Button>
+                    <Link to="posts/new/">Create a new post</Link>
+                </Button>
+            :
+                <Button>
+                    <Link to={{ pathname: 'login', state: {'next': 'posts/new/'} }}>Login to add a new post</Link>
+                </Button>
+            }
+
             <List
                 itemLayout="vertical"
                 size="large"
@@ -73,10 +77,19 @@ const PostsList = (props: Props) => {
                         ]}
                     >
                         <List.Item.Meta
-                            title={<span style={{fontSize: "2em"}}>{item.title}</span>}
+                            title={
+                                <span>
+                                    <span style={{fontSize: "2em"}}>{item.title} </span>
+                                    {
+                                        item.verified ?
+                                            <span style={{ fontStyle: "italic", color: "green" }}> verified</span>
+                                          : <span style={{ fontStyle: "italic", color: "red" }}> not verified</span>
+                                    }
+                                </span>
+                            }
                             description={"by " + item.author}
                         />
-                        {cutContent(item.content_preview)}
+                        {wrapContentPreview(item.content_preview)}
                     </List.Item>
                 )}
             />
@@ -86,6 +99,7 @@ const PostsList = (props: Props) => {
 
 const mapStateToProps = (state: State): StateToProps => ({
     posts: state.posts.items,
+    isAuthenticated: state.auth.token !== null,
 });
 
 const mapDispatchToProps = {
