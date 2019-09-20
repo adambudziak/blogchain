@@ -21,7 +21,8 @@ const bcAddComment = (web3Context: Web3Context, hash: string, postHash: string) 
         web3Context.commentsContract.methods.addComment(hash, postHash)
             .send({
                 from: web3Context.account,
-                value: web3Context.web3.utils.toWei('0.001', 'ether')
+                value: web3Context.web3.utils.toWei('0.001', 'ether'),
+                gas: 1000000,
             })
             .on('confirmation', () => resolve({ success: true }))
             .on('error', (error: Error) => resolve({ error }));
