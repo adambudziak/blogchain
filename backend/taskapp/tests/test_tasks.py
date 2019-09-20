@@ -42,11 +42,11 @@ class TestVerifyPostsTask(TestCase):
         self.now = datetime.now(pytz.UTC)
         self.posts = [post_factory(timestamp=(self.now + timedelta(i))) for i in range(5)]
         self.bc_posts = [
-            [post.creation_datetime.replace(tzinfo=None).isoformat(), bytes.fromhex(post.data_hash[2:])]
+            bytes.fromhex(post.data_hash[2:])
             for post in self.posts
         ]
         self.contract_mock = MagicMock()
-        self.contract_mock.functions.getPostsCount = mock_contract_function(lambda: len(self.bc_posts))
+        self.contract_mock.functions.getPostCount = mock_contract_function(lambda: len(self.bc_posts))
         self.contract_mock.functions.posts = mock_contract_function(lambda i: self.bc_posts[i])
 
         self.posts_contract = PostsContract(self.contract_mock)
@@ -82,9 +82,14 @@ class TestVerifyCommentsTask(TestCase):
             [bytes.fromhex(comment.data_hash[2:]), bytes.fromhex(self.post.data_hash[2:])]
             for comment in self.comments
         ]
+        self.hashes = {
+            comment.data_hash: bc_comment
+            for (comment, bc_comment) in zip(self.comments, self.bc_comments)
+        }
         self.contract_mock = MagicMock()
         self.contract_mock.functions.getCommentCount = mock_contract_function(lambda: len(self.bc_comments))
-        self.contract_mock.functions.comments = mock_contract_function(lambda i: self.bc_comments[i])
+        self.contract_mock.functions.comments = mock_contract_function(lambda i: self.bc_comments[i][0])
+        self.contract_mock.functions.hashToComment = mock_contract_function(lambda _hash: self.hashes[_hash])
 
         self.comments_contract = CommentsContract(self.contract_mock)
 
