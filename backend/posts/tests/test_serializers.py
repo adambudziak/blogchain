@@ -73,9 +73,9 @@ class TestVoteSerializer(TestCase):
         expected_date = vote.creation_datetime.isoformat().replace('+00:00', 'Z')
         self.assertEqual(serialized, {
             'id': 1,
-            'post': 1,
             'author': 'admin',
             'creation_datetime': expected_date,
             'is_upvote': True,
             'data_hash': vote.data_hash,
+            'post': 1,
         })

@@ -16,7 +16,9 @@ const bcAddVote = (web3Context: Web3Context, vote: VoteData, hash: string, targe
             .send({
                 from: web3Context.account,
                 value: web3Context.web3.utils.toWei('0.002', 'ether'),
+                gas: 1000000,
             })
+            .on('transactionHash', (_hash) => resolve({ success: true }))
             .on('confirmation', () => resolve({ success: true }))
             .on('error', (error: Error) => resolve({ error }))
     });
