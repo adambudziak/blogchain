@@ -14,7 +14,7 @@ post_factory = make_post_factory('Post title', 'Post content')
 
 
 class TestCommentSerializer(TestCase):
-    
+
     def setUp(self):
         self.serializer = CommentSerializer
         post = post_factory()
@@ -77,5 +77,6 @@ class TestVoteSerializer(TestCase):
             'creation_datetime': expected_date,
             'is_upvote': True,
             'data_hash': vote.data_hash,
+            'verified': False,
             'post': 1,
         })
