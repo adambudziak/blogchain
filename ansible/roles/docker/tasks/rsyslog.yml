@@ -1,0 +1,18 @@
+---
+- name: "Create directory for docker logs"
+  file:
+    path: /var/log/docker
+    owner: syslog
+    group: adm
+    mode: 0755
+    state: directory
+  become: true
+
+- name: "Create docker rsyslog"
+  template: 
+    src: 10-docker.conf.j2
+    dest: /etc/rsyslog.d/10-docker.conf
+    group: root
+    owner: root
+    mode: 0644
+  notify: restart rsyslog

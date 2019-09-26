@@ -1,0 +1,21 @@
+# Local development dependencies go here
+-r tests.txt 
+
+# Create documentation
+Sphinx==1.7.6
+sphinx_rtd_theme==0.4.1
+
+# WSGI utility library for Python
+Werkzeug==0.14.1
+
+# Collection of useful extensions
+django-extensions==2.2.1
+
+# Wery useful toolbar for debuging project
+django-debug-toolbar==1.11
+
+# Python debugger
+pudb==2018.1
+
+# jupyter module
+jupyter==1.0.0

@@ -1,0 +1,85 @@
+version: '3'
+
+services:
+  {% if usage_docker_db %}
+  db:
+    container_name: {{ env }}-db-blogchain
+    image: postgres:11.1
+    volumes:
+      - ./shared/postgresql:/var/lib/postgresql/data
+    env_file:
+      - .envs/.production/.postgres
+    logging:
+      driver: syslog
+      options:
+        tag: "docker/{% raw %}{{.Name}}{% endraw %}"
+    restart: always
+  {% endif %}
+  app: &app
+    container_name: {{ env }}-app-blogchain
+    image: 10clouds/blogchain-backend:{{ dockerTag | default('latest') }}
+    ports:
+      - "8000:8000"
+    env_file:
+      - .envs/.production/.django
+      - .envs/.production/.postgres
+    {% if usage_docker_db -%}
+    depends_on:
+      - db
+    {% endif -%}
+    volumes:
+      - ./shared/media:/app/shared/media
+      - ./shared/static:/app/shared/static
+      - ./shared/templates:/app/shared/templates
+    command: /gunicorn.sh
+    logging:
+      driver: syslog
+      options:
+        tag: "docker/{% raw %}{{.Name}}{% endraw %}"
+    restart: always
+
+
+  redis:
+    image: redis:3.0
+    restart: always
+
+  celeryworker:
+    <<: *app
+    container_name: {{ env }}-celeryworker-blogchain
+    depends_on:
+      - db
+      - redis
+    command: /start-celeryworker.sh
+    ports: []
+    logging:
+      driver: syslog
+      options:
+        tag: "docker/{% raw %}{{.Name}}{% endraw %}"
+    restart: always
+
+  celerybeat:
+    <<: *app
+    container_name: {{ env }}-celerybeat-blogchain
+    depends_on:
+      - db
+      - redis
+    ports: []
+    command: /start-celerybeat.sh
+    logging:
+      driver: syslog
+      options:
+        tag: "docker/{% raw %}{{.Name}}{% endraw %}"
+    restart: always
+
+  flower:
+    <<: *app
+    container_name: {{ env }}-flower-blogchain
+    ports:
+      - "5555:5555"
+    command: /start-flower.sh
+    logging:
+      driver: syslog
+      options:
+        tag: "docker/{% raw %}{{.Name}}{% endraw %}"
+    restart: always
+

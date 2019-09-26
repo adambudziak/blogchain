@@ -1,80 +1,81 @@
 version: '3'
+
 services:
   db:
-    image: postgres:12
+    image: postgres:11.1
+    volumes:
+      - ./shared/postgresql:/var/lib/postgresql/data
     env_file:
       - .envs/.local/.postgres
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
-  backend: &backend
-    build: backend
-    expose:
-      - "8000"
-    ports:
-      - "8081:8000"
-    env_file:
-      - .envs/.local/.backend
-    links:
-      - ganache
-      - db
-      - redis
-    volumes:
-      - ./backend:/app
-
-  frontend:
-    build: frontend
-    volumes:
-      - ./frontend:/app
-    expose: 
-      - "8000"
-
-  ganache:
-    image: trufflesuite/ganache-cli:latest
-    ports:
-      - "8545:8545"
-
-  redis:
-    image: redis:5.0
-
-  celeryworker:
-    <<: *backend
-    ports: []
-    entrypoint: ["./start_celeryworker.sh"]
-
-  celerybeat:
-    <<: *backend
-    ports: []
-    entrypoint: ["./start_celerybeat.sh"]
-
-  flower:
-    <<: *backend
-    ports:
-      - "5555:5555"
-    entrypoint: ["./start_flower.sh"]
-
-  nginx:
-    image: nginx:latest
-    ports:
-      - 8000:8000
-    links:
-      - frontend
-      - backend
-    volumes:
-      - ./nginx:/etc/nginx
-      - ./assets:/var/www/blogchain/assets
-
-  truffle:
+    environment:
+      # We set PGDATA to a subfolder because Postgres needs this folder to be
+      # empty, and we have a .gitkeep file there
+      - PGDATA=/var/lib/postgresql/data/pgdata
+  app:  &app
+    container_name: blogchain-app
     build:
       context: .
-      dockerfile: bc/Dockerfile
-    links:
-      - ganache
+      dockerfile: ./docker/local/backend/Dockerfile
+    ports:
+      - "8081:8000"
+    expose:
+      - 8000
+    depends_on:
+      - db
+    env_file:
+      - .envs/.local/.django
+      - .envs/.local/.postgres
     volumes:
-      - ./assets:/assets
-      - ./bc:/app:ro
+      - ./backend:/app
+      - ./shared/media:/app/shared/media
+      - ./shared/static:/app/shared/static
+      - ./shared/templates:/app/shared/templates
+      - ./docs:/docs
 
-volumes:
-  pgdata:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./docker/local/frontend/Dockerfile
+    expose:
+      - 8000
+    volumes:
+      - ./frontend:/app
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/local/nginx/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - frontend
+      - app
+
+  redis:
+    image: redis:3.0
+
+  celeryworker:
+    <<: *app
+    container_name: blogchain-celeryworker
+    depends_on:
+      - redis
+      - db
+    ports: []
+    command: /start-celeryworker.sh
+
+  celerybeat:
+    <<: *app
+    container_name: blogchain-celerybeat
+    depends_on:
+      - redis
+      - db
+    ports: []
+    command: /start-celerybeat.sh
+
+  flower:
+    <<: *app
+    container_name: blogchain-flower
+    ports:
+      - "5555:5555"
+    command: /start-flower.sh
+
