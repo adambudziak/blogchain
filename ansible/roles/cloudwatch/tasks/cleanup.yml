@@ -1,0 +1,12 @@
+---
+- name: Remove /tmp/awslogs.conf
+  file:
+    path: /tmp/awslogs.conf
+    state: absent
+  become: true
+
+- name: Remove /tmp/awslogs-agent-setup.py
+  file:
+    path: /tmp/awslogs-agent-setup.py
+    state: absent
+  become: true

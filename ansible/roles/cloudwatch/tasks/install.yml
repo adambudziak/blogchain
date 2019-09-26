@@ -1,0 +1,32 @@
+---                                                     
+- name: Install cloud utils packages
+  apt: pkg={{ item }} state=present update_cache=yes
+  with_items: [cloud-guest-utils]
+  become: true
+
+- name: Discover the EC2 instance region
+  shell: "ec2metadata --availability-zone | rev | cut -c 2- | rev"
+  register: ec2_region
+
+- name: Configure /tmp/awslogs.conf
+  template:
+    dest: /tmp/awslogs.conf
+    group: ubuntu
+    mode: 0600
+    owner: ubuntu
+    src: awslogs.conf.j2
+  become: true
+
+- name: Download the awslogs-agent-setup.py script
+  get_url:
+    dest: /tmp/awslogs-agent-setup.py
+    group: ubuntu
+    owner: ubuntu
+    mode: 0600
+    url: https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py
+  become: true
+
+- name: Install the AWS CloudWatch Logs daemon
+  shell: python /tmp/awslogs-agent-setup.py -n -r {{ ec2_region.stdout }} -c /tmp/awslogs.conf
+  become: true
+

@@ -1,0 +1,12 @@
+---                                                                     
+- hosts: "{{ env }}"
+  become: true
+
+  roles:
+   - { role: common,        tags: [ 'provisioning', 'deploy' ] }
+   - { role: certbot,       tags: [ 'provisioning', 'certbot' ] }
+   - { role: cloudwatch,    tags: [ 'provisioning', 'cloudwatch' ] }
+   - { role: nginx,         tags: [ 'provisioning', 'deploy', 'nginx' ] }
+   - { role: docker,        tags: [ 'provisioning', 'docker'] }
+   - { role: deploy,        tags: [ 'deploy' ],   become_user: "{{ ansible_ssh_user }}" }
+

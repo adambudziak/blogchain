@@ -1,0 +1,43 @@
+---                                                                 
+- name: Install repo
+  apt_repository:
+    repo: "ppa:certbot/certbot"
+
+- name: Install Certbot
+  package:
+    name: "letsencrypt"
+    state: present
+
+- name: Check if Nginx exists
+  stat: path=/etc/init.d/nginx
+  register: nginx_status
+
+- name: Ensure Nginx is stopped
+  service: name=nginx state=stopped
+  when: nginx_status.stat.exists
+
+- name: Install certbot and generate cert
+  command: "sudo /usr/bin/certbot certonly --agree-tos --standalone -n -m {{ certbot_email }} -d {{ item.server_name }}"
+  args:
+    creates: "/etc/letsencrypt/live/{{ item.server_name }}"
+  with_items: "{{ nginx_vhosts }}"
+  when:
+    - item.listen == "443"
+  become: yes
+
+- name: Unmask Nginx
+  command: systemctl unmask nginx
+  when: nginx_status.stat.exists
+
+- name: Ensure Nginx is started
+  command: service nginx start
+  when: nginx_status.stat.exists
+
+- name: Ensure a cron job to auto-renew the cert exists
+  cron:
+    name: "monthly auto renew cert"
+    special_time: monthly
+    job: "{{ certbot_script }} renew --standalone --no-self-upgrade --pre-hook \"service nginx stop\" --post-hook \"service nginx start\" --quiet"
+    state: present
+  when: certbot_auto_renew
+
