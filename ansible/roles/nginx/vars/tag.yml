@@ -1,0 +1,15 @@
+---
+nginx_servers:                                        
+  - name: YYYY
+    ip: '{{ ansible_default_ipv4.address }}'
+    port: '8080'
+    location_root: '/xxx/xxx'
+    location_index: 'index.html'
+    rewrite_on: false
+  - name: webservices
+    ip: '{{ ansible_default_ipv4.address }}'
+    port: '8891'
+    location_root: '/xxx/public'
+    location_index: 'index.html'
+    rewrite_on: false
+

@@ -1,0 +1,12 @@
+---
+- include: access.yml
+- include: pip.yml
+- include: swap.yml
+- include: debian-motd.yml
+  when: ansible_os_family == "Debian"
+
+- name: main | Configuring MOTD
+  template:
+    src: "etc/motd.j2"
+    dest: "/etc/motd"
+  become: true

@@ -1,3 +1,6 @@
-POSTGRES_DB=blogchain_db
-POSTGRES_USER=blogchain
-POSTGRES_PASSWORD=blogchain
+
+# PostgreSQL
+POSTGRES_DB=backend
+POSTGRES_USER=backend
+POSTGRES_PASSWORD=backend
+

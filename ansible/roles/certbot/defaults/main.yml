@@ -1,0 +1,3 @@
+---
+certbot_auto_renew: true
+certbot_script: /usr/bin/certbot
