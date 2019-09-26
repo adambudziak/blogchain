@@ -1,0 +1,8 @@
+---
+- name: "Create logrotate for docker logs"
+  template: 
+    src: docker-logrotate.conf.j2
+    dest: /etc/logrotate.d/docker-containers
+
+- name: "Reload logrotate"
+  command: logrotate /etc/logrotate.d/docker-containers

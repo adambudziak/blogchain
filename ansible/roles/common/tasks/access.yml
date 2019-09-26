@@ -1,0 +1,13 @@
+---                                           
+- name: Set up authorized keys
+  authorized_key:
+    user: 'ubuntu'
+    state: present
+    key: '{{ item }}'
+    path: /home/ubuntu/.ssh/authorized_keys
+    manage_dir: False
+  with_file:
+    - public_keys/ci_10clouds_com.pub
+    - public_keys/michal.lewandowski.pub
+    - public_keys/witold_gren.pub
+

@@ -1,0 +1,21 @@
+---                                           
+pip_install_packages: []
+
+swap_size: "{{ ansible_memtotal_mb }}M"
+swap_location: /swap
+swap_sysctl_tweaks:
+  vm.vfs_cache_pressure: "50"
+  vm.swappiness: "10"
+
+motd_custom_scripts:
+  - '30-sysinfo'
+motd_default_dir: '/etc/update-motd.d'
+motd_default_message: ''
+motd_disable_defaults: true
+motd_enable_custom_scripts: true
+motd_static: false
+motd_ubuntu_defaults:
+  - '00-header'
+  - '10-help-text'
+  - '91-release-upgrade'
+

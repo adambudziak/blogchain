@@ -1,0 +1,12 @@
+# /etc/rsyslog.d/10-docker.conf
+# Log Docker container logs to file per tag
+
+# Log docker messages to one file per container
+$template DockerFileName,"/var/log/docker/%syslogtag:R,ERE,1,DFLT:docker/(.*)\[--end%.log"
+
+# Log messages usually already contain a timestamp, so only log the raw message
+$template DockerLog,"%msg%\n"
+:syslogtag,startswith,"docker/" ?DockerFileName;DockerLog
+
+# Do not pollute default syslog with docker messages
+& ~

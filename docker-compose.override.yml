@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  db:
+    user: "1000"
+  app:  &app
+    build:
+      args: # Pass the host user id in, so the Dockerfile can create a user
+            # with the same UID, solving permissions problems on Linux
+        USER_ID: "1000"
+    user: "1000"
+
+  celeryworker:
+    <<: *app
+  celerybeat:
+    <<: *app
+  flower:
+    <<: *app
+

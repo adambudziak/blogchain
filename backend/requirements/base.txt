@@ -1,0 +1,74 @@
+# Wheel 0.25+ needed to install certain packages on CPython 3.5+ like Pillow and psycopg2
+# See http://bitly.com/wheel-building-fails-CPython-35
+# Verified bug on Python 3.5.1
+wheel==0.31.1
+
+# Django
+django==2.2.4
+
+# HTTP for Humans
+requests==2.18.4
+
+# Configuration
+django-environ==0.4.4
+
+# Models
+django-model-utils==3.1.2
+
+# Images
+Pillow==5.2.0
+
+# Password storage
+argon2-cffi==18.1.0
+
+# Health check
+django-health-check==3.7.1
+# Python-PostgreSQL Database Adapter
+psycopg2-binary==2.7.4
+# Unicode slugification
+awesome-slugify==1.6.5
+
+# Time zones support
+pytz==2018.4
+
+# Redis support for cache and celery
+django-redis==4.9.0
+redis>=2.10.6
+
+# Distributed Task Queue
+celery==4.2.1
+flower==0.9.3  # https://github.com/mher/flower
+
+
+# Powerful and flexible toolkit for building Web APIs
+djangorestframework==3.8.2
+django-rest-auth==0.9.3
+
+# Python implementation of Markdown for DRF
+Markdown==2.6.11
+
+# Reusable app for filter querysets dynamically
+django-filter==2.2.0
+
+# API documentation
+drf-yasg==1.7.4
+swagger-spec-validator>=2.1.0
+flex>=6.13.2
+
+
+
+
+# Django storage in AWS S3
+# ------------------------------------------------------------------------------
+django-storages[boto3]==1.7.1  # https://github.com/jschneier/django-storages
+
+
+# Exports Django monitoring metrics for Prometheus.io
+django-prometheus==1.0.15
+
+# Adds CORS headers to responses
+django-cors-headers==3.0.2
+
+# Your custom requirements go here
+drf-action-serializer==1.0.2
+web3==4.9.2
