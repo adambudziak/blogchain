@@ -1,0 +1,3 @@
+# This file is only here so we can keep this directory in version control, and
+# it therefore exists and has the right permissions when docker-compose tries
+# to mount it as a volume.

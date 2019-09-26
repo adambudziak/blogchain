@@ -1,0 +1,19 @@
+---                                                           
+docker_edition: "ce"
+docker_package: "docker-{{ docker_edition }}=18.06.1~ce~3-0~ubuntu"
+docker_package_version: "5:18.09.0~3-0~ubuntu-{{ ansible_distribution_release }}"
+docker_package_state: "present"
+
+docker_install_compose: true
+docker_compose_version: "1.21.0"
+docker_compose_path: /usr/local/bin/docker-compose
+
+docker_apt_release_channel: stable
+docker_apt_repository: "deb https://download.docker.com/linux/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
+
+docker_yum_repo_url: https://download.docker.com/linux/centos/docker-{{ docker_edition }}.repo
+docker_yum_repo_enable_edge: 0
+docker_yum_repo_enable_test: 0
+
+docker_users: []
+

@@ -1,0 +1,45 @@
+# This file exists so you can easily regenerate your project.
+#
+# `cookiepatcher` is a convenient shim around `cookiecutter`
+# for regenerating projects (it will generate a .cookiecutterrc
+# automatically for any template). To use it:
+#
+#    pip install cookiepatcher
+#    cookiepatcher gh:ionelmc/cookiecutter-pylibrary project-path
+#
+# See:
+#    https://pypi.python.org/pypi/cookiecutter
+#
+# Alternatively, you can run:
+#
+#    cookiecutter --overwrite-if-exists --config-file=blogchain/.cookiecutterrc git@github.com:10clouds/project-template.git
+
+default_context:
+
+    _template:                       'git@github.com:10clouds/10c-django-template.git'
+    author_name:                     'Adam Budziak'
+    description:                     'A short description of the project.'
+    django_version:                  '2.0.5'
+    domain_name:                     'blogchain.dev.10clouds.io'
+    email:                           'adam.budziak@10clouds.com'
+    github_org_name:                 '10clouds'
+    jenkinsSSHId:                    'b78d5aba-6e15-4e86-b4cc-3ecd0c2022c0'
+    jenkins_github_credentials_id:   'ci10clouds.com'
+    jenkins_slave_name:              'slave.ci.10clouds.com'
+    jenkins_url:                     'ci.10clouds.com'
+    open_source_license:             'Not open source'
+    postgresql_version:              '11.1'
+    project_name:                    'blogchain'
+    project_slug:                    'blogchain'
+    python_version:                  '3.6.8-slim'
+    slack_channel:                   'blogchain'
+    use_celery:                      'y'
+    use_django_allauth:              'n'
+    use_django_amazon_ses:           'n'
+    use_django_channels:             'n'
+    use_django_rest_framework:       'y'
+    use_django_storages:             'y'
+    use_pycharm:                     'y'
+    use_sphinx:                      'y'
+    version:                         '0.1.0'
+    windows:                         'n'

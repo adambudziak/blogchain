@@ -1,0 +1,56 @@
+# Base dependencies go here
+-r base.txt
+
+# Code coverage
+coverage==4.5.1
+
+# create model fixture
+factory-boy==2.11.1
+
+# best testing framework
+pytest>=3.6.0
+
+# pytest plugin produces coverage reports
+pytest-cov>=2.5.1
+
+# testing django with pytest
+pytest-django>=3.2.1
+
+# distributed testing and loop-on-failing modes
+pytest-xdist>=1.22.2
+
+# changes the default look test results
+pytest-sugar==0.9.1
+
+# pytest plugin for faker
+pytest-faker>=2.0.0
+
+# pytest plugin for mock module
+pytest-mock>=1.10.0
+
+# pytest plugin for pudb
+pytest-pudb==0.6
+
+# pytest plugin for factoryboy
+pytest-factoryboy==2.0.3
+
+# app for create functional testing
+django-webtest>=1.9.3
+# TODO: Remove when replace all test to pytest
+django-test-plus==1.0.20
+
+# # Wery useful toolbar for debuging project
+django-debug-toolbar==1.11
+
+
+
+# very easy request mock
+requests-mock==1.5.2
+
+# code audit tool
+isort==4.3.4
+pylama==7.6.6
+pylama-pylint==3.1.1
+pylint-django==2.0.4
+pylint-celery==0.3
+radon==2.4.0
