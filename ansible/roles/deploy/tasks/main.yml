@@ -1,0 +1,112 @@
+---                                                                                     
+- name: Create the application user
+  user: name={{ application_name }} state=present
+  become_user: root
+
+- name: Create the application group
+  group: name={{ application_group }} system=yes state=present
+  become_user: root
+
+- name: Add the application user to the application group
+  user: name={{ application_name }} group={{ application_group }} state=present
+  become_user: root
+
+- name: Add the ubuntu user to the application group
+  user: name=ubuntu group={{ application_group }} state=present
+  become_user: root
+
+- name: Ensure folder for environment exists
+  file:
+    path: "{{ project_path }}"
+    state: directory
+    mode: u+rwx
+  become_user: root
+
+- name: Ensure the {{ application_name }} have permission for folder for environment
+  file:
+    dest: "{{ project_path }}"
+    owner: "{{ application_name }}"
+    group: "{{ application_group }}"
+    mode: u=rwX,g=rwX,o=rX
+  become_user: root
+
+- name: Create static folder
+  file:
+    path: "{{ project_path }}/shared/static"
+    state: directory
+    mode: u+rwx
+    owner: 999
+    group: root
+    recurse: yes
+  become_user: root
+
+- name: Create media folder
+  file:
+    path: "{{ project_path }}/shared/media"
+    state: directory
+    mode: u+rwx
+    owner: 999
+    group: root
+    recurse: yes
+  become_user: root
+
+- name: Upload docker-compose file
+  template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ project_path }}/docker-compose.yml"
+  become_user: "{{ application_name }}"
+
+- name: Upload .env file
+  copy:
+    src: ".env"
+    dest: "{{ project_path }}/.env"
+    owner: "{{ application_name }}"
+    group: "{{ application_group }}"
+  become_user: root
+
+- name: Upload docker login config
+  copy:
+    src:  "~/.dockercfg"
+    dest: "~/.dockercfg"
+  become_user: "{{ application_name }}"
+  when: not new_docker_credential
+
+- name: Create docker directory
+  file:
+    path: "~/.docker"
+    state: directory
+  become_user: "{{ application_name }}"
+  when: new_docker_credential
+
+- name: Upload docker login config
+  copy:
+    src: "~/.docker/config.json"
+    dest: "~/.docker/config.json"
+  become_user: "{{ application_name }}"
+  when: new_docker_credential
+
+- name: Pull docker images
+  raw: "cd {{ project_path }} && docker-compose pull --parallel"
+  become_user: "{{ application_name }}"
+
+- name: Delete docker login config
+  file:
+    path: "~/.docker/config.json"
+    state: absent
+  become_user: "{{ application_name }}"
+  when: new_docker_credential
+
+- name: Delete docker login config
+  file:
+    path:  "~/.dockercfg"
+    state: absent
+  when: not new_docker_credential
+
+- name: Run containers
+  raw: "cd {{ project_path }} && docker-compose up -d --remove-orphans"
+  become_user: "{{ application_name }}"
+
+- name: Clean containers
+  raw: "cd {{ project_path }} && docker system prune -af --volumes"
+  become_user: "{{ application_name }}"
+

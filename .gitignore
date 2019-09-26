@@ -2,3 +2,4 @@
 **/celerybeat.pid
 **/celerybeat-schedule
 **/venv
+**/pgdata/*

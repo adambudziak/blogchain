@@ -1,0 +1,23 @@
+---
+cloudwatch_logs:
+  - file: /var/log/docker/app
+    format: "%b %d %H:%M:%S"
+    group_name: app
+  
+  - file: /var/log/docker/redis
+    format: "%b %d %H:%M:%S"
+    group_name: redis
+
+  - file: /var/log/docker/celerybeat
+    format: "%b %d %H:%M:%S"
+    group_name: celerybeat
+
+  - file: /var/log/docker/flower
+    format: "%b %d %H:%M:%S"
+    group_name: flower
+  
+  
+cloudwatch_logs_db:
+  - file: /var/log/docker/db
+    format: "%b %d %H:%M:%S"
+    group_name: db

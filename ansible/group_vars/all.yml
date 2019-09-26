@@ -1,0 +1,79 @@
+---
+project_name: "blogchain"       
+project_path: "/srv/{{ project_name }}/{{ env }}"     
+
+application_name: "blogchain"
+application_group: webapps
+
+pip_install_packages:
+  - name: docker-compose
+
+new_docker_credential: True
+docker_users:
+  - name: ubuntu
+  - name: "blogchain"           
+
+certbot_email: devops@10clouds.com
+
+nginx_vhosts:
+  - listen: "80"
+    server_name: "blogchain.dev.10clouds.io"
+    filename: "blogchain.dev.10clouds.io-80.conf"
+    access_log: "/var/log/nginx/blogchain.dev.10clouds.io-80-access.log"
+    error_log:  "/var/log/nginx/blogchain.dev.10clouds.io-80-errors.log"
+    extra_parameters: |
+      return 301 https://$host$request_uri;
+  - listen: "443"
+    server_name: "blogchain.dev.10clouds.io"
+    filename: "blogchain.dev.10clouds.io-443.conf"
+    access_log: "/var/log/nginx/blogchain.dev.10clouds.io-443-access.log"
+    error_log:  "/var/log/nginx/blogchain.dev.10clouds.io-443-errors.log"
+    extra_parameters: |
+      ssl on;
+      ssl_certificate               /etc/letsencrypt/live/blogchain.dev.10clouds.io/fullchain.pem; # managed by Certbot
+      ssl_certificate_key           /etc/letsencrypt/live/blogchain.dev.10clouds.io/privkey.pem; # managed by Certbot
+      ssl_session_timeout 5m;
+      ssl_protocols TLSv1.1 TLSv1.2;
+      ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+      ssl_session_cache shared:SSL:50m;
+      ssl_prefer_server_ciphers on;
+      ssl_dhparam /etc/nginx/ssl/dh4096.pem;
+      client_max_body_size 256M;
+
+      # HSTS (HTTP Strict Transport Security)
+      add_header Strict-Transport-Security max-age=31536000;
+
+      gzip on;
+      gzip_disable "msie6";
+      gzip_vary on;
+      gzip_proxied any;
+      gzip_comp_level 7;
+      gzip_buffers 16 8k;
+      gzip_http_version 1.1;
+      gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+      keepalive_timeout 60;
+      
+      location / {
+        if (-f {{ project_path }}/shared/maintenance_on.html) {
+          return 503;
+        }
+
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;     # for Django
+        proxy_set_header Host $host;
+        proxy_redirect off;
+      }                                               
+                                                      
+      error_page 500 502 504 /500.html;
+      location = /500.html {
+        root {{ project_path }}/shared/;
+      }
+
+      error_page 503 /maintenance_on.html;
+      location = /maintenance_on.html {
+        root {{ project_path }}/shared/;
+      }                                               
