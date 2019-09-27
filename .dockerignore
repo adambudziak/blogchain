@@ -10,3 +10,9 @@
 backend/.pytest_cache/
 backend/celerybeat*
 backend/.unitreports/
+
+!truffle/*
+truffle/node_modules
+
+!frontend/*
+frontend/node_modules
