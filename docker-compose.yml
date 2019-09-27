@@ -54,6 +54,21 @@ services:
   redis:
     image: redis:3.0
 
+  ganache:
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - "8545:8545"
+
+  truffle:
+    build:
+      context: .
+      dockerfile: ./docker/local/truffle/Dockerfile
+    links:
+      - ganache
+    volumes:
+      - ./shared/static:/assets
+      - ./truffle:/app
+
   celeryworker:
     <<: *app
     container_name: blogchain-celeryworker
