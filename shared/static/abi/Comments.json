@@ -6152,10 +6152,76 @@
       "links": {},
       "address": "0x170968d3A196DA89Cd58c5C0d2Cc4Ea28269e46A",
       "transactionHash": "0x6709e3e7e4c5c56ef3b0cee86ea4c4ea7f38fc5396923fa18adcb6a391533798"
+    },
+    "1569827418320": {
+      "events": {
+        "0xeb23a547cc405b4454718db4391dec96b82d2fb60b2b72bcf280ab8a3b388a76": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "hash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "postHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "author",
+              "type": "address"
+            }
+          ],
+          "name": "CommentAdded",
+          "type": "event",
+          "signature": "0xeb23a547cc405b4454718db4391dec96b82d2fb60b2b72bcf280ab8a3b388a76"
+        },
+        "0x3c492f084c3d4b8f3844bb604f62e56a04de04da308c0d0a3b0ded9427dfd2a8": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "oldAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newAddress",
+              "type": "address"
+            }
+          ],
+          "name": "PostsAddressChanged",
+          "type": "event",
+          "signature": "0x3c492f084c3d4b8f3844bb604f62e56a04de04da308c0d0a3b0ded9427dfd2a8"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0x95dD7fd65F2B9a6edf5f658BB652b3d2691346ba",
+      "transactionHash": "0xd62205093ec54e1ce67ee2b33a915e1997f20b62849895f4c08998256f14d57a"
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-09-27T09:09:47.935Z",
+  "updatedAt": "2019-09-30T07:10:22.377Z",
   "devdoc": {
     "methods": {
       "isOwner()": {
