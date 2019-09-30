@@ -50,6 +50,8 @@ services:
     depends_on:
       - frontend
       - app
+    volumes:
+      - ./shared/static:/var/www/blogchain/assets
 
   redis:
     image: redis:3.0
@@ -75,6 +77,7 @@ services:
     depends_on:
       - redis
       - db
+      - ganache
     ports: []
     command: /start-celeryworker.sh
 
@@ -84,6 +87,7 @@ services:
     depends_on:
       - redis
       - db
+      - ganache
     ports: []
     command: /start-celerybeat.sh
 
