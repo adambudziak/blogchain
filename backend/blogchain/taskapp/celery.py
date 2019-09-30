@@ -27,3 +27,15 @@ class CeleryConfig(AppConfig):
 @app.task(bind=True)
 def debug_task(self):
     print('Request: {0!r}'.format(self.request))  # pragma: no cover
+
+
+app.conf.beat_schedule = {
+    'verify-posts': {
+        'task': 'blogchain.taskapp.tasks.verify_posts',
+        'schedule': 60.0,
+    },
+    'verify-comments': {
+        'task': 'blogchain.taskapp.tasks.verify_comments',
+        'schedule': 10.0,
+    }
+}
