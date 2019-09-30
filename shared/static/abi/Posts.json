@@ -2409,10 +2409,53 @@
       "links": {},
       "address": "0x76b9f5504AE7b16a7178Def1F69F7caC7aA794dF",
       "transactionHash": "0x1787dd4dea7c3aae8d1ed5e3fe83fc4e8d6a05badebdd9afcd75d01987d02fff"
+    },
+    "1569827418320": {
+      "events": {
+        "0x5c46107fa60dff0c784bdf6c3eb8d39aab98a25dd8cb8df6012a1619636fbd9d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "hash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "author",
+              "type": "address"
+            }
+          ],
+          "name": "PostAdded",
+          "type": "event",
+          "signature": "0x5c46107fa60dff0c784bdf6c3eb8d39aab98a25dd8cb8df6012a1619636fbd9d"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0x3059870Dae8FbF7ee0a4519d383957cFD5a25136",
+      "transactionHash": "0x7120f42a8c6589cd4c001227b05f988545b446ae8c99f58671295d31cad1734e"
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-09-27T09:09:47.932Z",
+  "updatedAt": "2019-09-30T07:10:22.370Z",
   "devdoc": {
     "methods": {
       "isOwner()": {
