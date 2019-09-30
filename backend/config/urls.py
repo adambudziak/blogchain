@@ -36,7 +36,7 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^docs/$', schema_view.with_ui('redoc', cache_timeout=None), name='schema-redoc'),
     # Your stuff: custom urls includes go here
-    url(r'^posts/', include('blogchain.posts.urls')),
+    url(r'', include('blogchain.posts.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
