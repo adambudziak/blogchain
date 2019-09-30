@@ -51,6 +51,8 @@ export function* watchSubmitPost() {
         const now = moment().format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
         const author = getUser();
         const hash = hashPost(payload.web3Context.web3, payload.post, author, now);
+        payload.web3Context.postsContract.methods.getPostCount().call()
+            .then(console.log);
         try {
             yield call(createPost, {
                 title: payload.post.title,
