@@ -2,15 +2,10 @@ version: '3'
 
 services:
   db:
-    image: postgres:11.1
-    volumes:
-      - ./shared/postgresql:/var/lib/postgresql/data
+    image: postgres:12
     env_file:
       - .envs/.local/.postgres
-    environment:
-      # We set PGDATA to a subfolder because Postgres needs this folder to be
-      # empty, and we have a .gitkeep file there
-      - PGDATA=/var/lib/postgresql/data/pgdata
+
   app:  &app
     container_name: blogchain-app
     build:
@@ -97,4 +92,3 @@ services:
     ports:
       - "5555:5555"
     command: /start-flower.sh
-
