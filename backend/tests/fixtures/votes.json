@@ -1,0 +1,74 @@
+[
+  {
+    "model": "posts.postvote",
+    "pk": 1,
+    "fields": {
+      "creation_datetime": "2019-08-28T07:30:10.754Z",
+      "data_hash": "0x51d04a7c8e49bbbc301f23cc51f53993a093dc1fbf3cbca4322a651294979914",
+      "verified": true,
+      "author": 2,
+      "is_upvote": true,
+      "post": 1
+    }
+  },
+  {
+    "model": "posts.postvote",
+    "pk": 2,
+    "fields": {
+      "creation_datetime": "2019-08-28T07:30:10.754Z",
+      "data_hash": "0x6c87f6b6f860cdb0d068dd9ad3be5589cdc9a9e6a471266d84bd543915b86fc2",
+      "verified": false,
+      "author": 3,
+      "is_upvote": true,
+      "post": 1
+    }
+  },
+  {
+    "model": "posts.postvote",
+    "pk": 3,
+    "fields": {
+      "creation_datetime": "2019-08-28T07:30:10.754Z",
+      "data_hash": "0x37b91bef697671be5c00fb3a5f9bac3bdac2e00e622100b4c82bdf07e719638a",
+      "verified": true,
+      "author": 4,
+      "is_upvote": false,
+      "post": 1
+    }
+  },
+  {
+    "model": "posts.commentvote",
+    "pk": 1,
+    "fields": {
+      "creation_datetime": "2019-08-28T07:30:10.754Z",
+      "data_hash": "0x51d04a7c8e49bbbc301f23cc51f53993a093dc1fbf3cbca4322a651294979914",
+      "verified": true,
+      "author": 2,
+      "is_upvote": true,
+      "comment": 1
+    }
+  },
+  {
+    "model": "posts.commentvote",
+    "pk": 2,
+    "fields": {
+      "creation_datetime": "2019-08-28T07:30:10.754Z",
+      "data_hash": "0x6c87f6b6f860cdb0d068dd9ad3be5589cdc9a9e6a471266d84bd543915b86fc2",
+      "verified": false,
+      "author": 3,
+      "is_upvote": true,
+      "comment": 1
+    }
+  },
+  {
+    "model": "posts.commentvote",
+    "pk": 3,
+    "fields": {
+      "creation_datetime": "2019-08-28T07:30:10.754Z",
+      "data_hash": "0x37b91bef697671be5c00fb3a5f9bac3bdac2e00e622100b4c82bdf07e719638a",
+      "verified": true,
+      "author": 4,
+      "is_upvote": false,
+      "comment": 1
+    }
+  }
+]

@@ -1,0 +1,67 @@
+[
+  {
+    "model": "posts.post",
+    "pk": 1,
+    "fields": {
+      "creation_datetime": "2019-08-23T08:09:29.368Z",
+      "data_hash": "0x32c05d4e5ece9e19d1ae3698b0cc430325be70c7c4bd9013524af2aa99b7e055",
+      "verified": true,
+      "author": 1,
+      "content": "First post content",
+      "title": "First post",
+      "tags": []
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 2,
+    "fields": {
+      "creation_datetime": "2019-08-23T08:09:29.379Z",
+      "data_hash": "0xa5c55a43c52d8f27959e064c23e76167c2962f8f4283808a9754e522bcb41359",
+      "verified": true,
+      "author": 1,
+      "content": "Second post content",
+      "title": "Second post",
+      "tags": []
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 3,
+    "fields": {
+      "creation_datetime": "2019-08-23T08:09:29.380Z",
+      "data_hash": "0x34cd8ef6bdba85264501f3d307cf4f2c06e28206ea928641b2a24417af5591e2",
+      "verified": true,
+      "author": 1,
+      "content": "Third post content",
+      "title": "Third post",
+      "tags": []
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 4,
+    "fields": {
+      "creation_datetime": "2019-08-23T08:09:29.381Z",
+      "data_hash": "0x1744f16335a877546110baf0974117c4aa35a6af3130d9d962bbd2bc5696b771",
+      "verified": true,
+      "author": 1,
+      "content": "Fourth post content",
+      "title": "Fourth post",
+      "tags": []
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 5,
+    "fields": {
+      "creation_datetime": "2019-08-23T08:09:29.383Z",
+      "data_hash": "0xd42dfb4db0a9f477e3fb1b808f4c1cd902c9759f798b5b713a2f99a27ab03a6c",
+      "verified": true,
+      "author": 1,
+      "content": "Fifth post content",
+      "title": "Fifth post",
+      "tags": []
+    }
+  }
+]

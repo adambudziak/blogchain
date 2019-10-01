@@ -1,0 +1,78 @@
+[
+    {
+        "fields": {
+            "date_joined": "2019-10-01T12:06:14.839Z",
+            "email": "",
+            "first_name": "",
+            "groups": [],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": null,
+            "last_name": "",
+            "name": "",
+            "password": "argon2$argon2i$v=19$m=512,t=2,p=2$WTlRQ3lNOHA5SXJM$HMQT8v0r/EhOE//idApf7g",
+            "user_permissions": [],
+            "username": "admin"
+        },
+        "model": "users.user",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "date_joined": "2019-10-01T12:07:34.531Z",
+            "email": "",
+            "first_name": "",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": null,
+            "last_name": "",
+            "name": "",
+            "password": "argon2$argon2i$v=19$m=512,t=2,p=2$OE1uajJiNXNweEgy$6wHhH3q75lhcFz81XBjLkg",
+            "user_permissions": [],
+            "username": "test_user_1"
+        },
+        "model": "users.user",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "date_joined": "2019-10-01T12:07:34.542Z",
+            "email": "",
+            "first_name": "",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": null,
+            "last_name": "",
+            "name": "",
+            "password": "argon2$argon2i$v=19$m=512,t=2,p=2$cENiMkpubUJlMk11$kMR668T4V6+atK72lTMW3A",
+            "user_permissions": [],
+            "username": "test_user_2"
+        },
+        "model": "users.user",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "date_joined": "2019-10-01T12:07:34.547Z",
+            "email": "",
+            "first_name": "",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": null,
+            "last_name": "",
+            "name": "",
+            "password": "argon2$argon2i$v=19$m=512,t=2,p=2$dXZnN2trNE1Zaklj$4kcJncqihb96lPkSgwfQVg",
+            "user_permissions": [],
+            "username": "test_user_3"
+        },
+        "model": "users.user",
+        "pk": 4
+    }
+]

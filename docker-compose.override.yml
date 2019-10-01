@@ -1,8 +1,6 @@
 version: '3'
 
 services:
-  db:
-    user: "1000"
   app:  &app
     build:
       args: # Pass the host user id in, so the Dockerfile can create a user
