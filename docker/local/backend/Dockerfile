@@ -1,4 +1,4 @@
-FROM python:3.6.8-slim
+FROM python:3.7-slim
 
 # User ID for the django user we're creating. The builder can set this to the
 # host user's ID to avoid file permissions problems.
