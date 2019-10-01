@@ -1,12 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 import pytz
 
 from django.test import TestCase
-from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 
-from ..models import PostVote
-from ..bc.hash  import compute_vote_hash
+from blogchain.posts.models import PostVote
+from blogchain.posts.bc.hash import compute_vote_hash
+from blogchain.users.models import User
 
 from .utils import make_post_factory
 

@@ -1,0 +1,27 @@
+version: '3'
+services:
+  backend_test:
+    build:
+      context: .
+      dockerfile: docker/local/backend/Dockerfile
+    command: runtest
+    env_file:
+      - .envs/.local/.django
+      - .envs/.local/.postgres
+    environment:
+      - DJANGO_SETTINGS_MODULE_TEST=config.settings.test
+
+  ganache:
+    image: trufflesuite/ganache-cli:latest
+    expose:
+      - 8545
+
+  truffle_test:
+    build:
+      context: .
+      dockerfile: docker/local/truffle/Dockerfile
+    entrypoint: ["truffle", "test"]
+    links:
+      - ganache
+    volumes:
+      - ./truffle:/app:ro

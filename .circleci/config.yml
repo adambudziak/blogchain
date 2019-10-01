@@ -1,0 +1,28 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - run:
+          name: Setup unit tests
+          command: |
+            docker-compose -f docker-compose.tests.yml build
+      - run:
+          name: Setup integration tests
+          command: |
+            docker-compose -f docker-compose.integration.yml build
+      - run:
+          name: Run backend unittests
+          command: |
+            docker-compose -f docker-compose.tests.yml run backend_test
+      - run:
+          name: Run truffle unittests
+          command: |
+            docker-compose -f docker-compose.tests.yml run truffle_test
+      - run:
+          name: Run integration tests
+          command: |
+            docker-compose -f docker-compose.integration.yml up --exit-code-from tavern
