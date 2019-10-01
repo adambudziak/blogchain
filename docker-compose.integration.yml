@@ -1,27 +1,30 @@
 version: '3'
 services:
   backend:
-    build: backend
+    build:
+      context: .
+      dockerfile: docker/local/backend/Dockerfile
     container_name: backend_integration
+    command: integration
     env_file:
-      - .envs/.local/.backend
+      - .envs/.local/.django
+      - .envs/.local/.postgres
     expose:
       - "8000"
     links:
       - db
-    entrypoint: "/app/tests/start_integration.sh"
 
   db:
     image: postgres:12
     container_name: db_integration
-    env_file:
-      - .envs/.local/.postgres
     expose:
       - "5432"
+    env_file:
+      - .envs/.local/.postgres
 
   tavern:
     build:
-      dockerfile: tavern/Dockerfile
+      dockerfile: docker/local/tavern/Dockerfile
       context: .
     container_name: tavern_integration
     links:
