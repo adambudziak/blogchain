@@ -1,0 +1,82 @@
+test_name: Test "verified" filter (valid inputs)
+
+marks:
+  - parametrize:
+      key:
+       - verified_true
+       - verified_false
+      vals:
+        - ["true", "false"]
+        - ["True", "False"]
+        - ["true", "false"]
+        - ["TrUe", "FaLSE"]
+        - ["1", "0"]
+  - parametrize:
+      key: url
+      vals:
+        - http://backend:8000/api/posts/
+        - http://backend:8000/api/comments/
+        - http://backend:8000/api/posts/1/comments/
+        - http://backend:8000/api/posts/1/votes/
+        - http://backend:8000/api/comments/1/votes/
+
+
+stages:
+
+  - name: assert valid "true" inputs work
+
+    request:
+      url: "{url}?verified={verified_true}"
+      method: GET
+
+    response:
+      status_code: 200
+      verify_response_with:
+        function: functions.utils:assert_all_verified
+
+  - name: assert valid "false" inputs work
+
+    request:
+      url: "{url}?verified={verified_false}"
+      method: GET
+
+    response:
+      status_code: 200
+      verify_response_with:
+        function: functions.utils:assert_all_not_verified
+
+---
+
+test_name: Test "verified" filter (invalid inputs)
+
+marks:
+  - parametrize:
+      key: verified
+      vals:
+        - fasle
+        - maybe
+        - ture
+        - 2
+        - dog
+        - null
+        - none
+  - parametrize:
+      key: url
+      vals:
+        - http://backend:8000/api/posts/
+        - http://backend:8000/api/comments/
+        - http://backend:8000/api/posts/1/comments/
+        - http://backend:8000/api/posts/1/votes/
+        - http://backend:8000/api/comments/1/votes/
+
+
+stages:
+
+  - name: assert invalid inputs return 400 Bad Request
+
+    request:
+      url: "{url}?verified={verified}"
+      method: GET
+
+    response:
+      status_code: 400
