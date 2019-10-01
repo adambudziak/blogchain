@@ -36,17 +36,18 @@ sys.exit(0)
 END
 }
 
-
-counter=0
-until postgres_ready; do
-  >&2 echo 'PostgreSQL is unavailable (sleeping)...'
-  sleep 1
-  if [ $counter -gt "60" ]; then
-    echo "Can't connect to PostgreSQL. Exiting."
-    exit 1
-  fi
-  counter=$(expr $counter + 1)
-done
+if [ "$cmd" != "runtest" ]; then
+  counter=0
+  until postgres_ready; do
+    >&2 echo 'PostgreSQL is unavailable (sleeping)...'
+    sleep 1
+    if [ $counter -gt "60" ]; then
+      echo "Can't connect to PostgreSQL. Exiting."
+      exit 1
+    fi
+    counter=$(expr $counter + 1)
+  done
+fi
 
 >&2 echo 'PostgreSQL is up - continuing...'
 
