@@ -57,6 +57,13 @@ case "$cmd" in
             --verbose \
             --ignore=tests
     ;;
+    integration)
+        python3 manage.py migrate
+        python3 manage.py loaddata tests/fixtures/users.json
+        python3 manage.py loaddata tests/fixtures/posts.json
+        python3 manage.py loaddata tests/fixtures/comments.json
+        python3 manage.py runserver 0.0.0.0:8000
+    ;;
     runcitest)
         pip install -r /production_tests.txt --user django
         $PYTEST \

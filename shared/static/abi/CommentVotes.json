@@ -9287,10 +9287,346 @@
       "links": {},
       "address": "0x19f6eA37F19f0c1ac03911000F18f799B8A9219F",
       "transactionHash": "0xd438d38895383f380c233ac5e775283beb5c02556358d0e604d7ede9caa916d9"
+    },
+    "1569928372495": {
+      "events": {
+        "0xc58317f3d54059c20f34effbf9280b0797376f67288464bbcf80575214bb1f6e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "hash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "commentHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "author",
+              "type": "address"
+            }
+          ],
+          "name": "VoteAdded",
+          "type": "event",
+          "signature": "0xc58317f3d54059c20f34effbf9280b0797376f67288464bbcf80575214bb1f6e"
+        },
+        "0x3c492f084c3d4b8f3844bb604f62e56a04de04da308c0d0a3b0ded9427dfd2a8": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "oldAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newAddress",
+              "type": "address"
+            }
+          ],
+          "name": "PostsAddressChanged",
+          "type": "event",
+          "signature": "0x3c492f084c3d4b8f3844bb604f62e56a04de04da308c0d0a3b0ded9427dfd2a8"
+        },
+        "0xa9ca9f2fe4f8bd73efe1f64cf57e7bc7d2634513fe09dd1c78b3fd827ecfdce9": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "oldAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newAddress",
+              "type": "address"
+            }
+          ],
+          "name": "CommentsAddressChanged",
+          "type": "event",
+          "signature": "0xa9ca9f2fe4f8bd73efe1f64cf57e7bc7d2634513fe09dd1c78b3fd827ecfdce9"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0x634a433c58b878fC7946cdcDB1514C0023451dD6",
+      "transactionHash": "0xbe971f478f042210c24cd62acae176dfcf6a9621c0e6465caeca99675c8caf3a"
+    },
+    "1569929690755": {
+      "events": {
+        "0xc58317f3d54059c20f34effbf9280b0797376f67288464bbcf80575214bb1f6e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "hash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "commentHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "author",
+              "type": "address"
+            }
+          ],
+          "name": "VoteAdded",
+          "type": "event",
+          "signature": "0xc58317f3d54059c20f34effbf9280b0797376f67288464bbcf80575214bb1f6e"
+        },
+        "0x3c492f084c3d4b8f3844bb604f62e56a04de04da308c0d0a3b0ded9427dfd2a8": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "oldAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newAddress",
+              "type": "address"
+            }
+          ],
+          "name": "PostsAddressChanged",
+          "type": "event",
+          "signature": "0x3c492f084c3d4b8f3844bb604f62e56a04de04da308c0d0a3b0ded9427dfd2a8"
+        },
+        "0xa9ca9f2fe4f8bd73efe1f64cf57e7bc7d2634513fe09dd1c78b3fd827ecfdce9": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "oldAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newAddress",
+              "type": "address"
+            }
+          ],
+          "name": "CommentsAddressChanged",
+          "type": "event",
+          "signature": "0xa9ca9f2fe4f8bd73efe1f64cf57e7bc7d2634513fe09dd1c78b3fd827ecfdce9"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0x63B520440c7Df58Ffc1b608c65ae7DFB08752717",
+      "transactionHash": "0x56c37cc7111710d29a247e697b001c87820e321a9a86a74dba30f13e1b43c478"
+    },
+    "1569930345146": {
+      "events": {
+        "0xc58317f3d54059c20f34effbf9280b0797376f67288464bbcf80575214bb1f6e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "hash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "commentHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "author",
+              "type": "address"
+            }
+          ],
+          "name": "VoteAdded",
+          "type": "event",
+          "signature": "0xc58317f3d54059c20f34effbf9280b0797376f67288464bbcf80575214bb1f6e"
+        },
+        "0x3c492f084c3d4b8f3844bb604f62e56a04de04da308c0d0a3b0ded9427dfd2a8": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "oldAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newAddress",
+              "type": "address"
+            }
+          ],
+          "name": "PostsAddressChanged",
+          "type": "event",
+          "signature": "0x3c492f084c3d4b8f3844bb604f62e56a04de04da308c0d0a3b0ded9427dfd2a8"
+        },
+        "0xa9ca9f2fe4f8bd73efe1f64cf57e7bc7d2634513fe09dd1c78b3fd827ecfdce9": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "oldAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newAddress",
+              "type": "address"
+            }
+          ],
+          "name": "CommentsAddressChanged",
+          "type": "event",
+          "signature": "0xa9ca9f2fe4f8bd73efe1f64cf57e7bc7d2634513fe09dd1c78b3fd827ecfdce9"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0xa84Dc940FC501398B2A3002BCea328c167f89eCC",
+      "transactionHash": "0xd10212cd03d63e15aa777ac1bf9708c32b7a59014dfc194bf040f57fad27c299"
+    },
+    "1569930584398": {
+      "events": {
+        "0xc58317f3d54059c20f34effbf9280b0797376f67288464bbcf80575214bb1f6e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "hash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "commentHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "name": "author",
+              "type": "address"
+            }
+          ],
+          "name": "VoteAdded",
+          "type": "event",
+          "signature": "0xc58317f3d54059c20f34effbf9280b0797376f67288464bbcf80575214bb1f6e"
+        },
+        "0x3c492f084c3d4b8f3844bb604f62e56a04de04da308c0d0a3b0ded9427dfd2a8": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "oldAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newAddress",
+              "type": "address"
+            }
+          ],
+          "name": "PostsAddressChanged",
+          "type": "event",
+          "signature": "0x3c492f084c3d4b8f3844bb604f62e56a04de04da308c0d0a3b0ded9427dfd2a8"
+        },
+        "0xa9ca9f2fe4f8bd73efe1f64cf57e7bc7d2634513fe09dd1c78b3fd827ecfdce9": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "oldAddress",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newAddress",
+              "type": "address"
+            }
+          ],
+          "name": "CommentsAddressChanged",
+          "type": "event",
+          "signature": "0xa9ca9f2fe4f8bd73efe1f64cf57e7bc7d2634513fe09dd1c78b3fd827ecfdce9"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0x64758a51bd2c1F1A33FDda971386fb3B0b7f3883",
+      "transactionHash": "0xf10ac7abe91795537fd4d13c3a3545f2fdd52cb10cb5c2e21f3d5f4533873455"
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-09-30T12:48:21.849Z",
+  "updatedAt": "2019-10-01T11:49:48.388Z",
   "devdoc": {
     "methods": {
       "isOwner()": {
