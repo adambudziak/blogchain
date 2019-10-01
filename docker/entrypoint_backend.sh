@@ -54,8 +54,8 @@ done
 case "$cmd" in
     runtest)
         $PYTEST \
-            --cov blogchain --cov-report xml \
-            --verbose
+            --verbose \
+            --ignore=tests
     ;;
     runcitest)
         pip install -r /production_tests.txt --user django

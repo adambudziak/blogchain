@@ -5,11 +5,11 @@ from django.test import TestCase
 from unittest.mock import MagicMock, patch
 from web3 import Web3
 
-from posts.bc.contracts import PostsContract, CommentsContract
-from posts.tests.utils import make_post_factory, make_comment_factory
-from taskapp.tasks import verify_posts, verify_comments
+from blogchain.taskapp.tasks import verify_posts, verify_comments
 
-from posts.models import Post, Comment
+from blogchain.posts.bc.contracts import PostsContract, CommentsContract
+from blogchain.posts.tests.utils import make_post_factory, make_comment_factory
+from blogchain.posts.models import Post, Comment
 
 post_factory = make_post_factory('Some title', 'Some content')
 
@@ -51,14 +51,14 @@ class TestVerifyPostsTask(TestCase):
 
         self.posts_contract = PostsContract(self.contract_mock)
 
-    @patch('taskapp.tasks.PostsContract')
+    @patch('blogchain.taskapp.tasks.PostsContract')
     def test_verify_all_correct(self, mock_posts_contract):
         mock_posts_contract.default = MagicMock(return_value=self.posts_contract)
         verified_count = verify_posts.s().apply().get()
         self.assertEqual(verified_count, len(self.posts))
         self.assertTrue(all(p.verified for p in Post.objects.all()))
 
-    @patch('taskapp.tasks.PostsContract')
+    @patch('blogchain.taskapp.tasks.PostsContract')
     def test_verify_one_bad(self, mock_posts_contract):
         self.posts[0].data_hash = Web3.toHex(b'1' * 32)
         self.posts[0].save()
@@ -93,14 +93,14 @@ class TestVerifyCommentsTask(TestCase):
 
         self.comments_contract = CommentsContract(self.contract_mock)
 
-    @patch('taskapp.tasks.CommentsContract')
+    @patch('blogchain.taskapp.tasks.CommentsContract')
     def test_verify_all_correct(self, mock_comments_contract):
         mock_comments_contract.default = MagicMock(return_value=self.comments_contract)
         verified_count = verify_comments.s().apply().get()
         self.assertEqual(verified_count, len(self.comments))
         self.assertTrue(all(c.verified for c in Comment.objects.all()))
 
-    @patch('taskapp.tasks.CommentsContract')
+    @patch('blogchain.taskapp.tasks.CommentsContract')
     def test_verify_one_bad(self, mock_comments_contract):
         self.comments[0].data_hash = Web3.toHex(b'1' * 32)
         self.comments[0].save()
