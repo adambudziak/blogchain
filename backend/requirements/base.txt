@@ -36,7 +36,7 @@ django-redis==4.9.0
 redis>=2.10.6
 
 # Distributed Task Queue
-celery==4.2.1
+celery==4.3.0 # updated from 4.2.1 to support python3.7
 flower==0.9.3  # https://github.com/mher/flower
 
 
