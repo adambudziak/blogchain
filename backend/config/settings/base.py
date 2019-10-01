@@ -28,6 +28,7 @@ if READ_DOT_ENV_FILE:
     env.read_env(env_file)
     print('The .env file has been loaded. See base.py for more information')
 
+ALLOWED_HOSTS = ["backend", "app"]
 
 # APP
 # ------------------------------------------------------------------------------
@@ -340,3 +341,8 @@ REST_FRAMEWORK = {
 
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
+
+REST_SESSION_LOGIN = True
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
