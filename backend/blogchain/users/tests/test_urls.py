@@ -10,18 +10,18 @@ class TestUserURLs(TestCase):
         self.user = self.make_user()
     
     def test_users_viewstet_resolve(self):
-        found = resolve('/users/')
+        found = resolve('/api/users/')
         assert found.func.cls == UserViewSet
 
     def test_list_model_resolve(self):
         self.assertEqual(
             reverse('users:user-list'),
-            '/users/'
+            '/api/users/'
         )
 
     def test_detail_model_resolve(self):
         self.assertEqual(
             reverse('users:user-detail', kwargs={'pk': 1}),
-            '/users/1/'
+            '/api/users/1/'
         )
     
