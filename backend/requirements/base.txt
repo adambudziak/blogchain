@@ -41,7 +41,7 @@ flower==0.9.3  # https://github.com/mher/flower
 
 
 # Powerful and flexible toolkit for building Web APIs
-djangorestframework==3.8.2
+djangorestframework==3.9.1
 django-rest-auth==0.9.3
 
 # Python implementation of Markdown for DRF
