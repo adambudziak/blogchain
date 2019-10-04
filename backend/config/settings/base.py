@@ -28,7 +28,7 @@ if READ_DOT_ENV_FILE:
     env.read_env(env_file)
     print('The .env file has been loaded. See base.py for more information')
 
-ALLOWED_HOSTS = ["backend", "app"]
+ALLOWED_HOSTS = ["backend", "app", "localhost", "127.0.0.1", "[::1]"]
 
 # APP
 # ------------------------------------------------------------------------------
@@ -321,7 +321,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
     ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
