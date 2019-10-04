@@ -4,8 +4,18 @@ import * as actionTypes from 'actions/types';
 
 export interface AuthState {
   token: string | null;
-  error: Error | null;
+  error: AuthError | null;
   loading: boolean;
+}
+
+export interface AuthError {
+  message: string;
+  response: {
+    status: number;
+    data: {
+      [field: string]: string[];
+    };
+  };
 }
 
 const initialState: AuthState = {
