@@ -1,0 +1,21 @@
+[
+    {
+        "fields": {
+            "date_joined": "2019-10-01T12:06:14.839Z",
+            "email": "",
+            "first_name": "",
+            "groups": [],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": null,
+            "last_name": "",
+            "name": "",
+            "password": "argon2$argon2i$v=19$m=512,t=2,p=2$WTlRQ3lNOHA5SXJM$HMQT8v0r/EhOE//idApf7g",
+            "user_permissions": [],
+            "username": "admin"
+        },
+        "model": "users.user",
+        "pk": 1
+    }
+]

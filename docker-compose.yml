@@ -34,7 +34,7 @@ services:
     expose:
       - 8000
     volumes:
-      - ./frontend:/app
+      - ./frontend/src:/app/src
 
   nginx:
     build:
