@@ -42,7 +42,7 @@ flower==0.9.3  # https://github.com/mher/flower
 
 # Powerful and flexible toolkit for building Web APIs
 djangorestframework==3.9.1
-django-rest-auth==0.9.3
+django-rest-auth[with_social]==0.9.3
 
 # Python implementation of Markdown for DRF
 Markdown==2.6.11

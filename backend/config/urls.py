@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^users/', include('blogchain.users.urls')),
     
     url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^docs/$', schema_view.with_ui('redoc', cache_timeout=None), name='schema-redoc'),
     # Your stuff: custom urls includes go here
