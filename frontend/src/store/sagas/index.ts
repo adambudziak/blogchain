@@ -4,9 +4,9 @@ import { watchAuthCheckState, watchLogin, watchLogout, watchSignup } from "sagas
 import { watchInitWeb3 } from 'sagas/bc';
 import { watchSubmitComment } from "sagas/comments";
 import {
-    watchFetchPostComments, watchFetchPostDetails,
-    watchFetchPosts,
-    watchSubmitPost
+  watchFetchPostComments, watchFetchPostDetails,
+  watchFetchPosts,
+  watchSubmitPost
 
 } from "sagas/posts";
 import { watchSubmitCommentVote, watchSubmitPostVote } from "sagas/votes";
@@ -14,18 +14,18 @@ import { watchSubmitCommentVote, watchSubmitPostVote } from "sagas/votes";
 export const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export default function* root() {
-    yield all([
-        watchLogin(),
-        watchSignup(),
-        watchAuthCheckState(),
-        watchLogout(),
-        watchInitWeb3(),
-        watchFetchPosts(),
-        watchSubmitPost(),
-        watchFetchPostComments(),
-        watchFetchPostDetails(),
-        watchSubmitComment(),
-        watchSubmitPostVote(),
-        watchSubmitCommentVote(),
-    ]);
+  yield all([
+    watchLogin(),
+    watchSignup(),
+    watchAuthCheckState(),
+    watchLogout(),
+    watchInitWeb3(),
+    watchFetchPosts(),
+    watchSubmitPost(),
+    watchFetchPostComments(),
+    watchFetchPostDetails(),
+    watchSubmitComment(),
+    watchSubmitPostVote(),
+    watchSubmitCommentVote(),
+  ]);
 }

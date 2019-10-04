@@ -6,8 +6,8 @@ import React from 'react';
 import { CommentData } from "actions/comments";
 
 interface OwnProps {
-  postId: number,
-  onSubmit: (comment: CommentData) => void
+  postId: number;
+  onSubmit: (comment: CommentData) => void;
 }
 
 type Props = OwnProps & FormComponentProps;

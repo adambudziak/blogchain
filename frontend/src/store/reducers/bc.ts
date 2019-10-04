@@ -5,34 +5,35 @@ import Contract from "web3/eth/contract";
 import { INIT_WEB3_SUCCESS } from 'actions/types';
 
 export interface Web3Context {
-    web3: Web3,
-    account: string,
-    accounts: string[],
-    addresses: any,
-    postsContract: Contract,
-    commentsContract: Contract,
-    postVotesContract: Contract,
-    commentVotesContract: Contract,
+  web3: Web3;
+  account: string;
+  accounts: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addresses: any;
+  postsContract: Contract;
+  commentsContract: Contract;
+  postVotesContract: Contract;
+  commentVotesContract: Contract;
 }
 
 export interface BcState {
-    web3Context: Web3Context | null,
+  web3Context: Web3Context | null;
 }
 
 const initialState: BcState = {
-    web3Context: null
+  web3Context: null
 };
 
 const reducer = (state=initialState, action: AnyAction): BcState => {
-    switch (action.type) {
-        case INIT_WEB3_SUCCESS:
-            return {
-                ...state,
-                ...action,
-            };
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case INIT_WEB3_SUCCESS:
+      return {
+        ...state,
+        ...action,
+      };
+    default:
+      return state;
+  }
 };
 
 export default reducer;

@@ -10,11 +10,11 @@ import { State } from "reducers/index";
 import { authCheckState } from "actions/auth";
 
 interface StateToProps {
-  isAuthenticated: boolean,
+  isAuthenticated: boolean;
 }
 
 interface DispatchToProps {
-  authCheckState: () => void,
+  authCheckState: () => void;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -23,18 +23,18 @@ const App = (props: Props) => {
   useEffect(() => props.authCheckState, [props.authCheckState]);
 
   return (
-      <div>
-        <Router>
-          <LayoutWrapper {...props}>
-            <BaseRouter />
-          </LayoutWrapper>
-        </Router>
-      </div>
+    <div>
+      <Router>
+        <LayoutWrapper {...props}>
+          <BaseRouter />
+        </LayoutWrapper>
+      </Router>
+    </div>
   );
 };
 
 const mapStateToProps = (state: State): StateToProps => ({
-    isAuthenticated: state.auth.token !== null
+  isAuthenticated: state.auth.token !== null
 });
 
 const mapDispatchToProps = {

@@ -8,12 +8,12 @@ import { authSignup } from "actions/auth";
 import { State } from "reducers/index";
 
 interface StateToProps {
-  loading: boolean,
-  error: Error | null,
+  loading: boolean;
+  error: Error | null;
 }
 
 interface DispatchToProps {
-  authSignup: (username: string, email: string, password1: string, password2: string) => void,
+  authSignup: (username: string, email: string, password1: string, password2: string) => void;
 }
 
 type Props = RouteComponentProps & StateToProps & DispatchToProps & FormComponentProps;
@@ -40,6 +40,7 @@ class RegistrationForm extends React.Component<Props> {
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   compareToFirstPassword = (rule: any, value: any, callback: any) => {
     const { form } = this.props;
     if (value && value !== form.getFieldValue('password')) {
@@ -49,6 +50,7 @@ class RegistrationForm extends React.Component<Props> {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   validateToNextPassword = (rule: any, value: any, callback: any) => {
     const { form } = this.props;
     if (value && this.state.confirmDirty) {
@@ -63,44 +65,44 @@ class RegistrationForm extends React.Component<Props> {
     return (
       <Form onSubmit={this.handleSubmit}>
         <Form.Item>
-        {getFieldDecorator('username', {
-          rules: [{ required: true, message: 'Please input your username!' }],
-        })(
-          <Input
-          prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-          placeholder="Username"
-          />
-        )}
+          {getFieldDecorator('username', {
+            rules: [{ required: true, message: 'Please input your username!' }],
+          })(
+            <Input
+              prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+              placeholder="Username"
+            />
+          )}
         </Form.Item>
 
         <Form.Item>
           {getFieldDecorator('email', {
             rules: [{ required: true, message: 'Please input your E-mail!'}],
           })(
-          <Input
-          prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
-          placeholder="Email"
-          />,
+            <Input
+              prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
+              placeholder="Email"
+            />,
           )}
         </Form.Item>
 
         <Form.Item hasFeedback>
           {getFieldDecorator('password', {
             rules: [{required: true, message: 'Please input your password!'},
-                    { validator: this.validateToNextPassword }],
+              { validator: this.validateToNextPassword }],
           })(<Input.Password
-          prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-          placeholder="Password"
+            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            placeholder="Password"
           />)}
         </Form.Item>
 
         <Form.Item hasFeedback>
           {getFieldDecorator('confirm', {
             rules: [{required: true, message: 'Please confirm your password!'},
-                    {validator: this.compareToFirstPassword}],
+              {validator: this.compareToFirstPassword}],
           })(<Input.Password
-          prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-          placeholder="Confirm password"
+            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+            placeholder="Confirm password"
           />)}
         </Form.Item>
         <Form.Item>
@@ -109,7 +111,7 @@ class RegistrationForm extends React.Component<Props> {
           </Button>
           Or
           <NavLink
-          style={{marginRight: '10px'}} to='/login'
+            style={{marginRight: '10px'}} to='/login'
           > login
           </NavLink>
         </Form.Item>
