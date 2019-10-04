@@ -7,17 +7,17 @@ import postReducer, {PostsState} from 'reducers/posts';
 import votesReducer, {VotesState} from 'reducers/votes';
 
 export interface State {
-    auth: AuthState,
-    bc: BcState,
-    posts: PostsState,
-    comments: CommentsState,
-    votes: VotesState,
+  auth: AuthState;
+  bc: BcState;
+  posts: PostsState;
+  comments: CommentsState;
+  votes: VotesState;
 }
 
 export default combineReducers({
-    posts: postReducer,
-    comments: commentReducer,
-    auth: authReducer,
-    bc: bcReducer,
-    votes: votesReducer,
+  posts: postReducer,
+  comments: commentReducer,
+  auth: authReducer,
+  bc: bcReducer,
+  votes: votesReducer,
 });

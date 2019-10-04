@@ -4,7 +4,7 @@ import React from 'react';
 import {PostData} from "actions/posts";
 
 interface OwnProps {
-    onSubmit: (post: PostData) => void,
+  onSubmit: (post: PostData) => void;
 }
 
 type Props = OwnProps & FormComponentProps;

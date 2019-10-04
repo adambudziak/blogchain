@@ -83,10 +83,9 @@
   "scripts": {
     "start": "PORT=8000 node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "test": "node scripts/test.js",
+    "lint": "eslint './src/**/*.{ts,tsx}'",
+    "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix"
   },
   "browserslist": {
     "production": [
