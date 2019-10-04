@@ -1,69 +1,108 @@
 import { Form, Input, Icon, Button } from 'antd';
 import { FormComponentProps } from "antd/lib/form";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, NavLink } from 'react-router-dom';
 
 import { authSignup } from "actions/auth";
+import { AuthError } from "reducers/auth";
 import { State } from "reducers/index";
 
 interface StateToProps {
   loading: boolean;
-  error: Error | null;
+  error: AuthError | null;
 }
 
 interface DispatchToProps {
   authSignup: (username: string, email: string, password1: string, password2: string) => void;
 }
 
+interface ErrorProps {
+  error: AuthError;
+};
+
+const RegistrationError = ({ error }: ErrorProps) => {
+  if (error.response.status !== 400) {
+    return <div>{error.message}</div>;
+  }
+  const parsedErrors = [];
+  let key = 0;
+  for (const errors of Object.values(error.response.data)) {
+    for (const error of errors) {
+      parsedErrors.push(<li key={key}>{error}</li>);
+      key++;
+    }
+  }
+  return (
+    <div>
+      <ul>
+        {parsedErrors}
+      </ul>
+    </div>
+  )
+}
+
 type Props = RouteComponentProps & StateToProps & DispatchToProps & FormComponentProps;
 
+const RegistrationForm = (props: Props) => {
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<AuthError | null>(null);
 
+  useEffect(() => {
+    if (props.loading) { return; }
+    const error = submitted && (props.error != null);
+    if (props.error !== null) {
+      setError(props.error);
+    }
+    if (!error && submitted) {
+      props.history.push('/login');
+    }
+    if (submitted) {
+      setSubmitted(false);
+    }
+  }, [props.loading, props.error, props.history, error, submitted]);
 
-class RegistrationForm extends React.Component<Props> {
-  state = {
-    confirmDirty: false,
-  };
-
-  handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
+    props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        this.props.authSignup(
+        setSubmitted(true);
+        props.authSignup(
           values.username,
           values.email,
           values.password,
           values.confirm
         );
-        this.props.history.push('/login');
       }
     });
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  compareToFirstPassword = (rule: any, value: any, callback: any) => {
-    const { form } = this.props;
+  const compareToFirstPassword = (rule: any, value: any, callback: any) => {
+    const { form } = props;
     if (value && value !== form.getFieldValue('password')) {
-      callback('Two passwords that you enter is inconsistent!');
+      callback("Passwords don't match!");
     } else {
       callback();
     }
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  validateToNextPassword = (rule: any, value: any, callback: any) => {
-    const { form } = this.props;
-    if (value && this.state.confirmDirty) {
+  const validateToNextPassword = (rule: any, value: any, callback: any) => {
+    const { form } = props;
+    if (value) {
       form.validateFields(['confirm'], { force: true });
     }
     callback();
   };
 
-  render() {
-    const { getFieldDecorator } = this.props.form;
 
-    return (
-      <Form onSubmit={this.handleSubmit}>
+  const { getFieldDecorator } = props.form;
+
+  return (
+    <div>
+      {error != null && <RegistrationError error={error}/>}
+      <Form onSubmit={handleSubmit}>
         <Form.Item>
           {getFieldDecorator('username', {
             rules: [{ required: true, message: 'Please input your username!' }],
@@ -74,7 +113,7 @@ class RegistrationForm extends React.Component<Props> {
             />
           )}
         </Form.Item>
-
+  
         <Form.Item>
           {getFieldDecorator('email', {
             rules: [{ required: true, message: 'Please input your E-mail!'}],
@@ -85,21 +124,21 @@ class RegistrationForm extends React.Component<Props> {
             />,
           )}
         </Form.Item>
-
+  
         <Form.Item hasFeedback>
           {getFieldDecorator('password', {
             rules: [{required: true, message: 'Please input your password!'},
-              { validator: this.validateToNextPassword }],
+              { validator: validateToNextPassword }],
           })(<Input.Password
             prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
             placeholder="Password"
           />)}
         </Form.Item>
-
+  
         <Form.Item hasFeedback>
           {getFieldDecorator('confirm', {
             rules: [{required: true, message: 'Please confirm your password!'},
-              {validator: this.compareToFirstPassword}],
+              {validator: compareToFirstPassword}],
           })(<Input.Password
             prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
             placeholder="Confirm password"
@@ -116,8 +155,8 @@ class RegistrationForm extends React.Component<Props> {
           </NavLink>
         </Form.Item>
       </Form>
-    );
-  }
+    </div>
+  );
 }
 
 const WrappedRegistrationForm = Form.create({ name: 'register' })(RegistrationForm);
@@ -125,7 +164,7 @@ const WrappedRegistrationForm = Form.create({ name: 'register' })(RegistrationFo
 const mapStateToProps = (state: State): StateToProps => {
   return {
     loading: state.auth.loading,
-    error: state.auth.error,  // TODO unused?
+    error: state.auth.error, 
   }
 };
 
