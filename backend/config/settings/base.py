@@ -58,6 +58,10 @@ LOCAL_APPS = [  # custom users app
     'blogchain.users.apps.UsersConfig',
     # Your stuff: custom apps go here
     'blogchain.posts.apps.PostsConfig',
+
+    'rest_auth.registration',
+    'allauth',
+    'allauth.account',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
