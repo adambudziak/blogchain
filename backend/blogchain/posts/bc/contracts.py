@@ -171,6 +171,9 @@ class CommentsContract:
     def get_comment(self, index):
         return self._get_comment(index)
 
+    def get_post_balance(self, post_hash):
+        return self.contract.functions.totalBalances(post_hash).call()
+
     def iter_comments(self):
         """
         Iterate all comments on the blockchain ordered from the newest

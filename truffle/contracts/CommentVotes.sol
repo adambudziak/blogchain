@@ -27,6 +27,7 @@ contract CommentVotes is Ownable {
     mapping (bytes32 => address) public voteToAuthor;
 
     mapping (address => uint) public balances;
+    mapping (bytes32 => uint) public totalBalances;
 
     constructor(address _postsAddress, address _commentsAddress) public {
         postsAddress = _postsAddress;
@@ -52,6 +53,7 @@ contract CommentVotes is Ownable {
 
         require(balances[postAuthor] + postAuthorBonus > balances[postAuthor]);
         require(balances[commentAuthor] + commentAuthorBonus > balances[commentAuthor]);
+        require(totalBalances[_commentHash] + commentAuthorBonus > totalBalances[_commentHash]);
 
         emit VoteAdded(_hash, _commentHash, msg.sender);
         votes.push(Vote(_hash));
@@ -59,6 +61,7 @@ contract CommentVotes is Ownable {
         balances[postAuthor] += postAuthorBonus;
         balances[commentAuthor]  += commentAuthorBonus;
         balances[owner()] += voteFee;
+        totalBalances[_commentHash] += commentAuthorBonus;
     }
 
     function setPostsAddress(address _newPostsAddress) external onlyOwner {

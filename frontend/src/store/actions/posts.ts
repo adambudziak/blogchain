@@ -20,6 +20,7 @@ export interface BaseApiPost {
   upvotes: number;
   downvotes: number;
   comments: number;
+  balance: string;
 }
 
 export interface ApiPost extends BaseApiPost {
