@@ -46,21 +46,14 @@ type Props = RouteComponentProps & StateToProps & DispatchToProps & FormComponen
 
 const RegistrationForm = (props: Props) => {
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState<AuthError | null>(null);
+  const { loading, error, history } = props;
 
   useEffect(() => {
-    if (props.loading) { return; }
-    const error = submitted && (props.error != null);
-    if (props.error !== null) {
-      setError(props.error);
+    if (loading) { return; }
+    if (error === null && submitted) {
+      history.push('/');
     }
-    if (!error && submitted) {
-      props.history.push('/login');
-    }
-    if (submitted) {
-      setSubmitted(false);
-    }
-  }, [props.loading, props.error, props.history, error, submitted]);
+  }, [loading, error, history, submitted]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,7 +94,7 @@ const RegistrationForm = (props: Props) => {
 
   return (
     <div>
-      {error != null && <RegistrationError error={error}/>}
+      {error !== null && <RegistrationError error={error}/>}
       <Form onSubmit={handleSubmit}>
         <Form.Item>
           {getFieldDecorator('username', {
