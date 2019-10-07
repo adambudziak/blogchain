@@ -55,6 +55,7 @@ export function* watchSignup() {
 
         const token = response.data.key;
         yield call(saveSession, token, username);
+        yield put({ type: AUTH_SUCCESS, token });
 
         yield delay(expirationTime);
         yield put({ type: AUTH_LOGOUT });
