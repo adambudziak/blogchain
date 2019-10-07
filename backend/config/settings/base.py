@@ -48,6 +48,9 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
+    'rest_auth.registration',
+    'allauth',
+    'allauth.account',
     'drf_yasg',
     'corsheaders',
 ]
@@ -59,9 +62,6 @@ LOCAL_APPS = [  # custom users app
     # Your stuff: custom apps go here
     'blogchain.posts.apps.PostsConfig',
 
-    'rest_auth.registration',
-    'allauth',
-    'allauth.account',
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -284,7 +284,8 @@ AUTHENTICATION_BACKENDS = [
 # Custom user app defaults
 # Select the correct user model
 AUTH_USER_MODEL = 'users.User'
-LOGIN_REDIRECT_URL = 'users:redirect'
+# Not necessary because we signup with frontend
+# LOGIN_REDIRECT_URL = 'users:redirect'
 LOGIN_URL = 'account_login'
 
 
@@ -348,5 +349,6 @@ REST_FRAMEWORK = {
 
 REST_SESSION_LOGIN = True
 ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
