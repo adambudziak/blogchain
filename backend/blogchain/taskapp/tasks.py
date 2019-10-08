@@ -39,7 +39,7 @@ def verify_comments(self):
 
 
 @app.task(name="blogchain.taskapp.tasks.verify_post_votes", bind=True)
-def verify_comments(self):
+def verify_post_votes(self):
     post_votes_to_verify = PostVote.objects.filter(verified=False)
     post_votes_contract = PostVotesContract.default()
     verified = post_votes_contract.verify_votes(post_votes_to_verify)
@@ -49,7 +49,7 @@ def verify_comments(self):
 
 
 @app.task(name="blogchain.taskapp.tasks.verify_comment_votes", bind=True)
-def verify_comments(self):
+def verify_comment_votes(self):
     comment_votes_to_verify = CommentVote.objects.filter(verified=False)
     comment_votes_contract = CommentVotesContract.default()
     verified = comment_votes_contract.verify_votes(comment_votes_to_verify)

@@ -5,11 +5,30 @@ from django.test import TestCase
 from unittest.mock import MagicMock, patch
 from web3 import Web3
 
-from blogchain.taskapp.tasks import verify_posts, verify_comments
+from blogchain.taskapp.tasks import (
+    verify_posts,
+    verify_comments,
+    verify_post_votes,
+    verify_comment_votes,
+)
 
-from blogchain.posts.bc.contracts import PostsContract, CommentsContract
-from blogchain.posts.tests.utils import make_post_factory, make_comment_factory
-from blogchain.posts.models import Post, Comment
+from blogchain.posts.bc.contracts import (
+    PostsContract,
+    CommentsContract,
+    PostVotesContract,
+    CommentVotesContract
+)
+from blogchain.posts.tests.utils import (
+    make_post_factory,
+    make_comment_factory,
+    make_vote_factory
+)
+from blogchain.posts.models import (
+    Post,
+    Comment,
+    PostVote,
+    CommentVote
+)
 
 post_factory = make_post_factory('Some title', 'Some content')
 
@@ -111,3 +130,87 @@ class TestVerifyCommentsTask(TestCase):
         comments = Comment.objects.all()
         self.assertFalse(comments[0].verified)
         self.assertTrue(all(c.verified for c in comments[1:]))
+
+
+class TestVerifyPostVotesTask(TestCase):
+    def setUp(self):
+        self.post = post_factory()
+        self.now = datetime.now(pytz.UTC)
+        vote_factory = make_vote_factory(self.post, True)
+        self.votes = [vote_factory(timestamp=(self.now + timedelta(i))) for i in range(5)]
+        self.bc_votes = [
+            bytes.fromhex(vote.data_hash[2:])
+            for vote in self.votes
+        ]
+        self.hashes = {
+            vote.data_hash: bc_vote
+            for (vote, bc_vote) in zip(self.votes, self.bc_votes)
+        }
+        self.contract_mock = MagicMock()
+        self.contract_mock.functions.getVoteCount = mock_contract_function(lambda: len(self.bc_votes))
+        self.contract_mock.functions.votes = mock_contract_function(lambda i: self.bc_votes[i])
+        self.contract_mock.functions.hashToVote = mock_contract_function(lambda _hash: self.hashes[_hash])
+
+        self.votes_contract = PostVotesContract(self.contract_mock)
+
+    @patch('blogchain.taskapp.tasks.PostVotesContract')
+    def test_verify_all_correct(self, mock_votes_contract):
+        mock_votes_contract.default = MagicMock(return_value=self.votes_contract)
+        verified_count = verify_post_votes.s().apply().get()
+        self.assertEqual(verified_count, len(self.votes))
+        self.assertTrue(all(c.verified for c in PostVote.objects.all()))
+
+    @patch('blogchain.taskapp.tasks.PostVotesContract')
+    def test_verify_one_bad(self, mock_votes_contract):
+        self.votes[0].data_hash = Web3.toHex(b'1' * 32)
+        self.votes[0].save()
+
+        mock_votes_contract.default = MagicMock(return_value=self.votes_contract)
+        verified_count = verify_post_votes.s().apply().get()
+        self.assertEqual(verified_count, len(self.votes) - 1)
+        votes = PostVote.objects.all()
+        self.assertFalse(votes[0].verified)
+        self.assertTrue(all(v.verified for v in votes[1:]))
+
+
+class TestVerifyCommentVotesTask(TestCase):
+    def setUp(self):
+        self.post = post_factory()
+        self.now = datetime.now(pytz.UTC)
+        self.comment = make_comment_factory(self.post, "fake_content")()
+        vote_factory = make_vote_factory(self.comment, True)
+        self.votes = [vote_factory(timestamp=(self.now + timedelta(i))) for i in range(5)]
+        self.bc_votes = [
+            bytes.fromhex(vote.data_hash[2:])
+            for vote in self.votes
+        ]
+        self.hashes = {
+            vote.data_hash: bc_vote
+            for (vote, bc_vote) in zip(self.votes, self.bc_votes)
+        }
+        self.contract_mock = MagicMock()
+        self.contract_mock.functions.getVoteCount = mock_contract_function(lambda: len(self.bc_votes))
+        self.contract_mock.functions.votes = mock_contract_function(lambda i: self.bc_votes[i])
+        self.contract_mock.functions.hashToVote = mock_contract_function(lambda _hash: self.hashes[_hash])
+
+        self.votes_contract = CommentVotesContract(self.contract_mock)
+
+    @patch('blogchain.taskapp.tasks.CommentVotesContract')
+    def test_verify_all_correct(self, mock_votes_contract):
+        mock_votes_contract.default = MagicMock(return_value=self.votes_contract)
+        verified_count = verify_comment_votes.s().apply().get()
+        self.assertEqual(verified_count, len(self.votes))
+        self.assertTrue(all(c.verified for c in CommentVote.objects.all()))
+
+    @patch('blogchain.taskapp.tasks.CommentVotesContract')
+    def test_verify_one_bad(self, mock_votes_contract):
+        self.votes[0].data_hash = Web3.toHex(b'1' * 32)
+        self.votes[0].save()
+
+        mock_votes_contract.default = MagicMock(return_value=self.votes_contract)
+        verified_count = verify_comment_votes.s().apply().get()
+        self.assertEqual(verified_count, len(self.votes) - 1)
+        votes = CommentVote.objects.all()
+        self.assertFalse(votes[0].verified)
+        self.assertTrue(all(v.verified for v in votes[1:]))
+

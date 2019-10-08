@@ -229,10 +229,10 @@ class VotesContract:
 
     def iter_votes(self):
         for i in reversed(range(self.votes_count())):
-            yield self.get_vote(i)
+            yield self.get_vote(i, self.contract)
 
     def verify_votes(self, votes: Iterable[PostVote]):
-        votes = {v['data_hash']: v for v in votes}
+        votes = {v.data_hash: v for v in votes}
         verified = 0
 
         for stored_vote in self.iter_votes():
