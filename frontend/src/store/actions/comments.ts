@@ -16,6 +16,7 @@ export type ApiComment = {
   content: string;
   upvotes: number;
   downvotes: number;
+  balance: string;
 }
 
 export const submitComment = (web3Context: Web3Context, comment: CommentData, postHash: string) => ({

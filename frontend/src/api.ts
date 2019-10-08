@@ -41,6 +41,7 @@ export const API_URLS = {
   COMMENT_VOTES: 'http://localhost:8000/api/comments/<pk>/votes/',
   COMMENT_UPVOTES: 'http://localhost:8000/api/comments/<pk>/upvotes/',
   COMMENT_DOWNVOTES: 'http://localhost:8000/api/comments/<pk>/downvotes/',
+  COMMENT_BALANCE: 'http://localhost:8000/api/comments/<pk>/balance/',
 };
 
 function defaultConfig() {

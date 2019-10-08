@@ -87,9 +87,15 @@ export function* watchSubmitPost() {
 }
 
 export function* watchFetchPostComments() {
+  const web3 = new Web3();
   yield takeEvery(FETCH_COMMENTS_FOR_POST_START, function*({ payload }: ReturnType<typeof fetchPostComments>) {
     try {
       const response = yield call(axios.get, API_URLS.POST_COMMENTS.replace('<pk>', String(payload.postId)));
+      for (const comment of response.data) {
+        const response = yield call(axios.get, API_URLS.COMMENT_BALANCE.replace('<pk>', String(comment.id)));
+        comment['balance'] = web3.utils.fromWei(String(response.data.balance), 'ether');
+      }
+      console.log(response.data);
       yield put({ type: FETCH_COMMENTS_FOR_POST, payload: response.data, postId: payload.postId })
     } catch (error) {
       console.error(error);

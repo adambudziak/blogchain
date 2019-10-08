@@ -251,6 +251,12 @@ class VotesContract:
 class PostVotesContract(VotesContract):
     name = 'PostVotes'
 
+    def get_post_balance(self, post_hash):
+        return self.contract.functions.totalBalances(post_hash).call()
+
 
 class CommentVotesContract(VotesContract):
     name = 'CommentVotes'
+
+    def get_comment_balance(self, comment_hash):
+        return self.contract.functions.totalBalances(comment_hash).call()

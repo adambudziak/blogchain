@@ -175,7 +175,7 @@ const PostDetailComponent = (props: Props) => {
             actions={[
               <IconText propStyle={{color: "blue"}} type="like-o" text={item.upvotes.toString()} key="list-vertical-like-o"/>,
               <IconText propStyle={{color: "red"}} type="dislike-o" text={item.downvotes.toString()} key="list-vertical-dislike-o"/>,
-              <IconText propStyle={{color: "green"}} type="dollar-o" text="156" key="list-vertical-dollar-o"/>,
+              <IconText propStyle={{color: "green"}} type="dollar-o" text={item.balance} key="list-vertical-dollar-o"/>,
             ]}
           >
             <List.Item.Meta
