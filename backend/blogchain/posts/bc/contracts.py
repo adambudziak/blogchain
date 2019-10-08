@@ -1,7 +1,7 @@
 import json
 import logging
 from collections import namedtuple
-from typing import Iterable
+from typing import Iterable, Union
 
 import requests
 from rest_framework import status
@@ -231,7 +231,7 @@ class VotesContract:
         for i in reversed(range(self.votes_count())):
             yield self.get_vote(i, self.contract)
 
-    def verify_votes(self, votes: Iterable[PostVote]):
+    def verify_votes(self, votes: Union[Iterable[PostVote], Iterable[CommentVote]]):
         votes = {v.data_hash: v for v in votes}
         verified = 0
 
