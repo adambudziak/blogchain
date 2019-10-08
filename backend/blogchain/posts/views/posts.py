@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
@@ -23,6 +23,12 @@ from ..serializers import (
 )
 
 from ..filters import BcObjectsFilter
+
+from ..bc.contracts import (
+    CommentsContract,
+    PostVotesContract,
+    CommentVotesContract,
+)
 
 import logging
 
@@ -63,11 +69,35 @@ class PostViewSet(CreateListRetrieveViewSet):
     serializer_class = PostSerializer
     filterset_class = BcObjectsFilter
 
+    @action(detail=True, methods=['GET'])
+    def balance(self, request, pk=None):
+        # TODO balances could be tracked and stored in the database by catching
+        # the events emitted from the blockchain. In case when backend just started,
+        # it should refresh the balances of all the entries in the database and
+        # listen on events.
+        post = self.get_object()
+        comments = CommentsContract.default()
+        votes = PostVotesContract.default()
+        balance = comments.get_post_balance(post.data_hash)
+        balance += votes.get_post_balance(post.data_hash)
+        return Response({'balance': balance})
+
 
 class CommentViewSet(CreateListRetrieveViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     filterset_class = BcObjectsFilter
+
+    @action(detail=True, methods=['GET'])
+    def balance(self, request, pk=None):
+        # TODO balances could be tracked and stored in the database by catching
+        # the events emitted from the blockchain. In case when backend just started,
+        # it should refresh the balances of all the entries in the database and
+        # listen on events.
+        comment = self.get_object()
+        votes = CommentVotesContract.default()
+        balance = votes.get_comment_balance(comment.data_hash)
+        return Response({'balance': balance})
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):

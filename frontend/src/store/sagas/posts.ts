@@ -31,8 +31,14 @@ function hashPost(web3: Web3, post: PostData, author: string, now: string) {
 
 export function* watchFetchPosts() {
   yield takeLatest(FETCH_POSTS, function* () {
+    const web3 = new Web3();
     try {
       const response = yield call(axios.get, API_URLS.POSTS);
+
+      for (const post of response.data.results) {
+        const response = yield call(axios.get, API_URLS.POST_BALANCE.replace('<pk>', String(post.id)));
+        post['balance'] = web3.utils.fromWei(String(response.data.balance), 'ether');
+      }
       yield put({ type: FETCH_POSTS_SUCCESS, payload: response.data.results })
     } catch (error) {
       yield put({ type: FETCH_POSTS_ERROR, error })
@@ -45,9 +51,10 @@ const bcAddPost = (web3Context: Web3Context, hash: string) =>
     web3Context.postsContract.methods.addPost(hash)
       .send({
         from: web3Context.account,
-        value: web3Context.web3.utils.toWei('0.005', 'ether')
+        value: web3Context.web3.utils.toWei('0.005', 'ether'),
+        gas: 1000000,
       })
-      .on('confirmation', () => resolve({ success: true }))
+      .on('receipt', (receipt) => { console.log(receipt); resolve({ success: true }) })
       .on('error', (error: Error) => resolve({ error }));
   });
 
@@ -80,9 +87,15 @@ export function* watchSubmitPost() {
 }
 
 export function* watchFetchPostComments() {
+  const web3 = new Web3();
   yield takeEvery(FETCH_COMMENTS_FOR_POST_START, function*({ payload }: ReturnType<typeof fetchPostComments>) {
     try {
       const response = yield call(axios.get, API_URLS.POST_COMMENTS.replace('<pk>', String(payload.postId)));
+      for (const comment of response.data) {
+        const response = yield call(axios.get, API_URLS.COMMENT_BALANCE.replace('<pk>', String(comment.id)));
+        comment['balance'] = web3.utils.fromWei(String(response.data.balance), 'ether');
+      }
+      console.log(response.data);
       yield put({ type: FETCH_COMMENTS_FOR_POST, payload: response.data, postId: payload.postId })
     } catch (error) {
       console.error(error);

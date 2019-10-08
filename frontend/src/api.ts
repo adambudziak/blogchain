@@ -36,10 +36,12 @@ export const API_URLS = {
   POST_VOTES: 'http://localhost:8000/api/posts/<pk>/votes/',
   POST_UPVOTES: 'http://localhost:8000/api/posts/<pk>/upvotes/',
   POST_DOWNVOTES: 'http://localhost:8000/api/posts/<pk>/downvotes/',
+  POST_BALANCE: 'http://localhost:8000/api/posts/<pk>/balance/',
   COMMENTS: 'http://localhost:8000/api/comments/',
   COMMENT_VOTES: 'http://localhost:8000/api/comments/<pk>/votes/',
   COMMENT_UPVOTES: 'http://localhost:8000/api/comments/<pk>/upvotes/',
   COMMENT_DOWNVOTES: 'http://localhost:8000/api/comments/<pk>/downvotes/',
+  COMMENT_BALANCE: 'http://localhost:8000/api/comments/<pk>/balance/',
 };
 
 function defaultConfig() {

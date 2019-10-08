@@ -22,6 +22,7 @@ contract Comments is Ownable {
     mapping (bytes32 => Comment) public hashToComment;
 
     mapping (address => uint) public balances;
+    mapping (bytes32 => uint) public totalBalances;
 
     constructor(address _postsAddress) public {
         postsAddress = _postsAddress;
@@ -42,12 +43,14 @@ contract Comments is Ownable {
 
         address postAuthor = posts.postToAuthor(_postHash);
         require(balances[postAuthor] + postAuthorBonus > balances[postAuthor]);
+        require(totalBalances[_postHash] + postAuthorBonus > totalBalances[_postHash]);
 
         emit CommentAdded(_hash, _postHash, msg.sender);
         comments.push(_hash);
         hashToComment[_hash] = Comment(msg.sender, _postHash);
         balances[postAuthor] += postAuthorBonus;
         balances[owner()] += addCommentFee;
+        totalBalances[_postHash] += postAuthorBonus;
     }
 
     function setPostsAddress(address _newPostsAddress) external onlyOwner {
