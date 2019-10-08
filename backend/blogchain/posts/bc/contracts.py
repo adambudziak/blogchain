@@ -1,13 +1,13 @@
 import json
 import logging
 from collections import namedtuple
-from typing import Iterable
+from typing import Iterable, Union
 
 import requests
 from rest_framework import status
 from web3 import Web3
 
-from ..models import Post, Comment
+from ..models import Post, Comment, PostVote, CommentVote
 
 CONTRACT_ABI_URL = 'http://nginx:8000/assets/abi/{contract_name}.json'
 CONTRACT_ADDRESS_STORE_URL = 'http://nginx:8000/assets/contracts.json'
@@ -204,3 +204,50 @@ class CommentsContract:
                     verified += 1
                     break
         return verified
+
+
+class VotesContract:
+
+    _Vote = namedtuple('_Vote', 'hash')
+
+    def __init__(self, contract):
+        self.contract = contract
+
+    @classmethod
+    def default(cls):
+        web3 = default_web3()
+        address = get_contract_address(cls.name)
+        abi = get_contract_abi(cls.name)
+        return cls(web3.eth.contract(abi=abi, address=address))
+
+    def votes_count(self) -> int:
+        return self.contract.functions.getVoteCount().call()
+
+    @classmethod
+    def get_vote(cls, index: int, contract):
+        return cls._Vote(contract.functions.votes(index).call())
+
+    def iter_votes(self):
+        for i in reversed(range(self.votes_count())):
+            yield self.get_vote(i, self.contract)
+
+    def verify_votes(self, votes: Union[Iterable[PostVote], Iterable[CommentVote]]):
+        votes = {v.data_hash: v for v in votes}
+        verified = 0
+
+        for stored_vote in self.iter_votes():
+            vote_hash = Web3.toHex(stored_vote.hash) 
+            if vote_hash in votes:
+                votes[vote_hash].verified = True
+                votes[vote_hash].save()
+                verified += 1
+
+        return verified
+
+
+class PostVotesContract(VotesContract):
+    name = 'PostVotes'
+
+
+class CommentVotesContract(VotesContract):
+    name = 'CommentVotes'

@@ -1,8 +1,8 @@
 from datetime import datetime
 import pytz
 
-from ..models import Post, Comment
-from ..bc.hash import compute_post_hash, compute_comment_hash
+from ..models import Post, Comment, PostVote, CommentVote
+from ..bc.hash import compute_post_hash, compute_comment_hash, compute_vote_hash
 
 
 def make_post_factory(title, content):
@@ -56,6 +56,29 @@ def make_comment_factory(post, content):
             creation_datetime=timestamp,
             data_hash=comment_hash,
         )
+    return inner
+
+
+def make_vote_factory(target, is_upvote):
+    def inner(author=None, timestamp: datetime = None):
+        author_name = author.username if author else 'anonymous'
+        vote_hash = compute_vote_hash(author_name, timestamp, is_upvote)
+        if isinstance(target, Post):
+            return PostVote.objects.create(
+                author=author,
+                is_upvote=is_upvote,
+                creation_datetime=timestamp,
+                post=target,
+                data_hash=vote_hash
+            )
+        else:
+            return CommentVote.objects.create(
+                author=author,
+                is_upvote=is_upvote,
+                creation_datetime=timestamp,
+                comment=target,
+                data_hash=vote_hash
+            )
     return inner
 
 

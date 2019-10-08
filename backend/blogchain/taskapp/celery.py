@@ -37,5 +37,13 @@ app.conf.beat_schedule = {
     'verify-comments': {
         'task': 'blogchain.taskapp.tasks.verify_comments',
         'schedule': 10.0,
-    }
+    },
+    'verify-post-votes': {
+        'task': 'blogchain.taskapp.tasks.verify_post_votes',
+        'schedule': 10.0,
+    },
+    'verify-comment-votes': {
+        'task': 'blogchain.taskapp.tasks.verify_comment_votes',
+        'schedule': 10.0,
+    },
 }
