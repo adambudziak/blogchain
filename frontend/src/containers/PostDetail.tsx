@@ -56,9 +56,13 @@ const IconText = ({type, text, propStyle}: {type: string; text: string; propStyl
 );
 
 const PostDetailComponent = (props: Props) => {
+  // TODO this code starts to look like as I'm trying to reinvent some kind
+  //      of task executor. Maybe there are already solutions for that, and maybe
+  //      that's even an antipattern.
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [unfinishedTasks, setUnfinishedTasks] = useState<((web3Context: Web3Context) => any)[]>([]);
-  const [wasLoading, setWasLoading] = useState({ comment: false, vote: false });
+  const [wasLoading, setWasLoading] = useState({ comment: false, postVote: false, commentVote: false });
 
   const postId = Number(props.match.params.postId);
 
@@ -66,7 +70,6 @@ const PostDetailComponent = (props: Props) => {
   useEffect(() => {
     if (props.web3Context === null || unfinishedTasks.length === 0) { return }
     const web3Context: Web3Context = props.web3Context;
-    console.log('Unfinished tasks: ', unfinishedTasks);
     unfinishedTasks.forEach(task => task(web3Context));
     setUnfinishedTasks([]);
   }, [props.web3Context, unfinishedTasks])
@@ -76,16 +79,20 @@ const PostDetailComponent = (props: Props) => {
       setWasLoading({...wasLoading, comment: false});
       props.fetchPostComments(postId);
     }
-    if (!props.voteSubmit.loading && wasLoading.vote) {
-      setWasLoading({...wasLoading, vote: false});
+    if (!props.voteSubmit.loading && wasLoading.postVote) {
+      setWasLoading({...wasLoading, postVote: false});
       props.fetchPostDetails(postId);
+    }
+    if (!props.voteSubmit.loading && wasLoading.commentVote) {
+      setWasLoading({...wasLoading, commentVote: false});
+      props.fetchPostComments(postId);
     }
   }, [postId, props, props.commentSubmit, props.fetchPostComments, wasLoading]);
 
   if (props.post.result instanceof Error) {
     return (
       <div>
-                An error occurred {props.post.result}.
+         An error occurred {props.post.result}.
       </div>
     );
   }
@@ -96,19 +103,19 @@ const PostDetailComponent = (props: Props) => {
     }
     return (
       <div>
-                Loading ...
+        Loading ...
       </div>
     )
   }
 
-  const postHash = props.post.result.data_hash;
+  const post = props.post.result;
 
   const _submitComment = (comment: CommentData) => {
     const task = (web3Context: Web3Context) => {
       console.log('Running submitComment task');
       if (web3Context === null) { return }
       console.log('Web3context is not null, continuing.');
-      props.submitComment(web3Context, comment, postHash);
+      props.submitComment(web3Context, comment, post.data_hash);
       setWasLoading({ ...wasLoading, comment: true });
     }
     if (props.web3Context === null) {
@@ -125,9 +132,26 @@ const PostDetailComponent = (props: Props) => {
       console.log('Running submitVote task');
       if (web3Context === null) { return; }
       console.log('Web3context is not null, continuing.');
-      props.submitPostVote(web3Context, { isUpvote: upvote, postId: postId }, postHash);
-      setWasLoading({ ...wasLoading, vote: true });
+      props.submitPostVote(web3Context, { isUpvote: upvote, postId: postId }, post.data_hash);
+      setWasLoading({...wasLoading, postVote: true });
     };
+    if (props.web3Context === null) {
+      props.initWeb3();
+      unfinishedTasks.push(task);
+      setUnfinishedTasks(unfinishedTasks);
+    } else {
+      task(props.web3Context);
+    }
+  };
+
+  const _submitCommentVote = (upvote: boolean, comment: ApiComment) => () => {
+    const task = (web3Context: Web3Context) => {
+      console.log('Running submitCommentVote task');
+      if (web3Context === null) { return; }
+      console.log('Web3context is not null, continuing.');
+      props.submitCommentVote(web3Context, { isUpvote: upvote, commentId: comment.id }, comment.data_hash)
+      setWasLoading({...wasLoading, commentVote: true });
+    }
     if (props.web3Context === null) {
       props.initWeb3();
       unfinishedTasks.push(task);
@@ -173,8 +197,20 @@ const PostDetailComponent = (props: Props) => {
           <List.Item
             key={item.id}
             actions={[
-              <IconText propStyle={{color: "blue"}} type="like-o" text={item.upvotes.toString()} key="list-vertical-like-o"/>,
-              <IconText propStyle={{color: "red"}} type="dislike-o" text={item.downvotes.toString()} key="list-vertical-dislike-o"/>,
+              <div onClick={_submitCommentVote(true, item)} key="list-vertical-like-o">
+                <IconText
+                  propStyle={{color: "blue"}}
+                  type="like-o"
+                  text={item.upvotes.toString()}
+                />
+              </div>,
+              <div onClick={_submitCommentVote(false, item)} key="list-vertical-dislike-o">
+                <IconText
+                  propStyle={{color: "red"}}
+                  type="dislike-o"
+                  text={item.downvotes.toString()}
+                />
+              </div>,
               <IconText propStyle={{color: "green"}} type="dollar-o" text={item.balance} key="list-vertical-dollar-o"/>,
             ]}
           >
