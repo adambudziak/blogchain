@@ -40,7 +40,7 @@ django-webtest>=1.9.3
 django-test-plus==1.0.20
 
 # # Wery useful toolbar for debuging project
-django-debug-toolbar==1.11
+django-debug-toolbar==1.11.1
 
 
 
