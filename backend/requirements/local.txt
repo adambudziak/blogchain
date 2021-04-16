@@ -12,7 +12,7 @@ Werkzeug==0.15.3
 django-extensions==2.2.1
 
 # Wery useful toolbar for debuging project
-django-debug-toolbar==1.11
+django-debug-toolbar==1.11.1
 
 # Python debugger
 pudb==2018.1
