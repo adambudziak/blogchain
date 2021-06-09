@@ -4,7 +4,7 @@
 wheel==0.31.1
 
 # Django
-django==2.2.4
+django==2.2.22
 
 # HTTP for Humans
 requests==2.20.0
